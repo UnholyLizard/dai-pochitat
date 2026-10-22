@@ -1,0 +1,33 @@
+{
+  "name": "dai-pochitat",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/postbuild.mjs",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "check": "eslint . && npm run build",
+    "art": "node scripts/gen-art.mjs",
+    "art:cut": "node scripts/cutout.mjs",
+    "deploy": "npm run build && wrangler deploy",
+    "art:icons": "node scripts/icons.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/literata": "^5.3.0",
+    "@fontsource-variable/nunito": "^5.3.0",
+    "@fontsource/caveat": "^5.3.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
+    "sharp": "^0.35.5",
+    "vite": "^8.3.5",
+    "vite-plugin-pwa": "^2.0.0",
+    "workbox-window": "^7.4.1",
+    "wrangler": "^4.152.0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Static site: an assets-only Worker serving the Vite build.
+  "name": "dai-pochitat",
+  "compatibility_date": "2026-10-22",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "routes": [
+    { "pattern": "dai-pochitat-mne.craft-tower.com", "custom_domain": true }
+  ],
+  "workers_dev": true
+}

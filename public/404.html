@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Эта страница ещё не написана — Дай почитать!</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <style>
+    :root { color-scheme: light dark; --paper: #f4e8cf; --ink: #2b1b12; --muted: #85705d; --cobalt: #1f4dd8; }
+    @media (prefers-color-scheme: dark) { :root { --paper: #141a30; --ink: #f7ecd6; --muted: #a59cb5; --cobalt: #4d72f0; } }
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: radial-gradient(900px 600px at 20% 0%, rgb(255 246 220 / 0.25), transparent 60%), var(--paper);
+      color: var(--ink);
+      font-family: Georgia, 'Times New Roman', serif;
+      text-align: center;
+    }
+    main { max-width: 34rem; display: grid; gap: 18px; justify-items: center; }
+    img { width: min(220px, 50vw); height: auto; rotate: -4deg; filter: drop-shadow(0 18px 24px rgb(60 30 10 / 0.25)); }
+    h1 { font-size: clamp(2rem, 6vw, 3rem); font-style: italic; line-height: 1.05; }
+    p { color: var(--muted); font-size: 1.1rem; line-height: 1.5; }
+    a {
+      display: inline-block;
+      padding: 14px 24px;
+      border-radius: 999px;
+      border: 2.5px solid #2b1b12;
+      background: var(--cobalt);
+      color: #fff8e8;
+      font: 800 1rem/1 system-ui, sans-serif;
+      text-decoration: none;
+      box-shadow: 0 4px 0 #2b1b12;
+    }
+    a:focus-visible { outline: 3px solid #f6c343; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="/art/pippi-think.webp" alt="" width="640" height="580">
+    <h1>Эта страница ещё не написана</h1>
+    <p>Пеппи перевернула весь сундук — и не нашла её. Зато книга целиком на месте.<br><span lang="en">This page hasn’t been written yet — but the book is right here.</span></p>
+    <a href="/">Вернуться к книге · Back to the book</a>
+  </main>
+</body>
+</html>

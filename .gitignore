@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.*
+art/raw/
+art/*.png
+art/*.cjs
+art/*.log
+.wrangler/
+dev-dist/
+.claude/
+art/ref/

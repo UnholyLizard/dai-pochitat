@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dai-pochitat-mne.craft-tower.com/sitemap.xml
