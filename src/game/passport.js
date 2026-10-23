@@ -25,7 +25,7 @@ function view() {
 
   return html`
     <header class="pp-head">
-      <div class="pp-photo"><img src="${artUrl(avatar ? avatar.art : 'pippi-avatar')}" alt=""></div>
+      <div class="pp-photo"><img src="${artUrl(avatar ? avatar.art : 'ginger-avatar')}" alt=""></div>
       <div>
         <p class="pp-kicker">${t('passport.kicker', { no: s.cardNo })}</p>
         <h2 class="pp-title" id="passport-title">${t('passport.title')}</h2>

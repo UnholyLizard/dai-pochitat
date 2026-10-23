@@ -1,5 +1,6 @@
 import { bus, store } from '../lib/core.js';
 import { CRITTERS, RANKS } from '../content/game.js';
+import { DEFAULT_LIBRARIAN, LIBRARIANS } from '../content/librarians.js';
 
 const KEY = 'dp:game';
 
@@ -14,9 +15,15 @@ const fresh = () => ({
   cardNo: String(1000 + Math.floor(Math.random() * 9000)),
   visits: 0,
   lastVisit: 0,
+  librarian: DEFAULT_LIBRARIAN, // who answers in the chat (chosen in the casting)
+  vote: null,                   // the reader's vote in the casting
+  voter: crypto.randomUUID(),   // anonymous id so a vote can be changed, not repeated
 });
 
 let state = { ...fresh(), ...store.get(KEY, {}) };
+// v1 → v2: the chat stamp was renamed.
+if (state.stamps.pippi) { state.stamps.chat = state.stamps.pippi; delete state.stamps.pippi; }
+if (!LIBRARIANS.some((l) => l.id === state.librarian)) state.librarian = DEFAULT_LIBRARIAN;
 const save = () => store.set(KEY, state);
 
 export const rankOf = (coins) => RANKS.reduce((r, need, i) => (coins >= need ? i : r), 0);
@@ -82,9 +89,26 @@ export const game = {
     game.award('riddle');
   },
 
+  /** The reader picked who answers in the chat. */
+  setLibrarian(id) {
+    if (state.librarian === id) return;
+    state.librarian = id;
+    save();
+    bus.emit('librarian', id);
+  },
+
+  /** Remember the reader's casting vote (the server keeps the tally). */
+  setVote(id) {
+    state.vote = id;
+    save();
+    game.award('jury');
+    bus.emit('game', state);
+  },
+
   reset() {
-    const { cardNo, visits, lastVisit } = state;
-    state = { ...fresh(), cardNo, visits, lastVisit };
+    // Progress starts over; the casting choice and anonymous voter id are preferences, not progress.
+    const { cardNo, visits, lastVisit, librarian, vote, voter } = state;
+    state = { ...fresh(), cardNo, visits, lastVisit, librarian, vote, voter };
     save();
     bus.emit('reset');
     bus.emit('game', state);

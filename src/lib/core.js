@@ -36,6 +36,31 @@ export const prefs = {
 
 export const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
+/**
+ * Phones resize the window while the address bar slides in and out. The 3D stage is sized to
+ * the large viewport (100lvh) and the book is placed inside the small one (100svh); both stay
+ * put while scrolling, so the book never jumps. Re-measured only on real resizes.
+ */
+let probes = null;
+let vp = null;
+export function measureViewport() {
+  probes ??= ['100lvh', '100svh'].map((h) => {
+    const d = document.createElement('div');
+    d.style.cssText = `position:fixed;top:0;left:0;width:0;height:${h};visibility:hidden;pointer-events:none`;
+    d.setAttribute('aria-hidden', 'true');
+    document.body.append(d);
+    return d;
+  });
+  vp = {
+    w: document.documentElement.clientWidth || innerWidth,
+    large: probes[0].offsetHeight || innerHeight,
+    small: probes[1].offsetHeight || innerHeight,
+  };
+  return vp;
+}
+export const viewport = () => vp ?? measureViewport();
+addEventListener('resize', () => { if (vp) measureViewport(); }, { passive: true });
+
 /** URL of a generated illustration in public/art (respects Vite's base, e.g. GitHub Pages). */
 export const artUrl = (id) => `${import.meta.env.BASE_URL}art/${id}.webp`;
 

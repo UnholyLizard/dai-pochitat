@@ -1,18 +1,16 @@
-// A sample of the shelf for Pippi's chest. The real catalogue can replace this list 1:1.
+// A sample of the shelf for the magic chest. The real catalogue can replace this list 1:1.
 // age: [min, max]; moods: funny | adventure | magic | spooky | friends | animals | real
 const B = (id, ru, en, ruAuthor, enAuthor, age, moods, color, saysRu, saysEn) => ({
   id, title: { ru, en }, author: { ru: ruAuthor, en: enAuthor }, age, moods, color, says: { ru: saysRu, en: saysEn },
 });
 
 export const BOOKS = [
-  B('pippi', 'Пеппи Длинныйчулок', 'Pippi Longstocking', 'Астрид Линдгрен', 'Astrid Lindgren', [6, 10], ['funny', 'adventure', 'friends'], '#d2553a',
-    'Это про меня! Читай и завидуй.', 'It’s about me! Read it and be jealous.'),
   B('karlsson', 'Малыш и Карлсон', 'Karlsson-on-the-Roof', 'Астрид Линдгрен', 'Astrid Lindgren', [6, 10], ['funny', 'friends'], '#2f8a84',
     'Мужчина в самом расцвете сил. И с пропеллером!', 'A man in his prime. With a propeller!'),
   B('lionheart', 'Братья Львиное Сердце', 'The Brothers Lionheart', 'Астрид Линдгрен', 'Astrid Lindgren', [9, 13], ['adventure', 'magic', 'friends'], '#7d5bbf',
     'Про храбрость. Возьми платок — на всякий случай.', 'About courage. Bring a hanky, just in case.'),
   B('ronia', 'Рони, дочь разбойника', 'Ronia, the Robber’s Daughter', 'Астрид Линдгрен', 'Astrid Lindgren', [9, 12], ['adventure', 'friends'], '#6f8f3a',
-    'Девочка из леса, которая никого не боится. Как я!', 'A forest girl who fears no one. Like me!'),
+    'Девочка из леса, которая никого не боится.', 'A forest girl who fears no one.'),
   B('moomin-comet', 'Муми-тролль и комета', 'Comet in Moominland', 'Туве Янссон', 'Tove Jansson', [7, 11], ['adventure', 'friends', 'magic'], '#3f7fd6',
     'Летит комета, а они пьют чай. Вот это выдержка!', 'A comet is coming and they’re having tea. Now that’s calm!'),
   B('gruffalo', 'Груффало', 'The Gruffalo', 'Джулия Дональдсон', 'Julia Donaldson', [3, 6], ['funny', 'animals', 'spooky'], '#8a5a2b',
@@ -32,11 +30,11 @@ export const BOOKS = [
   B('matilda', 'Матильда', 'Matilda', 'Роальд Даль', 'Roald Dahl', [8, 12], ['funny', 'real', 'magic'], '#d9667e',
     'Девочка, которая прочитала всю библиотеку. Уважаю.', 'A girl who read the whole library. Respect.'),
   B('witches', 'Ведьмы', 'The Witches', 'Роальд Даль', 'Roald Dahl', [8, 12], ['spooky', 'magic', 'funny'], '#5b3f8c',
-    'Страшно и смешно одновременно. Как я в шляпе.', 'Scary and funny at once. Like me in a hat.'),
+    'Страшно и смешно одновременно — редкое сочетание.', 'Scary and funny at once — a rare mix.'),
   B('oz', 'Волшебник Изумрудного города', 'The Wizard of the Emerald City', 'Александр Волков', 'Alexander Volkov', [6, 10], ['magic', 'adventure', 'friends'], '#2e8b57',
     'Друзья, дорога и немножко обмана. Классика!', 'Friends, a road and a little trickery. A classic!'),
   B('deniska', 'Денискины рассказы', 'Deniska’s Stories', 'Виктор Драгунский', 'Victor Dragunsky', [6, 10], ['funny', 'real'], '#e07b39',
-    'Смеялась так, что лошадь испугалась.', 'I laughed so hard my horse got scared.'),
+    'Смеётся вся библиотека — даже лошадь.', 'The whole library laughs — even the horse.'),
   B('neznayka', 'Незнайка на Луне', 'Dunno on the Moon', 'Николай Носов', 'Nikolay Nosov', [7, 11], ['funny', 'adventure'], '#3d6fb6',
     'Коротышки летят на Луну. А что, так можно было?', 'Little folk fly to the Moon. Wait, that’s allowed?'),
   B('alice', 'Алиса в Стране чудес', 'Alice’s Adventures in Wonderland', 'Льюис Кэрролл', 'Lewis Carroll', [8, 99], ['magic', 'funny'], '#4aa3c7',
@@ -60,13 +58,13 @@ export const BOOKS = [
   B('garden', 'Таинственный сад', 'The Secret Garden', 'Фрэнсис Бёрнетт', 'Frances Hodgson Burnett', [9, 13], ['friends', 'real'], '#5a8f3d',
     'Ключ, калитка и сад, который оживает.', 'A key, a gate and a garden coming back to life.'),
   B('treasure', 'Остров сокровищ', 'Treasure Island', 'Роберт Льюис Стивенсон', 'Robert Louis Stevenson', [10, 14], ['adventure'], '#a0522d',
-    'Пираты! Мой папа одобряет.', 'Pirates! My dad approves.'),
+    'Пираты, карта и сундук — всё как мы любим.', 'Pirates, a map and a chest — just how we like it.'),
   B('hunger', 'Голодные игры', 'The Hunger Games', 'Сьюзен Коллинз', 'Suzanne Collins', [13, 18], ['adventure', 'real'], '#b5442c',
     'Для тех, кто постарше. Не оторваться.', 'For older readers. Impossible to put down.'),
   B('baskervilles', 'Собака Баскервилей', 'The Hound of the Baskervilles', 'Артур Конан Дойл', 'Arthur Conan Doyle', [12, 99], ['spooky', 'adventure'], '#4a4e69',
     'Туман, болота и великий сыщик. Читай при свете!', 'Fog, moors and a great detective. Keep the light on!'),
   B('poppins', 'Мэри Поппинс', 'Mary Poppins', 'Памела Трэверс', 'P. L. Travers', [6, 10], ['magic', 'funny'], '#2f4858',
-    'Няня с зонтиком. Почти такая же волшебная, как я.', 'A nanny with an umbrella. Almost as magical as me.'),
+    'Няня с зонтиком и характером. Волшебно!', 'A nanny with an umbrella and attitude. Magic!'),
   B('charlotte', 'Паутина Шарлотты', 'Charlotte’s Web', 'Элвин Брукс Уайт', 'E. B. White', [7, 10], ['animals', 'friends'], '#b07d48',
     'Поросёнок и паучиха. Самая нежная дружба.', 'A pig and a spider. The gentlest friendship.'),
   B('alisa', 'Путешествие Алисы', 'Alisa’s Journey', 'Кир Булычёв', 'Kir Bulychev', [8, 12], ['adventure', 'funny', 'magic'], '#3a86ff',

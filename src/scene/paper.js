@@ -117,7 +117,7 @@ function star(ctx, x, y, r) {
  * Cloth cover with gold foil. mode: 'color' | 'mask' (the same drawing rendered twice:
  * once in colour, once as a white-on-black foil mask that makes the gold glow).
  */
-export function paintCover(canvas, { side, mode, house, t }) {
+export function paintCover(canvas, { side, mode, house, olive, cypress, t }) {
   // The foil mask doesn't need full resolution.
   const k = mode === 'color' ? 1 : 0.5;
   canvas.width = COVER.w * k; canvas.height = COVER.h * k;
@@ -188,12 +188,42 @@ export function paintCover(canvas, { side, mode, house, t }) {
       const sky = ctx.createLinearGradient(0, py, 0, py + ph);
       sky.addColorStop(0, '#9fc3f2'); sky.addColorStop(0.7, '#f6e6c4');
       ctx.fillStyle = sky; ctx.fillRect(px, py, pw, ph);
-      ctx.fillStyle = '#e8d4ad';
-      ctx.fillRect(px, py + ph - 110, pw, 110);
-      if (house) {
-        const ih = ph - 90, iw = ih * (house.width / house.height);
-        ctx.drawImage(house, w / 2 - iw / 2, py + 40, iw, ih);
+      // Green hills of Rumija behind the house, a lawn in front: the yellow house needs its garden.
+      const hill = (color, y0, amp, phase) => {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(px, py + ph);
+        for (let x = 0; x <= pw; x += 20) ctx.lineTo(px + x, py + y0 - Math.sin((x / pw) * Math.PI * 1.3 + phase) * amp);
+        ctx.lineTo(px + pw, py + ph);
+        ctx.closePath();
+        ctx.fill();
+      };
+      hill('#a9c98a', 300, 70, 0.4);
+      hill('#7fae5f', 380, 46, 2.1);
+      const lawn = ctx.createLinearGradient(0, py + ph - 150, 0, py + ph);
+      lawn.addColorStop(0, '#8fbf5e'); lawn.addColorStop(1, '#5f9440');
+      ctx.fillStyle = lawn;
+      ctx.beginPath();
+      ctx.moveTo(px, py + ph - 120);
+      ctx.quadraticCurveTo(px + pw / 2, py + ph - 165, px + pw, py + ph - 118);
+      ctx.lineTo(px + pw, py + ph); ctx.lineTo(px, py + ph); ctx.closePath();
+      ctx.fill();
+      // daisies
+      let seed = 7;
+      const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      for (let i = 0; i < 26; i++) {
+        const fx = px + 30 + rnd() * (pw - 60), fy = py + ph - 95 + rnd() * 75;
+        ctx.fillStyle = i % 3 ? '#fff8e8' : '#f6c343';
+        ctx.beginPath(); ctx.arc(fx, fy, 3 + rnd() * 2.5, 0, Math.PI * 2); ctx.fill();
       }
+      const draw = (img, cx, bottom, h) => {
+        if (!img) return;
+        const iw = h * (img.width / img.height);
+        ctx.drawImage(img, cx - iw / 2, bottom - h, iw, h);
+      };
+      draw(cypress, px + pw - 66, py + ph - 70, 330);
+      draw(house, w / 2 + 14, py + ph - 52, ph - 120);
+      draw(olive, px + 104, py + ph - 34, 270);
       ctx.restore();
     }
     ctx.strokeStyle = foil; ctx.lineWidth = 4;
@@ -243,18 +273,18 @@ export function paintCover(canvas, { side, mode, house, t }) {
   return canvas;
 }
 
-export function coverTextures({ house, t }) {
+export function coverTextures({ house, olive, cypress, t }) {
   const make = (side) => ({
-    color: canvasTexture(paintCover(document.createElement('canvas'), { side, mode: 'color', house, t })),
+    color: canvasTexture(paintCover(document.createElement('canvas'), { side, mode: 'color', house, olive, cypress, t })),
     mask: canvasTexture(paintCover(document.createElement('canvas'), { side, mode: 'mask', t }), false),
   });
   return { front: make('front'), back: make('back') };
 }
 
-export function repaintCovers(set, { house, t }) {
+export function repaintCovers(set, { house, olive, cypress, t }) {
   for (const side of ['front', 'back']) {
     for (const mode of ['color', 'mask']) {
-      paintCover(set[side][mode].image, { side, mode, house, t });
+      paintCover(set[side][mode].image, { side, mode, house, olive, cypress, t });
       set[side][mode].needsUpdate = true;
     }
   }
@@ -286,6 +316,33 @@ export function contactShadowTexture() {
   g.addColorStop(1, 'rgba(60,32,10,0)');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, 256, 256);
+  return canvasTexture(c);
+}
+
+/** A little cloud with a short aside in it ("hmm…"): the thought bubbles that pop up off the page. */
+export function thoughtTexture(text) {
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 320;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#fffaf0';
+  ctx.shadowColor = 'rgba(60,32,10,0.35)';
+  ctx.shadowBlur = 14;
+  ctx.shadowOffsetY = 6;
+  // One cloud shape: draw it with the shadow, then again without, so the bumps read as one piece.
+  const cloud = () => {
+    ctx.beginPath(); ctx.roundRect(40, 70, 432, 190, 95); ctx.fill();
+    for (const [x, y, r] of [[130, 110, 60], [256, 90, 72], [380, 110, 58]]) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); }
+    for (const [x, y, r] of [[120, 282, 24], [92, 305, 14]]) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); }
+  };
+  cloud();
+  ctx.shadowColor = 'transparent';
+  cloud();
+  ctx.fillStyle = 'rgba(43,27,18,0.88)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  let px = 96;
+  do { ctx.font = `700 ${px}px Caveat`; px -= 4; } while (ctx.measureText(text).width > 380 && px > 40);
+  ctx.fillText(text, 256, 165);
   return canvasTexture(c);
 }
 

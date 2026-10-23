@@ -1,5 +1,5 @@
 // Page chrome: theme (day / evening), scroll → book position, contents, in-page links.
-import { bus, prefs, reducedMotion, $, $$ } from '../lib/core.js';
+import { bus, prefs, reducedMotion, $, $$, viewport, measureViewport } from '../lib/core.js';
 import { t } from '../i18n/index.js';
 import { game } from '../game/state.js';
 import { toast } from '../game/feedback.js';
@@ -43,6 +43,8 @@ let target = 0;
 let current = -1;
 
 function measure() {
+  measureViewport();
+  area = computeArea();
   sections = $$('[data-spread]').map((el) => {
     const r = el.getBoundingClientRect();
     return { el, top: r.top + scrollY, height: r.height, spread: Number(el.dataset.spread) };
@@ -112,9 +114,11 @@ export function initScroll() {
   if (location.hash.length > 1) requestAnimationFrame(() => scrollTo({ top: spreadTop(location.hash.slice(1)) }));
 }
 
-/** Where the book should sit on screen: right of the text column, or the top half on phones. */
-export function bookArea() {
-  const vw = innerWidth, vh = innerHeight;
+/** Where the book should sit on screen: right of the text column, or the top half on phones.
+ *  Measured on resize only (it's read every frame), in stable viewport units. */
+let area = null;
+function computeArea() {
+  const { w: vw, small: vh } = viewport();
   const header = parseFloat(getComputedStyle(root).getPropertyValue('--header-h')) || 72;
   if (vw < 860) return { x: 0, y: header * 0.6, w: vw, h: vh * 0.52 };
   const card = $('#house .card');
@@ -122,3 +126,4 @@ export function bookArea() {
   const x = right + vw * 0.01;
   return { x, y: header * 0.7, w: vw - x - vw * 0.015, h: vh - header * 0.7 - 16 };
 }
+export const bookArea = () => (area ??= computeArea());

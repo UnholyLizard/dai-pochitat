@@ -10,3 +10,4 @@ art/*.log
 dev-dist/
 .claude/
 art/ref/
+graphify-out/

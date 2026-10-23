@@ -1,30 +1,34 @@
 /**
- * Pippi, the librarian agent.
+ * The librarian agent (whoever won the reader's casting).
  *
  * The chat UI talks to a "brain" with one method:
  *
  *   reply(message: string, context) → Promise<Reply[]>
  *
  *   context = { lang: 'ru'|'en', state: { name, coins, found, stamps, wish, solved }, isNight,
+ *               librarian: candidate id (src/content/librarians.js — voice & personality),
  *               history: {from, text}[], app: { canInstall, ios, standalone } }
  *
  *   Reply = { say: string }                    — a chat bubble (plain text)
  *         | { book: string }                   — a book card, by id from src/content/books.js
  *         | { chips: { label, send?, action? }[] } — quick replies under the log
- *         | { action: Action }                 — something Pippi does on the page
+ *         | { action: Action }                 — something the librarian does on the page
  *
  *   Action = { type: 'goto', id }  | { type: 'theme' } | { type: 'upside' } | { type: 'passport' }
  *          | { type: 'lang', lang } | { type: 'solve', id } | { type: 'oracle' } | { type: 'install' }
  *
- * Today the scripted brain answers locally. Set VITE_PIPPI_ENDPOINT to a server that
+ * Brains also implement greet(context) and takeOver(context) (first words after a casting pick).
+ *
+ * Today the scripted brain answers locally. Set VITE_LIBRARIAN_ENDPOINT to a server that
  * speaks the same contract (e.g. an LLM with tools: searchCatalog, isOnShelf,
- * reserveBook, getEvents) and Pippi becomes a real AI librarian — no UI changes.
+ * reserveBook, getEvents) and the librarian becomes a real AI agent — no UI changes.
  */
 import { createScriptedBrain } from './brain-scripted.js';
 
 function createRemoteBrain(endpoint, fallback) {
   return {
     greet: fallback.greet,
+    takeOver: fallback.takeOver,
     async reply(message, context) {
       try {
         const res = await fetch(endpoint, {
@@ -43,7 +47,7 @@ function createRemoteBrain(endpoint, fallback) {
         if (!Array.isArray(replies)) throw new Error('bad reply');
         return replies;
       } catch {
-        // Offline, slow or broken server: Pippi still answers.
+        // Offline, slow or broken server: the librarian still answers.
         return fallback.reply(message, context);
       }
     },
@@ -52,6 +56,6 @@ function createRemoteBrain(endpoint, fallback) {
 
 export function createLibrarian() {
   const scripted = createScriptedBrain();
-  const endpoint = import.meta.env.VITE_PIPPI_ENDPOINT;
+  const endpoint = import.meta.env.VITE_LIBRARIAN_ENDPOINT;
   return endpoint ? createRemoteBrain(endpoint, scripted) : scripted;
 }

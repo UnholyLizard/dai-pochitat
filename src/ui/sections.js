@@ -41,7 +41,7 @@ document.addEventListener('click', (e) => {
   if (on) sfx.pop();
 });
 
-/* ── Pippi's chest ─────────────────────────────────────────────────────── */
+/* ── The magic chest ─────────────────────────────────────────────────────── */
 const queues = new Map();
 let shown = null;
 

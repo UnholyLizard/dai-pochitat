@@ -69,7 +69,11 @@ export const sfx = {
 
 export function initSound() {
   const btn = $('[data-sound-toggle]');
-  const sync = () => btn?.setAttribute('aria-pressed', String(enabled));
+  // The icon is swapped, not hidden: CSS can't reach into an SVG <use> shadow tree.
+  const sync = () => {
+    btn?.setAttribute('aria-pressed', String(enabled));
+    btn?.querySelector('use')?.setAttribute('href', enabled ? '#i-sound-on' : '#i-sound-off');
+  };
   sync();
   btn?.addEventListener('click', () => {
     enabled = !enabled;

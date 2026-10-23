@@ -1,12 +1,24 @@
-// Pippi's offline brain: intent matching + a little memory. Same reply contract as the
+// The librarian's offline brain: intent matching + a little memory. Same reply contract as the
 // future AI brain (see librarian.js), so the chat UI never knows which one is talking.
+// Facts are shared; personality lines come from the candidate the reader chose in the casting.
 import { BOOKS, AGE_GROUPS, findBooks, bookById, bookOfTheWeek } from '../content/books.js';
+import { librarianById } from '../content/librarians.js';
 import { EVENTS } from '../content/events.js';
 import { LIBRARY } from '../content/library.js';
 import { CRITTERS } from '../content/game.js';
 
 const R = (ru, en) => ({ ru, en });
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+// Lines any librarian may fall back on (grammatically neutral in Russian).
+const NEUTRAL = {
+  horse: R('Пятнистая лошадь живёт в главе про сундук. Нажми на неё — увидишь фокус!', 'The spotted horse lives in the chest chapter. Tap it for a trick!'),
+  found: R('Тадам! Вот книга для тебя:', 'Ta-da! Here’s a book for you:'),
+};
+const line = (voice, key) => {
+  const v = voice[key] ?? NEUTRAL[key];
+  return Array.isArray(v) ? pick(v) : v;
+};
 const norm = (s) => s.toLowerCase().replace(/ё/g, 'е').replace(/[^\p{L}\p{N}\s+-]/gu, ' ').replace(/\s+/g, ' ').trim();
 
 // Stems match at word starts («смеш» → «смешное»); '=word' must match a whole word;
@@ -43,8 +55,8 @@ const INTENTS = [
   ['night', ['вечер', 'ночь', 'темн', 'лампа', 'свет', 'night', 'dark', 'lamp', 'evening', 'light']],
   ['upside', ['вверх ногами', 'вверх тормашками', 'перевер', 'upside down', 'flip']],
   ['horse', ['лошад', 'конь', 'horse', 'pony']],
-  ['monkey', ['нильсон', 'обезьян', 'nilsson', 'monkey']],
   ['coins', ['монет', 'звани', 'очк', 'coin', 'rank', 'points', 'score', 'passport', 'паспорт']],
+  ['casting', ['кастинг', 'голосова', 'выбрать библиотекар', 'другого библиотекар', 'другой библиотекар', 'casting', '=vote', 'voting', 'new librarian', 'another librarian']],
   ['ai', ['робот', 'нейросет', 'искусствен', '=бот', 'robot', '=ai', '=bot', 'artificial', 'chatgpt']],
   ['who', ['кто ты', 'ты кто', 'как тебя', 'про себя', 'who are you', 'your name', 'about you']],
   ['english', ['по-английски', 'по английски', 'english', 'in english']],
@@ -76,9 +88,9 @@ const RIDDLES = [
   { id: 'alice', book: 'alice', a: ['алис', 'alice'],
     q: R('Кто прыгнул в кроличью нору вслед за Белым Кроликом?', 'Who followed the White Rabbit down the rabbit hole?'),
     hint: R('Её имя начинается на «А».', 'Her name starts with an A.') },
-  { id: 'pippi', book: 'pippi', a: ['пепп', 'pipp', 'ты', 'you'],
-    q: R('Кто живёт с лошадью и обезьянкой, а косички у неё торчат в разные стороны?', 'Who lives with a horse and a monkey, with braids sticking out sideways?'),
-    hint: R('Посмотри внимательно, с кем ты сейчас разговариваешь!', 'Look closely at who you’re talking to!') },
+  { id: 'treasure', book: 'treasure', a: ['сокровищ', 'treasure'],
+    q: R('В какой книге юнга Джим находит карту с крестиком и попадает к пиратам?', 'In which book does cabin boy Jim find a map with an X and end up among pirates?'),
+    hint: R('Там есть остров, попугай и одноногий кок.', 'It has an island, a parrot and a one-legged cook.') },
 ];
 
 const ageFromText = (text) => {
@@ -125,7 +137,7 @@ export function createScriptedBrain() {
     }[m], lang),
   }));
 
-  function recommend(lang, mood, age) {
+  function recommend(lang, voice, mood, age) {
     mem.last = 'book';
     mem.mood = mood ?? mem.mood;
     mem.age = age ?? mem.age;
@@ -133,7 +145,7 @@ export function createScriptedBrain() {
     const book = pick(pool.length ? pool : findBooks({ age: mem.age ?? 'middle' }));
     if (!book) return [{ say: L(R('Хм, в сундуке пусто. Приходи в библиотеку — там книг больше!', 'Hmm, the chest is empty. Come to the library — there are many more!'), lang) }];
     return [
-      { say: L(pick([R('Ага! Вот что я выудила из сундука:', 'Aha! Look what I fished out of the chest:'), R('Держи! Только не урони — она тяжёлая. Шучу!', 'Here! Don’t drop it — it’s heavy. Kidding!'), R('Тадам!', 'Ta-da!')]), lang) },
+      { say: L(line(voice, 'found'), lang) },
       { book: book.id },
       { chips: [{ label: L(R('Ещё!', 'Another!'), lang) }, { label: L(R('Другое настроение', 'Different mood'), lang), send: L(R('Что почитать?', 'What should I read?'), lang) }] },
     ];
@@ -148,13 +160,14 @@ export function createScriptedBrain() {
   }
 
   return {
-    greet({ lang, state, app, now = new Date() }) {
+    greet({ lang, state, app, librarian, now = new Date() }) {
+      const voice = librarianById(librarian).voice;
       const h = now.getHours();
-      const hello = h < 12 ? R('Доброе утро', 'Good morning') : h < 18 ? R('Добрый день', 'Good afternoon') : R('Добрый вечер', 'Good evening');
+      const hello = L(h < 12 ? R('Доброе утро', 'Good morning') : h < 18 ? R('Добрый день', 'Good afternoon') : R('Добрый вечер', 'Good evening'), lang);
       const week = bookOfTheWeek(now);
       const out = [];
-      if (state.name) out.push({ say: `${L(hello, lang)}, ${state.name}! ${L(R('С возвращением в библиотеку.', 'Welcome back to the library.'), lang)}` });
-      else out.push({ say: L(R(`${hello.ru}! Я Пеппи — самая сильная библиотекарша на свете. Могу поднять лошадь, а могу найти тебе книжку. Что выберешь?`, `${hello.en}! I’m Pippi — the strongest librarian in the world. I can lift a horse, or I can find you a book. Which will it be?`), lang) });
+      const fill = (s) => s.replace('{hello}', hello).replace('{name}', state.name);
+      out.push({ say: fill(L(state.name ? voice.welcome : voice.greet, lang)) });
       out.push({ say: L(R(`Кстати, книга недели — «${week.title.ru}». ${week.says.ru}`, `By the way, this week’s book is “${week.title.en}”. ${week.says.en}`), lang) });
       const chips = chipsDefault(lang);
       if (app?.canInstall && state.visits >= 2) chips.unshift({ label: L(R('Поселить книгу на телефоне', 'Keep the book on my phone'), lang), send: L(R('Как установить на телефон?', 'How do I install it?'), lang) });
@@ -162,7 +175,13 @@ export function createScriptedBrain() {
       return out;
     },
 
-    async reply(input, { lang, state, isNight, app = {} }) {
+    /** What the newly chosen librarian says when they take over the chat. */
+    takeOver({ lang, librarian }) {
+      return [{ say: L(librarianById(librarian).voice.hello, lang) }, { chips: chipsDefault(lang).slice(0, 3) }];
+    },
+
+    async reply(input, { lang, state, isNight, app = {}, librarian }) {
+      const voice = librarianById(librarian).voice;
       const text = norm(input);
       const say = (pair) => ({ say: L(pair, lang) });
 
@@ -173,7 +192,7 @@ export function createScriptedBrain() {
         const right = r.a.some((a) => (a.length <= 3 ? words.includes(a) : words.some((w) => w.startsWith(a))));
         if (right) {
           mem.riddle = null;
-          return [say(R('Правильно! Ты настоящий книгочей.', 'Correct! You’re a true bookworm.')), { book: r.book }, { action: { type: 'solve', id: r.id } }, { chips: [{ label: L(R('Ещё загадку!', 'Another riddle!'), lang) }, ...chipsDefault(lang).slice(0, 1)] }];
+          return [say(line(voice, 'correct')), { book: r.book }, { action: { type: 'solve', id: r.id } }, { chips: [{ label: L(R('Ещё загадку!', 'Another riddle!'), lang) }, ...chipsDefault(lang).slice(0, 1)] }];
         }
         if (has(text, INTENTS[0][1]) || mem.wrong >= 2) {
           mem.riddle = null;
@@ -196,28 +215,31 @@ export function createScriptedBrain() {
       const intent = INTENTS.find(([, stems]) => has(text, stems))?.[0];
 
       // Moods only steer when nothing more specific was asked («подсказку про зверят» is a hint, not a book).
-      if (mood && (!intent || ['recommend', 'more', 'greet', 'dontknow'].includes(intent))) return recommend(lang, mood, age);
-      if (age && (intent === 'recommend' || !intent)) return recommend(lang, null, age);
+      if (mood && (!intent || ['recommend', 'more', 'greet', 'dontknow'].includes(intent))) return recommend(lang, voice, mood, age);
+      if (age && (intent === 'recommend' || !intent)) return recommend(lang, voice, null, age);
 
       switch (intent) {
         case 'greet':
-          return [say(pick([R('Привет-привет! Чем займёмся?', 'Hello hello! What shall we do?'), R('Хей! Я как раз пересчитывала книжки. Все на месте!', 'Hey! I was just counting the books. All present!')])), { chips: chipsDefault(lang) }];
+          return [say(pick([R('Привет-привет! Чем займёмся?', 'Hello hello! What shall we do?'), R('Хей! Я как раз считаю книжки. Все на месте!', 'Hey! Just counting the books. All present!')])), { chips: chipsDefault(lang) }];
         case 'who':
-          return [say(R('Я Пеппи. Ну, почти та самая. Работаю здесь библиотекарем: знаю, где живёт каждая книжка, и умею читать вверх ногами. А скоро стану ещё умнее — меня учат разговаривать обо всём на свете.', 'I’m Pippi. Well, nearly that Pippi. I’m the librarian here: I know where every book lives and I can read upside down. Soon I’ll be even cleverer — they’re teaching me to talk about everything.'))];
+          return [say(line(voice, 'who')), { chips: [{ label: L(R('Кто ещё на кастинге?', 'Who else is auditioning?'), lang), action: { type: 'goto', id: 'casting' } }] }];
+        case 'casting':
+          return [say(R('В библиотеке идёт кастинг на роль библиотекаря! Послушай кандидатов и отдай свой голос — кого выберешь, тот и будет здесь отвечать.', 'There’s a casting for the librarian’s role! Listen to the candidates and cast your vote — whoever you choose will answer here.')),
+            { chips: [{ label: L(R('К кастингу!', 'To the casting!'), lang), action: { type: 'goto', id: 'casting' } }] }];
         case 'ai':
-          return [say(R('Я пока выучила только библиотечные дела: книжки, загадки, расписание. Но меня учат! Скоро смогу проверять, какая книга на полке, и откладывать её для тебя.', 'So far I only know library things: books, riddles, opening hours. But I’m learning! Soon I’ll be able to check which books are on the shelf and keep one aside for you.'))];
+          return [say(R('Пока я знаю только библиотечные дела: книжки, загадки, расписание. Но учусь! Скоро смогу проверять, какая книга на полке, и откладывать её для тебя.', 'So far I only know library things: books, riddles, opening hours. But I’m learning! Soon I’ll be able to check which books are on the shelf and keep one aside for you.'))];
         case 'recommend':
           return [say(R('Сейчас найдём! Какое у тебя настроение?', 'Let’s find one! What’s your mood?')), { chips: moodChips(lang) }];
         case 'more':
           if (mem.last === 'riddle') return askRiddle(lang, state.solved);
-          return mem.last === 'book' ? recommend(lang) : [say(R('Ещё чего? Книжку или загадку?', 'More of what? A book or a riddle?')), { chips: chipsDefault(lang).slice(0, 2) }];
+          return mem.last === 'book' ? recommend(lang, voice) : [say(R('Ещё чего? Книжку или загадку?', 'More of what? A book or a riddle?')), { chips: chipsDefault(lang).slice(0, 2) }];
         case 'riddle':
           return askRiddle(lang, state.solved);
         case 'dontknow':
           return [say(R('Ничего страшного! Давай я что-нибудь подскажу.', 'No problem! Let me help.')), { chips: chipsDefault(lang) }];
         case 'hours': {
           const lines = LIBRARY.hours.map((h) => `${L(h.days, lang)} — ${L(h.time, lang)}`).join('; ');
-          return [say(R(`Мы открыты: ${lines}. Но лучше уточни в Telegram — вдруг я ушла кормить лошадь.`, `We’re open: ${lines}. Best to double-check on Telegram — I might be out feeding the horse.`)), { chips: [{ label: L(R('Где вы?', 'Where are you?'), lang) }] }];
+          return [say(R(`Мы открыты: ${lines}. Но лучше уточни в Telegram — расписание иногда меняется.`, `We’re open: ${lines}. Best to double-check on Telegram — the schedule sometimes changes.`)), { chips: [{ label: L(R('Где вы?', 'Where are you?'), lang) }] }];
         }
         case 'where':
           return [say(R(`Мы в школе-саду «Компас» в Баре — в жёлтом доме с синими окнами. Его видно даже с Луны. Ну, почти.`, `We’re in the Kompas school-garden in Bar — the yellow house with blue windows. You can see it from the Moon. Nearly.`)), { chips: [{ label: L(R('Показать в книге', 'Show me in the book'), lang), action: { type: 'goto', id: 'find' } }] }];
@@ -242,9 +264,7 @@ export function createScriptedBrain() {
         case 'upside':
           return [say(R('Вжух! Теперь ты читаешь как я.', 'Whoosh! Now you read like me.')), { action: { type: 'upside' } }];
         case 'horse':
-          return [say(R('Лошадь? Да я её одной рукой подниму! Загляни в главу про мой сундук и нажми на неё.', 'The horse? I can lift it with one hand! Find it in the chapter about my chest and give it a tap.')), { chips: [{ label: L(R('Покажи!', 'Show me!'), lang), action: { type: 'goto', id: 'chest' } }] }];
-        case 'monkey':
-          return [say(R('Господин Нильсон сейчас спит в шляпе. Не будем его будить.', 'Mr Nilsson is asleep in a hat right now. Let’s not wake him.'))];
+          return [say(line(voice, 'horse')), { chips: [{ label: L(R('Покажи!', 'Show me!'), lang), action: { type: 'goto', id: 'chest' } }] }];
         case 'install':
           if (app.standalone) return [say(R('Я уже живу у тебя на экране! Книга открывается даже без интернета.', 'I already live on your screen! The book opens even without internet.'))];
           if (app.canInstall) return [say(R('Хоп — и книга поселится у тебя на телефоне, рядом с играми. И будет открываться без интернета!', 'Hop — and the book moves onto your phone, right next to your games. It even opens offline!')), { action: { type: 'install' } }];
@@ -257,18 +277,11 @@ export function createScriptedBrain() {
         case 'russian':
           return [{ action: { type: 'lang', lang: 'ru' } }, { say: 'Договорились! Говорим по-русски.' }];
         case 'thanks':
-          return [say(pick([R('Пожалуйста! Заходи ещё — у меня в сундуке полно сюрпризов.', 'You’re welcome! Come again — my chest is full of surprises.'), R('Всегда пожалуйста! Передай привет своей книжке.', 'Any time! Say hi to your book for me.')]))];
+          return [say(line(voice, 'thanks'))];
         case 'bye':
-          return [say(R('Пока-пока! Приходи в жёлтый дом — я буду ждать.', 'Bye-bye! Come to the yellow house — I’ll be waiting.'))];
+          return [say(line(voice, 'bye'))];
         default:
-          return [
-            say(pick([
-              R('Хм, этого я пока не знаю — я ещё учусь. Спроси меня про книги, расписание или загадки!', 'Hmm, I don’t know that yet — I’m still learning. Ask me about books, opening hours or riddles!'),
-              R('Ой, я как раз смотрела в другую сторону. Давай про книжки?', 'Oops, I was looking the other way. Shall we talk books?'),
-              R('Это слишком сложно даже для самой сильной девочки на свете. Попробуй по-другому!', 'That’s too tricky even for the strongest girl in the world. Try another way!'),
-            ])),
-            { chips: chipsDefault(lang) },
-          ];
+          return [say(line(voice, 'fallback')), { chips: chipsDefault(lang) }];
       }
     },
   };

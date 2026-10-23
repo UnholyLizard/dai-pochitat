@@ -1,20 +1,21 @@
-import { bus, prefs, $, $$, fragment } from '../lib/core.js';
-import { getLang } from '../i18n/index.js';
+import { bus, prefs, $, $$, fragment, artUrl } from '../lib/core.js';
+import { getLang, L } from '../i18n/index.js';
 import { game } from '../game/state.js';
 import { sfx } from '../game/sfx.js';
 import { bookById } from '../content/books.js';
+import { librarianById } from '../content/librarians.js';
 import { bookCard } from '../ui/sections.js';
 import { isNight } from '../ui/chrome.js';
 import { createLibrarian } from './librarian.js';
 import { canInstall, isIOS, isStandalone } from '../pwa.js';
 
-const panel = $('#pippi');
+const panel = $('#librarian');
 const log = $('[data-chat-log]');
 const chipsEl = $('[data-chat-chips]');
 const form = $('[data-chat-form]');
 const input = $('#chat-input');
-const fab = $('.pippi-fab');
-const teaser = $('[data-pippi-teaser]');
+const fab = $('.librarian-fab');
+const teaser = $('[data-librarian-teaser]');
 
 const brain = createLibrarian();
 const history = [];
@@ -53,14 +54,14 @@ async function play(replies) {
     if (r.chips) { chips(r.chips); continue; }
     if (r.action) { runAction(r.action); continue; }
     const typing = document.createElement('li');
-    typing.className = 'msg msg--pippi msg--typing';
+    typing.className = 'msg msg--librarian msg--typing';
     typing.setAttribute('aria-hidden', 'true');
     typing.innerHTML = '<i></i><i></i><i></i>';
     log.append(typing);
     scrollDown();
     await wait(r.say ? Math.min(1300, 350 + r.say.length * 9) : 450);
     typing.remove();
-    if (r.say) bubble('pippi', r.say);
+    if (r.say) bubble('librarian', r.say);
     if (r.book) {
       const b = bookById(r.book);
       if (b) {
@@ -80,8 +81,19 @@ const context = () => ({
   state: game.state,
   isNight: isNight(),
   history,
+  librarian: game.state.librarian,
   app: { canInstall: canInstall(), ios: isIOS(), standalone: isStandalone() },
 });
+
+/** Put the chosen candidate's face and name on the chat button and header. */
+function dress() {
+  const who = librarianById(game.state.librarian);
+  const src = artUrl(`${who.id}-avatar`);
+  for (const img of $$('[data-librarian-face]')) img.src = src;
+  for (const el of $$('[data-librarian-name]')) el.textContent = L(who.name);
+  for (const el of $$('[data-librarian-role]')) el.textContent = L(who.role);
+  fab.dataset.who = who.id;
+}
 
 export function send(text) {
   const q = text.trim();
@@ -89,7 +101,7 @@ export function send(text) {
   if (!isOpen()) open();
   bubble('me', q);
   chips([]);
-  game.award('pippi');
+  game.award('chat');
   busy = busy.then(async () => play(await brain.reply(q, context())));
   return busy;
 }
@@ -115,12 +127,13 @@ export function close() {
 }
 
 /** @param {{ actions: (a: object) => void }} o */
-export function initPippi({ actions }) {
+export function initLibrarian({ actions }) {
   runAction = actions;
+  dress();
   fab.setAttribute('aria-expanded', 'false');
   fab.addEventListener('click', () => (isOpen() ? close() : open()));
-  for (const b of $$('[data-open="pippi"]')) if (b !== fab) b.addEventListener('click', open);
-  for (const b of $$('[data-close="pippi"]')) b.addEventListener('click', () => { close(); fab.focus(); });
+  for (const b of $$('[data-open="librarian"]')) if (b !== fab) b.addEventListener('click', open);
+  for (const b of $$('[data-close="librarian"]')) b.addEventListener('click', () => { close(); fab.focus(); });
   panel.addEventListener('keydown', (e) => { if (e.key === 'Escape') { close(); fab.focus(); } });
   panel.addEventListener('toggle', (e) => { if (e.newState === 'closed') fab.classList.remove('is-open'); });
 
@@ -131,7 +144,7 @@ export function initPippi({ actions }) {
     send(q);
   });
 
-  // A small hello bubble, once a day, if the visitor hasn't met Pippi yet.
+  // A small hello bubble, once a day, if the visitor hasn't met the librarian yet.
   const today = new Date().toDateString();
   if (prefs.get('teaser') !== today) {
     setTimeout(() => {
@@ -143,8 +156,16 @@ export function initPippi({ actions }) {
   }
   $('[data-teaser-close]').addEventListener('click', () => { teaser.hidden = true; });
 
-  // Quick replies follow the language switch.
+  // A new librarian from the casting takes over the chat and says hello.
+  bus.on('librarian', () => {
+    dress();
+    fab.animate([{ rotate: '0deg' }, { rotate: '-12deg' }, { rotate: '10deg' }, { rotate: '0deg' }], { duration: 600 });
+    if (greeted) busy = busy.then(() => play(brain.takeOver(context())));
+  });
+
+  // Names and quick replies follow the language switch.
   bus.on('lang', () => {
+    dress();
     if (greeted) chips(brain.greet(context()).find((r) => r.chips)?.chips);
   });
 }

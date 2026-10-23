@@ -4,6 +4,10 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
   // Relative URLs: the build runs from any folder or sub-path.
   base: './',
+  // `npm run dev:worker` (wrangler dev on :8787) answers /api/* while Vite serves the page.
+  server: {
+    proxy: { '/api': 'http://127.0.0.1:8787' },
+  },
   build: {
     target: 'es2022',
     assetsInlineLimit: 0,
@@ -21,7 +25,7 @@ export default defineConfig({
         id: './',
         name: 'Дай почитать! — детская библиотека в Баре',
         short_name: 'Дай почитать!',
-        description: 'Маленькая некоммерческая библиотека для детей и подростков в жёлтом доме в Баре. Книга-раскладушка, Пеппи-библиотекарь и книжные загадки.',
+        description: 'Маленькая некоммерческая библиотека для детей и подростков в жёлтом доме в Баре. Книга-раскладушка, кастинг на роль библиотекаря и книжные загадки.',
         lang: 'ru',
         dir: 'ltr',
         start_url: './',
@@ -37,7 +41,7 @@ export default defineConfig({
           { src: 'icons/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
         shortcuts: [
-          { name: 'Сундук Пеппи — что почитать?', short_name: 'Сундук', url: './#chest', icons: [{ src: 'icons/shortcut-chest.png', sizes: '192x192', type: 'image/png' }] },
+          { name: 'Волшебный сундук — что почитать?', short_name: 'Сундук', url: './#chest', icons: [{ src: 'icons/shortcut-chest.png', sizes: '192x192', type: 'image/png' }] },
           { name: 'Праздники и встречи', short_name: 'Праздники', url: './#events', icons: [{ src: 'icons/shortcut-events.png', sizes: '192x192', type: 'image/png' }] },
           { name: 'Как нас найти', short_name: 'Адрес', url: './#find', icons: [{ src: 'icons/shortcut-find.png', sizes: '192x192', type: 'image/png' }] },
         ],
@@ -48,10 +52,10 @@ export default defineConfig({
       },
       workbox: {
         // App shell + the fonts actually used (Latin & Cyrillic); illustrations are cached as they're seen.
-        globPatterns: ['**/*.{js,css,html,svg}', 'assets/*-{latin,cyrillic}-*.woff2', 'art/{house,pippi-avatar}.webp'],
+        globPatterns: ['**/*.{js,css,html,svg}', 'assets/*-{latin,cyrillic}-*.woff2', 'art/{house,ginger-avatar}.webp'],
         globIgnores: ['**/*-ext-*.woff2'],
         navigateFallback: 'index.html',
-        navigateFallbackDenylist: [/^\/(?:robots\.txt|sitemap\.xml)$/],
+        navigateFallbackDenylist: [/^\/(?:robots\.txt|sitemap\.xml)$/, /^\/api\//],
         cleanupOutdatedCaches: true,
         maximumFileSizeToCacheInBytes: 1_500_000,
         runtimeCaching: [

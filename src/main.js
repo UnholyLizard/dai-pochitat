@@ -4,7 +4,7 @@ import '@fontsource-variable/literata/wght-italic.css';
 import '@fontsource-variable/nunito/wght.css';
 import '@fontsource/caveat/700.css';
 import './styles/main.css';
-import { bus, reducedMotion, $, $$, artUrl } from './lib/core.js';
+import { bus, reducedMotion, $, $$, artUrl, viewport } from './lib/core.js';
 import { initI18n, t, L, setLang } from './i18n/index.js';
 import { game } from './game/state.js';
 import { initSound, sfx } from './game/sfx.js';
@@ -12,9 +12,10 @@ import { initFeedback, toast } from './game/feedback.js';
 import { initPassport, openPassport } from './game/passport.js';
 import { initTheme, setNight, isNight, initScroll, getTarget, goTo, bookArea } from './ui/chrome.js';
 import { initOracle, initSections, syncCritterButtons } from './ui/sections.js';
-import { initPippi, send as askPippi, open as openPippi, close as closePippi } from './pippi/chat.js';
+import { initLibrarian, send as askLibrarian, open as openLibrarian, close as closeLibrarian } from './librarian/chat.js';
 import { bookById } from './content/books.js';
 import { initPWA, install } from './pwa.js';
+import { initCasting } from './ui/casting.js';
 
 initI18n();
 initTheme();
@@ -48,11 +49,11 @@ $('[data-critter="badger"]')?.addEventListener('click', (e) => {
     .finished.then(syncCritterButtons);
 });
 
-/* ── What Pippi can do on the page ────────────────────────────────────── */
-function pippiAction(a) {
+/* ── What the librarian can do on the page ────────────────────────────────────── */
+function librarianAction(a) {
   switch (a.type) {
     case 'goto':
-      if (innerWidth < 860) closePippi();
+      if (innerWidth < 860) closeLibrarian();
       goTo(a.id);
       break;
     case 'oracle': goTo('chest'); break;
@@ -70,7 +71,12 @@ function pippiAction(a) {
     }
   }
 }
-initPippi({ actions: pippiAction });
+initLibrarian({ actions: librarianAction });
+
+const casting = initCasting({
+  onPick: (id) => stage?.setCandidate(id),
+  onChat: () => openLibrarian(),
+});
 
 initOracle({
   onSpin() {
@@ -78,7 +84,7 @@ initOracle({
     stage?.celebrate('oracle');
   },
   onAsk(id) {
-    askPippi(t('oracle.askText', { title: L(bookById(id).title) }));
+    askLibrarian(t('oracle.askText', { title: L(bookById(id).title) }));
   },
 });
 
@@ -98,15 +104,124 @@ function sceneAction(a) {
       sfx.party();
       game.award('candles', origin);
       break;
-    case 'pippi':
+    case 'audition':
+      casting.audition(a.id);
+      break;
+    case 'librarian':
       sfx.pop();
-      openPippi();
+      openLibrarian();
       break;
   }
 }
 
 bus.on('lang', () => { stage?.setLang(); game.award('polyglot'); });
 bus.on('theme', (on) => stage?.setNight(on));
+
+/* ── Things placed relative to the 3D book ─────────────────────────────── */
+const hint = $('[data-book-hint]');
+const doodle = $('[data-book-doodle]');
+const zoomBtn = $('[data-zoom-open]');
+const zoomUi = $('[data-zoom-ui]');
+let zoomed = false;
+
+let hintOut = window.scrollY > 2;
+if (hintOut) hint.classList.add('is-out');
+
+function syncHintScroll() {
+  const shouldBeOut = window.scrollY > 2;
+  if (shouldBeOut !== hintOut) {
+    hintOut = shouldBeOut;
+    hint.classList.toggle('is-out', hintOut);
+    if (!hintOut) {
+      sfx.pluck();
+      if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+        try { navigator.vibrate(10); } catch (err) { void err; }
+      }
+    }
+  }
+}
+addEventListener('scroll', syncHintScroll, { passive: true });
+
+function placeByBook(r) {
+  const vw = viewport().w;
+  if (r.closed) {
+    // Under the closed cover, on its left: the scroll hint. Beside it: the hand-written note.
+    if (window.scrollY <= 2) {
+      hint.style.top = `${Math.round(r.bottom + 26)}px`;
+      const leftPos = Math.max(16, Math.round(vw >= 860 ? r.left : r.left + 8));
+      hint.style.left = `${leftPos}px`;
+      hint.style.right = 'auto';
+    }
+    if (vw >= 860) {
+      doodle.style.left = `${Math.round(r.left + 30)}px`;
+      doodle.style.top = `${Math.round(Math.max(r.top - 92, 70))}px`;
+    } else {
+      doodle.style.top = `${Math.round(Math.max(r.top - 70, 60))}px`;
+    }
+  }
+  // The magnifier rests on the book's near right corner, avoiding collision with the companion badge.
+  let x = Math.min(r.right - 30, vw - 64);
+  let y = Math.min(r.bottom - 30, viewport().small - 64);
+  const fab = $('.librarian-fab');
+  if (fab) {
+    const f = fab.getBoundingClientRect();
+    const margin = 14;
+    const collidesX = x + 52 > f.left - margin && x < f.right + margin;
+    const collidesY = y + 52 > f.top - margin && y < f.bottom + margin;
+    if (collidesX && collidesY) {
+      if (f.left - 52 - margin >= 16) {
+        x = f.left - 52 - margin;
+      } else {
+        y = f.top - 52 - margin;
+      }
+    }
+  }
+  zoomBtn.style.left = `${Math.round(x)}px`;
+  zoomBtn.style.top = `${Math.round(y)}px`;
+}
+
+function setZoom(on) {
+  if (!stage || on === zoomed) return;
+  zoomed = on;
+  if (on) { closeLibrarian(); $('#toc')?.hidePopover?.(); }
+  stage.setZoom(on);
+  document.documentElement.classList.toggle('is-zoomed', on);
+  stageEl.classList.toggle('is-zoomed', on);
+  zoomUi.hidden = !on;
+  zoomBtn.hidden = on;
+  // Everything behind the magnified book is out of reach until it closes.
+  for (const el of $$('.topbar, main, footer, .librarian-dock, .skip-link')) el.inert = on;
+  if (on) {
+    sfx.pop();
+    stage.enableTilt();
+    $('[data-zoom-close]').focus();
+  } else zoomBtn.focus({ preventScroll: true });
+}
+
+zoomBtn.addEventListener('click', () => { zoomBtn.classList.remove('is-new'); setZoom(true); });
+$('[data-zoom-close]').addEventListener('click', () => setZoom(false));
+$('[data-zoom-in]').addEventListener('click', () => stage?.zoomBy(1.3));
+$('[data-zoom-out]').addEventListener('click', () => stage?.zoomBy(1 / 1.3));
+document.addEventListener('keydown', (e) => {
+  if (!zoomed) return;
+  const pan = { ArrowLeft: [60, 0], ArrowRight: [-60, 0], ArrowUp: [0, 60], ArrowDown: [0, -60] }[e.key];
+  if (e.key === 'Escape') setZoom(false);
+  else if (e.key === '+' || e.key === '=') stage.zoomBy(1.3);
+  else if (e.key === '-') stage.zoomBy(1 / 1.3);
+  else if (pan) { e.preventDefault(); stage.panBy(...pan); }
+});
+
+const zoomArea = () => {
+  const { w, small: h } = viewport();
+  const bottom = w < 860 ? 150 : 130; // room for the toolbar
+  return { x: 10, y: 12, w: w - 20, h: h - 12 - bottom };
+};
+
+// Tilting the phone sways the book; iOS only allows that after a tap, so ask on the first
+// touch of the book, the magnifier or the "open the book" button.
+for (const el of [$('#stage-canvas'), zoomBtn, $('.hero__cta .btn--primary')]) {
+  el?.addEventListener('pointerup', () => stage?.enableTilt(), { once: true });
+}
 
 /* ── 3D, after the page itself is on screen ───────────────────────────── */
 function webglOK() {
@@ -127,13 +242,18 @@ async function boot3d() {
       canvas: $('#stage-canvas'),
       getTarget,
       getArea: bookArea,
+      getZoomArea: zoomArea,
+      onBookRect: placeByBook,
       t,
       reducedMotion,
       night: isNight(),
       isFound: game.isFound,
+      candidate: casting.selected,
       onAction: sceneAction,
     });
     stageEl.classList.add('is-ready');
+    zoomBtn.hidden = false;
+    zoomBtn.classList.add('is-new');
   } catch (err) {
     console.error('[stage]', err);
     fail();

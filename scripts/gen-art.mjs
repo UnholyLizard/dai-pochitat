@@ -30,9 +30,11 @@ async function generate(asset) {
   if (!force && await exists(out)) return `skip ${asset.id}`;
 
   const parts = [{ text: [STYLE, asset.subject, asset.kind === 'cut' ? STICKER(asset.key) : ''].join('\n\n') }];
+  // ref: a photo in art/ref/, or 'raw/<id>.png' to keep a character consistent with an earlier render.
   if (asset.ref) {
-    const data = await readFile(resolve(root, 'art/ref', asset.ref));
-    parts.push({ inline_data: { mime_type: 'image/jpeg', data: data.toString('base64') } });
+    const data = await readFile(resolve(root, 'art', asset.ref.startsWith('raw/') ? '' : 'ref', asset.ref));
+    const mime = asset.ref.endsWith('.png') ? 'image/png' : 'image/jpeg';
+    parts.push({ inline_data: { mime_type: mime, data: data.toString('base64') } });
   }
   const body = {
     contents: [{ role: 'user', parts }],

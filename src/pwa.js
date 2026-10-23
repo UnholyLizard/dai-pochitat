@@ -29,7 +29,7 @@ export async function install() {
 
 export function initPWA() {
   addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault(); // offered in the contents and by Pippi instead of the browser's mini-infobar
+    e.preventDefault(); // offered in the contents and by the librarian instead of the browser's mini-infobar
     deferred = e;
     sync();
   });
@@ -50,6 +50,9 @@ export function initPWA() {
     },
     onOfflineReady() {
       toast(t('pwa.offlineReady'), { ms: 5000 });
+    },
+    onRegisterError(err) {
+      console.warn('[pwa] service worker registration failed', err);
     },
   });
 

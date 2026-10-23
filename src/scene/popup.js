@@ -1,6 +1,11 @@
 import * as THREE from 'three';
 
 const CARDBOARD = new THREE.Color(0xdcc69c);
+const backOut = (v) => 1 + 2.4 * (v - 1) ** 3 + 1.4 * (v - 1) ** 2;
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const easeInOut = (v) => (v < 0.5 ? 4 * v * v * v : 1 - (-2 * v + 2) ** 3 / 2);
+/** One-shot progress: 0 is idle; once started it runs 0 → 1 and stops back at 0. */
+const tick1 = (p, step) => (p > 0 && p + step < 1 ? p + step : 0);
 
 /** Shared look for every paper cut-out: painted front, plain cardboard back. */
 function cutoutMaterial(texture) {
@@ -47,6 +52,7 @@ export class PopLayer {
     const w = h * art.aspect;
     const lift = def.lift ?? 0;
     this.size = { w, h, lift };
+    this.tab = null;
 
     const geo = new THREE.PlaneGeometry(w, h).translate(0, h / 2 + lift, 0);
     this.material = cutoutMaterial(art.texture);
@@ -61,6 +67,7 @@ export class PopLayer {
       const tab = new THREE.Mesh(new THREE.PlaneGeometry(tw, lift + 0.02).translate(0, (lift + 0.02) / 2, -0.002), tabMaterial);
       tab.castShadow = true;
       this.hinge.add(tab);
+      this.tab = tab;
     }
 
     this.rise = 0;
@@ -68,7 +75,13 @@ export class PopLayer {
     this.hoverTarget = 0;
     this.hop = 0;          // 0…1 one-shot jump
     this.gone = false;     // collected critters leave for good
+    this.enter = 1;        // 0 → 1: a fresh pop-up when a casting candidate steps on stage
     this.leaving = 0;
+    this.flight = 0;       // one-shot: a clicked balloon floats away and grows back
+    this.wave = 0;         // one-shot: a clicked boat rolls on the waves
+    this.spin = 0;         // one-shot: a clicked road sign turns round
+    this.swing = 0;        // sun / cloud: drift up or down, in opposite directions
+    this.swingTarget = 0;
     this.phase = Math.random() * Math.PI * 2;
   }
 
@@ -84,7 +97,19 @@ export class PopLayer {
     this.root.matrix.copy(matrix);
     this.root.matrixWorldNeedsUpdate = true;
 
+    // Clicked one-shots run before the grow-in, so a balloon that has floated away
+    // grows back from its start position in the same frame it resets.
+    const wasFlying = this.flight > 0;
+    this.flight = tick1(this.flight, dt / 1.8);
+    if (wasFlying && this.flight === 0) this.enter = 0;
+    this.wave = tick1(this.wave, dt / 1.6);
+    this.spin = tick1(this.spin, dt / 2.4);
+
     this.hover += (this.hoverTarget - this.hover) * Math.min(1, dt * 10);
+    if (this.enter < 1) {
+      this.enter = Math.min(1, this.enter + dt * 2.2);
+      rise *= Math.max(0, backOut(this.enter));
+    }
     if (this.hop > 0) this.hop = Math.max(0, this.hop - dt * 1.1);
     if (this.gone && this.leaving < 1) this.leaving = Math.min(1, this.leaving + dt * 1.6);
 
@@ -96,12 +121,24 @@ export class PopLayer {
     }
     this.hinge.rotation.x = angle;
 
-    // Hop: a little jump straight up (Pippi lifting the horse, the chest bouncing …)
+    // Swing: the sun and the cloud drift in opposite directions; the sun's tab follows it.
+    this.swing += (this.swingTarget - this.swing) * Math.min(1, dt * 3.5);
+    this.mesh.position.y = this.swing;
+    if (this.tab) this.tab.scale.y = (this.size.lift + this.swing + 0.02) / (this.size.lift + 0.02);
+    // Boat rolls on the waves; the road sign turns round three times.
+    this.mesh.rotation.z = this.wave > 0 ? Math.sin(this.wave * Math.PI * 4) * 0.2 * Math.sin(this.wave * Math.PI) : 0;
+    this.mesh.rotation.y = this.spin > 0 ? easeInOut(this.spin) * Math.PI * 6 : 0;
+
+    // Hop: a little jump straight up (the horse being lifted, the chest bouncing …)
     const jump = this.hop > 0 ? Math.sin((1 - this.hop) * Math.PI) * (this.def.hopHeight ?? 0.35) : 0;
     const leave = this.leaving > 0 ? Math.sin(this.leaving * Math.PI * 0.5) * 0.9 : 0;
-    this.hinge.position.y = jump + leave;
+    // Balloon: floats up while it shrinks away.
+    const f = this.flight;
+    const flyUp = f > 0 ? f * f * 1.1 : 0;
+    const flyScale = f > 0 ? 1 - clamp01((f - 0.4) / 0.6) ** 2 : 1;
+    this.hinge.position.y = jump + leave + flyUp;
     const s = this.gone ? 1 - this.leaving : 1;
-    this.hinge.scale.setScalar(Math.max(0.001, s * (1 + this.hover * 0.04)));
+    this.hinge.scale.setScalar(Math.max(0.001, s * flyScale * (1 + this.hover * 0.04)));
     this.material.emissiveIntensity = glow + this.hover * 0.25;
   }
 }

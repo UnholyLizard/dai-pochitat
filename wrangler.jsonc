@@ -1,12 +1,27 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  // Static site: an assets-only Worker serving the Vite build.
+  // The Vite build is served as static assets; a tiny Worker answers /api/* (casting votes).
   "name": "dai-pochitat",
-  "compatibility_date": "2026-10-22",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-23",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  // No database_id: Wrangler provisions the database on the first deploy.
+  "d1_databases": [
+    { "binding": "DB", "database_name": "dai-pochitat-casting", "migrations_dir": "migrations" }
+  ],
+  "ratelimits": [
+    { "name": "VOTE_LIMIT", "namespace_id": "1701", "simple": { "limit": 20, "period": 60 } }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "traces": { "enabled": true }
   },
   "routes": [
     { "pattern": "dai-pochitat-mne.craft-tower.com", "custom_domain": true }

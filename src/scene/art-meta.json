@@ -7,7 +7,7 @@
     "w": 722,
     "h": 796
   },
-  "pippi-hello": {
+  "ginger-hello": {
     "w": 640,
     "h": 584
   },
@@ -51,7 +51,7 @@
     "w": 1073,
     "h": 664
   },
-  "pippi-chest": {
+  "ginger-chest": {
     "w": 632,
     "h": 973
   },
@@ -119,11 +119,11 @@
     "w": 374,
     "h": 384
   },
-  "pippi-think": {
+  "ginger-think": {
     "w": 640,
     "h": 580
   },
-  "pippi-read": {
+  "ginger-read": {
     "w": 799,
     "h": 531
   },
@@ -150,5 +150,117 @@
   "ground-map": {
     "w": 2048,
     "h": 1374
+  },
+  "stage-arch": {
+    "w": 771,
+    "h": 702
+  },
+  "spotlight": {
+    "w": 452,
+    "h": 850
+  },
+  "director-chair": {
+    "w": 663,
+    "h": 785
+  },
+  "critter-parrot": {
+    "w": 302,
+    "h": 384
+  },
+  "cinder-hello": {
+    "w": 521,
+    "h": 640
+  },
+  "cinder-avatar": {
+    "w": 280,
+    "h": 300
+  },
+  "cinder-stage": {
+    "w": 553,
+    "h": 1007
+  },
+  "patches-hello": {
+    "w": 547,
+    "h": 640
+  },
+  "patches-avatar": {
+    "w": 280,
+    "h": 300
+  },
+  "patches-stage": {
+    "w": 697,
+    "h": 948
+  },
+  "mila-hello": {
+    "w": 397,
+    "h": 640
+  },
+  "mila-avatar": {
+    "w": 280,
+    "h": 300
+  },
+  "mila-stage": {
+    "w": 485,
+    "h": 1024
+  },
+  "nika-hello": {
+    "w": 473,
+    "h": 640
+  },
+  "nika-avatar": {
+    "w": 280,
+    "h": 300
+  },
+  "nika-stage": {
+    "w": 504,
+    "h": 1024
+  },
+  "tim-hello": {
+    "w": 414,
+    "h": 640
+  },
+  "tim-avatar": {
+    "w": 280,
+    "h": 300
+  },
+  "tim-stage": {
+    "w": 1024,
+    "h": 765
+  },
+  "marko-hello": {
+    "w": 575,
+    "h": 640
+  },
+  "marko-avatar": {
+    "w": 280,
+    "h": 300
+  },
+  "marko-stage": {
+    "w": 681,
+    "h": 1024
+  },
+  "bookmark-hello": {
+    "w": 533,
+    "h": 640
+  },
+  "bookmark-avatar": {
+    "w": 280,
+    "h": 300
+  },
+  "bookmark-stage": {
+    "w": 726,
+    "h": 1024
+  },
+  "ginger-stage": {
+    "w": 745,
+    "h": 1024
+  },
+  "ground-stage": {
+    "w": 2048,
+    "h": 1374
+  },
+  "ginger-avatar": {
+    "w": 280,
+    "h": 256
   }
 }

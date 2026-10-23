@@ -17,7 +17,8 @@ const meta = await readFile(metaPath, 'utf8').then(JSON.parse, () => ({}));
 const maxSide = (id) =>
   id === 'house' ? 1600
   : id.startsWith('critter-') ? 384
-  : ['pippi-hello', 'pippi-think'].includes(id) ? 640
+  : /-(hello|think)$/.test(id) ? 640
+  : /-stage$/.test(id) ? 1024
   : 1280;
 
 const T_SOFT = 46;   // ≤ this distance from the key colour → fully transparent
@@ -48,6 +49,9 @@ function cut(px, w, h) {
   };
   for (let x = 0; x < w; x++) { push(x, 0); push(x, h - 1); }
   for (let y = 0; y < h; y++) { push(0, y); push(w - 1, y); }
+  // Enclosed gaps (between an arm and the body …) are background too: seed them from
+  // any pixel that is almost exactly the key colour.
+  for (let p = 0; p < w * h; p++) if (!bg[p] && dist(p * 4) < 34) { bg[p] = 1; stack.push(p); }
   while (stack.length) {
     const p = stack.pop(), x = p % w, y = (p / w) | 0;
     if (x > 0) push(x - 1, y);
@@ -57,6 +61,14 @@ function cut(px, w, h) {
   }
 
   const isMagenta = key[0] > 180 && key[2] > 180 && key[1] < 120;
+  // Magenta mixed with dark outline ink inside tiny gaps survives the fill as a purple speck;
+  // the palette has no saturated magenta-purple, so such pixels are background.
+  if (isMagenta) {
+    for (let p = 0; p < w * h; p++) {
+      const i = p * 4, r = px[i], g = px[i + 1], b = px[i + 2];
+      if (r > 110 && b > 100 && Math.abs(r - b) < 45 && g < 0.62 * Math.min(r, b)) bg[p] = 1;
+    }
+  }
   for (let p = 0; p < w * h; p++) {
     const i = p * 4;
     if (!bg[p]) {
@@ -106,9 +118,17 @@ async function processOne(asset) {
     .webp({ quality: 84, alphaQuality: 90, effort: 5 })
     .toFile(out);
   meta[asset.id] = { w: res.width, h: res.height };
-  if (asset.id === 'pippi-hello') {
-    // Small copy for the chat button / avatar (shown at ≤ 140 CSS px).
-    await sharp(out).resize({ width: 280 }).webp({ quality: 86, alphaQuality: 90 }).toFile(resolve(root, 'public/art', 'pippi-avatar.webp'));
+  if (asset.id.endsWith('-hello')) {
+    // Small copy for the chat button, avatars and casting cards (shown at ≤ 140 CSS px).
+    const avatar = asset.id.replace(/-hello$/, '-avatar');
+    // Tall portraits are cropped to head and shoulders so every face sits the same in a circle.
+    const tall = res.height / res.width > 1.1;
+    await sharp(out)
+      .resize(tall ? { width: 280, height: 300, fit: 'cover', position: 'top' } : { width: 280 })
+      .webp({ quality: 86, alphaQuality: 90 })
+      .toFile(resolve(root, 'public/art', `${avatar}.webp`));
+    const m = await sharp(resolve(root, 'public/art', `${avatar}.webp`)).metadata();
+    meta[avatar] = { w: m.width, h: m.height };
   }
   return `ok   ${asset.id} ${res.width}x${res.height} ${(res.size / 1024).toFixed(0)}kB`;
 }

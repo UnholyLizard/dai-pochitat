@@ -64,8 +64,8 @@ export const ASSETS = [
     tummy with feet in the air, a girl in glasses cross-legged, a teenage boy with headphones round his
     neck leaning back with a thick novel. A teapot and a plate of cookies between them.` },
 
-  // ── Chapter 3: Pippi's chest ────────────────────────────────
-  { id: 'pippi-chest', kind: 'cut', aspect: '3:4',
+  // ── Chapter 4: the treasure chest ───────────────────────────
+  { id: 'ginger-chest', kind: 'cut', aspect: '3:4',
     subject: `A cheerful, freckled, very strong girl of about nine with bright carrot-red hair in two stiff
     braids sticking straight out sideways, a patched blue-and-yellow dress, one long stocking striped and
     one plain, huge black shoes. She sits on the lid of an open wooden pirate treasure chest overflowing
@@ -117,19 +117,80 @@ export const ASSETS = [
   { id: 'critter-mouse', kind: 'cut', aspect: '1:1',
     subject: `A little grey mouse with a candle stub, reading a matchbox-sized book.` },
 
-  // ── Pippi, the librarian (chat avatar / poses) ──────────────
-  { id: 'pippi-hello', kind: 'cut', aspect: '1:1',
+  // ── The red-haired librarian (chat avatar / poses) ──────────
+  { id: 'ginger-hello', kind: 'cut', aspect: '1:1',
     subject: `Head-and-shoulders portrait of the same freckled girl with bright carrot-red braids sticking
     straight out sideways, a huge grin with a gap tooth, waving hello, a pencil tucked behind her ear,
     wearing a patched blue-and-yellow dress.` },
-  { id: 'pippi-think', kind: 'cut', aspect: '1:1',
+  { id: 'ginger-think', kind: 'cut', aspect: '1:1',
     subject: `Head-and-shoulders portrait of the same freckled girl with bright carrot-red braids sticking
     straight out sideways, thinking hard with a finger on her chin and eyes rolled up, a little open book
     balanced on top of her head.` },
-  { id: 'pippi-read', kind: 'cut', aspect: '16:9',
+  { id: 'ginger-read', kind: 'cut', aspect: '16:9',
     subject: `The same freckled girl with carrot-red braids sticking out sideways and mismatched stockings,
     lying on her tummy reading a big book, legs kicking up in the air, a tiny monkey in a blue hat sitting
     on her back.` },
+
+  // ── Chapter 3: casting for the librarian's role ─────────────
+  { id: 'stage-arch', kind: 'cut', aspect: '4:3',
+    subject: `A miniature puppet-theatre proscenium seen straight from the front: an arch of carved gilded
+    wood with a painted golden star at the top, deep red velvet curtains drawn open to both sides with gold
+    tassels, a scalloped red valance, and inside the arch an empty deep-blue backdrop with tiny painted stars.` },
+  { id: 'spotlight', kind: 'cut', aspect: '3:4',
+    subject: `A vintage theatre spotlight on a tall three-legged stand, brass and black metal, switched on,
+    with a warm golden glow at the lens.` },
+  { id: 'director-chair', kind: 'cut', aspect: '1:1',
+    subject: `A wooden folding director's chair with a terracotta-red canvas seat and back, a megaphone and a
+    striped clapperboard leaning against it, and a script with a gold star on the seat.` },
+  { id: 'critter-parrot', kind: 'cut', aspect: '1:1',
+    subject: `A small colourful parrot with green, yellow and red feathers holding a tiny rolled-up script in
+    its beak, perched on a paper theatre ticket.` },
+
+  // Candidates: a headshot (chat avatar, casting card) and a full-body audition pose that is
+  // generated from the headshot so the character stays the same.
+  ...[
+    ['cinder', `a sleek black cat with big amber-green eyes and a tiny red bow tie, a calm, mysterious
+      half-smile, one ear slightly bent, a small open book in front of it`,
+      `sitting elegantly upright on a small pile of old books, tail curled around its paws, looking mysterious`],
+    ['patches', `a plump calico cat (white fur with big orange and black patches) with wide happy eyes,
+      wearing a little brown explorer's hat with a feather, a rolled map under one paw`,
+      `standing on her hind legs with a little leather backpack, holding a magnifying glass up to one eye`],
+    ['mila', `an original young woman in her early twenties with soft, wavy, shoulder-length honey-blonde
+      hair, light freckles and a gentle dreamy smile, wearing an oversized cream knit cardigan over a
+      small-flowered 1970s-style dress, hugging a stack of books`,
+      `standing and reading aloud from an open book, one hand raised expressively, cream cardigan, flowered
+      dress, ankle boots`],
+    ['nika', `a fourteen-year-old girl with a chin-length dark bob with one teal streak, round glasses, an
+      oversized mustard-yellow hoodie and big headphones around her neck, a confident half-smile, holding a
+      graphic novel`,
+      `standing in sneakers and the mustard hoodie, holding a sketchbook and a pencil, headphones around her
+      neck, waving`],
+    ['tim', `a ten-year-old boy with messy dark curly hair, big round tortoiseshell glasses, a green knitted
+      sweater vest over a white shirt with a red bow tie, a pencil behind his ear and an excited
+      "did you know?" expression, holding a dinosaur encyclopedia`,
+      `standing on tiptoe with a giant open dinosaur encyclopedia, pointing at it with a pencil, knee socks
+      and sneakers`],
+    ['marko', `a jolly old sea captain with a big fluffy white beard, rosy cheeks and twinkling eyes, a navy
+      captain's cap with an anchor badge, a navy-and-white striped sailor shirt under a pea coat, holding a
+      brass telescope`,
+      `standing with a brass telescope tucked under one arm and an old leather logbook in the other hand,
+      navy coat and boots, giving a cheerful salute`],
+    ['bookmark', `a small friendly retro robot made of tin and old cloth book covers, a round head with two
+      glowing round screen eyes and a smiling mouth line, a red ribbon bookmark sticking up like an antenna,
+      little rivets, holding a glowing open book`,
+      `rolling on small wheels, waving one hand and holding a glowing book in the other, ribbon-bookmark
+      antenna on its head`],
+  ].flatMap(([id, look, pose]) => [
+    { id: `${id}-hello`, kind: 'cut', aspect: '1:1', subject: `Head-and-shoulders portrait of ${look}.` },
+    { id: `${id}-stage`, kind: 'cut', aspect: '3:4', ref: `raw/${id}-hello.png`,
+      subject: `Full-body picture of the same character as in the reference image (${look}), now ${pose}.
+      Keep the face, colours and outfit exactly as in the reference.` },
+  ]),
+  { id: 'ginger-stage', kind: 'cut', aspect: '3:4', ref: 'raw/ginger-hello.png',
+    subject: `Full-body picture of the same freckled girl as in the reference image: carrot-red braids
+    sticking straight out sideways, patched blue-and-yellow dress, one striped and one plain stocking, huge
+    black shoes. She stands proudly with one arm raised high holding an open book, as if taking a bow on a
+    stage. Keep the face and outfit exactly as in the reference.` },
 
   // ── Page prints: the flat illustration printed under each pop-up spread ──
   // Seen from straight above; pale and calm so the cut-outs standing on them stay the stars.
@@ -140,6 +201,8 @@ export const ASSETS = [
       mustard, cobalt and terracotta rings in the middle, a couple of fallen pencils`],
     ['ground-chest', `an old hand-drawn treasure map: a sandy island with a wiggly coastline, a dotted
       path that ends in a big red X, a compass rose, little waves and a tiny sea serpent`],
+    ['ground-stage', `a polished honey-wood theatre stage floor of long planks with a painted gold star in
+      the middle, a few scattered red rose petals and two paper theatre tickets near the front edge`],
     ['ground-party', `a sunny lawn with a checked picnic blanket in yellow and blue, colourful confetti,
       curly paper streamers and a few scattered sweets`],
     ['ground-map', `an illustrated map of a small seaside town: turquoise sea with little waves along the

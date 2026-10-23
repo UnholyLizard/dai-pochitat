@@ -3,15 +3,19 @@ import { Book, W, CT } from './book.js';
 import { PopLayer, PinLayer } from './popup.js';
 import { SPREADS } from './spreads.js';
 import { loadArt, loadImage, setAnisotropy } from './art.js';
-import { ensureFonts, pageTexture, repaintPage, coverTextures, repaintCovers, edgeTexture, contactShadowTexture, glowTexture } from './paper.js';
+import { ensureFonts, pageTexture, repaintPage, coverTextures, repaintCovers, edgeTexture, contactShadowTexture, glowTexture, thoughtTexture } from './paper.js';
 import { Dust, Burst } from './particles.js';
-import { artUrl } from '../lib/core.js';
+import { artUrl, viewport } from '../lib/core.js';
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const easeInOut = (v) => (v < 0.5 ? 4 * v * v * v : 1 - (-2 * v + 2) ** 3 / 2);
 const backOut = (v) => { const c1 = 1.25, c3 = c1 + 1; return 1 + c3 * (v - 1) ** 3 + c1 * (v - 1) ** 2; };
-const LAST = SPREADS.length - 1; // 5: last content spread; 6 is the back cover
+const LAST = SPREADS.length - 1; // 6: last content spread; past it the book closes onto the back cover
+// Clicks that only play something inside the scene (no page turn, no critter).
+const VISUAL = new Set(['float', 'wave', 'spin', 'seesaw', 'think']);
+const THOUGHTS = ['thought.hmm', 'thought.interesting', 'thought.haha', 'thought.wow'];
+const SWING = 0.14; // how far the sun and the cloud drift
 
 /**
  * Pop-up for one layer on spread j, given the book position B.
@@ -21,7 +25,7 @@ function riseFor(B, j, delay = 0) {
   const d = B - j;
   if (d <= -1 || d >= 1) return 0;
   if (d <= 0) return backOut(clamp01((1 + d - 0.6 - delay * 0.6) / 0.28));
-  return 1 - easeInOut(clamp01((d - delay * 0.15) / 0.22));
+  return 1 - clamp01((d - delay * 0.15) / 0.35);
 }
 
 /**
@@ -32,7 +36,7 @@ function riseFor(B, j, delay = 0) {
  * @param {(key: string) => string} o.t
  * @param {(a: object) => void} o.onAction
  */
-export async function createStage({ canvas, getTarget, getArea, t, onAction, reducedMotion, night: startNight, isFound }) {
+export async function createStage({ canvas, getTarget, getArea, getZoomArea, t, onAction, onBookRect, reducedMotion, night: startNight, isFound, candidate: startCandidate }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.NeutralToneMapping;
@@ -43,7 +47,7 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 60);
-  const small = () => innerWidth < 860;
+  const small = () => viewport().w < 860;
 
   // ── Light: afternoon sun through the window; a reading lamp at night ──
   const hemi = new THREE.HemisphereLight(0xfff1d6, 0xb48a5a, 1);
@@ -78,8 +82,9 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
 
   // ── The book ──
   await ensureFonts();
-  const house = await loadImage(artUrl('house'));
-  const covers = coverTextures({ house, t });
+  const [house, olive, cypress] = await Promise.all(['house', 'olive', 'cypress'].map((id) => loadImage(artUrl(id))));
+  const plate = { house, olive, cypress };
+  const covers = coverTextures({ ...plate, t });
   const book = new Book({ front: covers.front, back: covers.back, edge: edgeTexture() });
   scene.add(book.group);
 
@@ -103,14 +108,17 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
       sp.flipped = sp.pages.L.clone();
       sp.flipped.repeat.x = -1;
       sp.flipped.offset.x = 1;
-      let order = 0;
-      for (const def of sp.def.layers) {
-        const layer = def.pin ? new PinLayer(def) : new PopLayer(def, await loadArt(def.art), order);
-        layer.order = order++;
+      // Fetch every cut-out first; a layer joins the scene only once the whole spread is
+      // ready (and the frame loop has positioned it), so nothing flashes at the book's centre.
+      const arts = await Promise.all(sp.def.layers.map((def) => (def.pin ? null : loadArt(def.art))));
+      sp.def.layers.forEach((def, order) => {
+        const layer = def.pin ? new PinLayer(def) : new PopLayer(def, arts[order], order);
+        layer.order = order;
+        layer.root.visible = false;
         if (def.critter && isFound(def.critter)) { layer.gone = true; layer.leaving = 1; }
         sp.layers.push(layer);
         book.group.add(layer.root);
-      }
+      });
       sp.ready = true;
     })();
     return sp.loading;
@@ -138,11 +146,18 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
   const clock = new THREE.Timer();
   let hovered = null;
   let debugB = null;
+  let candidate = startCandidate;
   const pointer = { ndc: new THREE.Vector2(), inside: false, dirty: false };
   const raycaster = new THREE.Raycaster();
+  const thoughts = [];
 
+  // Canvas size in CSS px: the large viewport, so the address bar sliding never resizes it.
+  const size = { w: 0, h: 0 };
   function resize() {
-    const w = innerWidth, h = innerHeight;
+    const { w, large: h } = viewport();
+    if (w === size.w && h === size.h) return;
+    size.w = w;
+    size.h = h;
     renderer.setPixelRatio(Math.min(devicePixelRatio, small() ? 1.5 : 2));
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
@@ -151,16 +166,66 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
   resize();
   addEventListener('resize', resize);
 
+  // ── Magnifier: the book fills the screen, drag to move, pinch / wheel to zoom ──
+  const zoom = { on: false, mix: 0, scale: 1, pan: new THREE.Vector2(), pointers: new Map(), pinch: 0, moved: 0, d: 8 };
+  const zoomBy = (f) => { zoom.scale = Math.min(3.2, Math.max(1, zoom.scale * f)); };
+  const tanV = () => Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
+  const panBy = (dxPx, dyPx) => {
+    const k = (2 * zoom.d * tanV()) / size.h; // world units per CSS pixel at the book
+    zoom.pan.x = Math.min(1.9, Math.max(-1.9, zoom.pan.x - dxPx * k));
+    zoom.pan.y = Math.min(1.4, Math.max(-1.4, zoom.pan.y - dyPx * k * 1.5));
+  };
+  const pinchDist = () => {
+    const [a, b] = [...zoom.pointers.values()];
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  };
+  canvas.addEventListener('pointerdown', (e) => {
+    if (!zoom.on) return;
+    canvas.setPointerCapture(e.pointerId);
+    zoom.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (zoom.pointers.size === 1) zoom.moved = 0;
+    if (zoom.pointers.size === 2) zoom.pinch = pinchDist();
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    const p = zoom.on && zoom.pointers.get(e.pointerId);
+    if (!p) return;
+    const dx = e.clientX - p.x, dy = e.clientY - p.y;
+    p.x = e.clientX;
+    p.y = e.clientY;
+    zoom.moved += Math.abs(dx) + Math.abs(dy);
+    if (zoom.pointers.size >= 2) {
+      const dist = pinchDist();
+      if (zoom.pinch) zoomBy(dist / zoom.pinch);
+      zoom.pinch = dist;
+    } else panBy(dx, dy);
+  });
+  const release = (e) => {
+    zoom.pointers.delete(e.pointerId);
+    if (zoom.pointers.size < 2) zoom.pinch = 0;
+  };
+  canvas.addEventListener('pointerup', release);
+  canvas.addEventListener('pointercancel', release);
+  canvas.addEventListener('wheel', (e) => {
+    if (!zoom.on) return;
+    e.preventDefault();
+    zoomBy(Math.exp(-e.deltaY * 0.0016));
+  }, { passive: false });
+
   function frameCamera(open) {
-    const vw = innerWidth, vh = innerHeight;
-    const a = getArea();
+    const vw = size.w, vh = size.h;
+    const n = getArea();
+    const m = easeInOut(clamp01(zoom.mix));
+    const z = m > 0 ? getZoomArea() : n;
+    const a = { x: lerp(n.x, z.x, m), y: lerp(n.y, z.y, m), w: lerp(n.w, z.w, m), h: lerp(n.h, z.h, m) };
     const fitW = lerp(2.9, 3.42, open);
     const fitH = lerp(3.0, 2.55, open);
-    const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
-    const d = Math.max(fitW / (2 * tanV * camera.aspect * (a.w / vw)), fitH / (2 * tanV * (a.h / vh))) * 1.04;
-    const elev = lerp(0.9, 0.6, open) + parallax.y * 0.035;
+    const d = Math.max(fitW / (2 * tanV() * camera.aspect * (a.w / vw)), fitH / (2 * tanV() * (a.h / vh))) * 1.04 / lerp(1, zoom.scale, m);
+    zoom.d = d;
+    // Magnified on a tall phone screen, look down a little more so the pages fill the height.
+    const portrait = a.h > a.w * 1.2;
+    const elev = lerp(0.9, 0.6, open) + parallax.y * 0.035 + m * (portrait ? 0.3 : 0.1);
     const az = parallax.x * 0.07;
-    target.set(0, lerp(0.05, 0.5, open), lerp(0.05, 0.02, open));
+    target.set(zoom.pan.x * m, lerp(0.05, 0.5, open), lerp(0.05, 0.02, open) + zoom.pan.y * m);
     camera.position.set(
       target.x + Math.sin(az) * Math.cos(elev) * d,
       target.y + Math.sin(elev) * d,
@@ -195,7 +260,51 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
     if (e.pointerType !== 'mouse') return;
     parallaxTarget.set((e.clientX / innerWidth) * 2 - 1, (e.clientY / innerHeight) * 2 - 1);
   }, { passive: true });
+
+  // ── Tilting the phone sways the book, like the mouse does on a computer ──
+  let tiltBase = null;
+  let tiltOn = false;
+  const onTilt = (e) => {
+    if (e.beta == null || e.gamma == null) return;
+    const angle = screen.orientation?.angle ?? 0;
+    let x = e.gamma, y = e.beta;
+    if (angle === 90) { x = e.beta; y = -e.gamma; } else if (angle === 270 || angle === -90) { x = -e.beta; y = e.gamma; }
+    tiltBase ??= { x, y };
+    // Slowly re-centre, so however the phone is held becomes "straight".
+    tiltBase.x += (x - tiltBase.x) * 0.006;
+    tiltBase.y += (y - tiltBase.y) * 0.006;
+    parallaxTarget.set(Math.max(-1, Math.min(1, (x - tiltBase.x) / 16)), Math.max(-1, Math.min(1, (y - tiltBase.y) / 16)));
+  };
+  const startTilt = () => {
+    if (tiltOn) return;
+    tiltOn = true;
+    addEventListener('deviceorientation', onTilt);
+  };
+  const needsPermission = typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function';
+  if (matchMedia('(pointer: coarse)').matches && typeof DeviceOrientationEvent !== 'undefined' && !needsPermission) startTilt();
+
+  // ── Where the book is on screen (for the hint, the doodle and the magnifier button) ──
+  const box = new THREE.Box3();
+  const boxB = new THREE.Box3();
+  const corner = new THREE.Vector3();
+  let lastRect = '';
+  function reportRect() {
+    if (!onBookRect) return;
+    box.setFromObject(book.left.pivot).union(boxB.setFromObject(book.right.pivot));
+    let l = Infinity, r = -Infinity, top = Infinity, bottom = -Infinity;
+    for (let i = 0; i < 8; i++) {
+      corner.set(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z).project(camera);
+      const x = ((corner.x + 1) / 2) * size.w, y = ((1 - corner.y) / 2) * size.h;
+      l = Math.min(l, x); r = Math.max(r, x); top = Math.min(top, y); bottom = Math.max(bottom, y);
+    }
+    const key = `${Math.round(l)},${Math.round(r)},${Math.round(top)},${Math.round(bottom)},${zoom.on}`;
+    if (key === lastRect) return;
+    lastRect = key;
+    onBookRect({ left: l, right: r, top, bottom, closed: B < 0.5, zoomed: zoom.on });
+  }
   canvas.addEventListener('click', (e) => {
+    // A drag around the magnified book is not a click on what's under the finger.
+    if (zoom.on && zoom.moved > 8) { zoom.moved = 0; return; }
     setPointer(e);
     const hit = pick();
     if (!hit) return;
@@ -207,15 +316,50 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
       onAction({ type: 'critter', id: def.critter, x: e.clientX, y: e.clientY });
       return;
     }
-    if (def.action === 'horse' || def.action === 'pippi' || def.action === 'cake') hit.hop = 1;
+    if (VISUAL.has(def.action)) return play(hit);
+    if (def.action === 'horse' || def.action === 'librarian' || def.action === 'cake' || def.action === 'audition') hit.hop = 1;
     if (def.action === 'cake') burst.spawn('confetti', topOf(hit, 0.85), 90);
-    if (def.action === 'pippi') burst.spawn('coins', topOf(hit, 0.35), 24);
-    onAction({ type: def.action, x: e.clientX, y: e.clientY });
+    if (def.action === 'librarian') burst.spawn('coins', topOf(hit, 0.35), 24);
+    onAction({ type: def.action, id: def.candidate, x: e.clientX, y: e.clientY });
   });
 
   function topOf(layer, k = 1) {
     const v = new THREE.Vector3(0, layer.size.lift + layer.size.h * k, 0.02);
     return layer.mesh.localToWorld(v);
+  }
+
+  /** A click on a pop-up that does something of its own, without turning the page. */
+  function play(layer) {
+    const { action, pair } = layer.def;
+    if (action === 'think') return think(layer);
+    if (action === 'seesaw') {
+      // Whichever one is clicked toggles; its partner always moves the opposite way.
+      const dir = layer.swingTarget > 0 ? -1 : 1;
+      layer.swingTarget = dir * SWING;
+      const partner = findLayer(pair);
+      if (partner) partner.swingTarget = -dir * SWING;
+      return;
+    }
+    if (action === 'float' && !layer.flight) layer.flight = 1e-4;
+    if (action === 'wave' && !layer.wave) layer.wave = 1e-4;
+    if (action === 'spin' && !layer.spin) layer.spin = 1e-4;
+  }
+
+  /** A little thought cloud pops up above the pop-up and fades after a moment. */
+  function think(layer) {
+    for (const th of thoughts.splice(0)) disposeThought(th);
+    const text = t(THOUGHTS[Math.floor(Math.random() * THOUGHTS.length)]);
+    const material = new THREE.SpriteMaterial({ map: thoughtTexture(text), transparent: true, depthWrite: false });
+    const sprite = new THREE.Sprite(material);
+    sprite.position.copy(topOf(layer, 0.9)).add(new THREE.Vector3(0.2, 0.28, 0.1));
+    scene.add(sprite);
+    thoughts.push({ sprite, age: 0 });
+  }
+
+  function disposeThought(th) {
+    scene.remove(th.sprite);
+    th.sprite.material.map.dispose();
+    th.sprite.material.dispose();
   }
 
   function findLayer(id) {
@@ -235,6 +379,7 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
     if (Math.abs(goal - B) < 1e-4) B = goal;
     parallax.lerp(motion ? parallaxTarget : parallax.set(0, 0), 1 - Math.exp(-dt * 3));
     nightMix += (nightTarget - nightMix) * (1 - Math.exp(-dt * 3));
+    zoom.mix = motion ? zoom.mix + ((zoom.on ? 1 : 0) - zoom.mix) * (1 - Math.exp(-dt * 6)) : (zoom.on ? 1 : 0);
 
     // Covers and position of the whole book.
     const open = easeInOut(clamp01((B - 0.06) / 0.52));
@@ -276,7 +421,7 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
         const def = layer.def;
         let rise = riseFor(B, j, def.delay);
         let host = def.page;
-        let show = d > -1 && d < 1;
+        let show = d > -1 && d < 1 && (!def.candidate || def.candidate === candidate);
         if (d > 1e-4 && def.page === 'R' && j < LAST) { host = 'SF'; show &&= theta !== null && theta < Math.PI / 2; }
         if (d < -1e-4 && def.page === 'L' && j > 1) { host = 'SB'; show &&= theta !== null && theta > Math.PI / 2; }
         if (!show) rise = 0;
@@ -308,6 +453,17 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
     dust.update(time, nightMix, motion);
     burst.update(dt);
 
+    // Thought clouds: grow in, hang for a moment, fade out.
+    for (let i = thoughts.length - 1; i >= 0; i--) {
+      const th = thoughts[i];
+      th.age += dt;
+      const grow = backOut(clamp01(th.age / 0.45));
+      th.sprite.scale.set(0.62 * grow, 0.3875 * grow, 1);
+      th.sprite.material.opacity = 1 - clamp01((th.age - 1.8) / 0.5);
+      if (motion) th.sprite.position.y += dt * 0.04;
+      if (th.age > 2.3) { disposeThought(th); thoughts.splice(i, 1); }
+    }
+
     // Hover.
     if (pointer.dirty) {
       pointer.dirty = false;
@@ -322,6 +478,7 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
 
     frameCamera(openness);
     renderer.render(scene, camera);
+    reportRect();
   }
 
   if (import.meta.env.DEV) {
@@ -352,8 +509,30 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
 
   return {
     setNight(on) { nightTarget = on ? 1 : 0; },
+    /** Magnifier mode: the book fills the screen and can be dragged and zoomed. */
+    setZoom(on) {
+      zoom.on = on;
+      zoom.pointers.clear();
+      if (on) { zoom.scale = size.h > size.w * 1.2 ? 1.3 : 1.12; zoom.pan.set(0, 0); }
+      canvas.style.touchAction = on ? 'none' : '';
+    },
+    zoomBy,
+    panBy,
+    /** iOS only lets a page read the gyroscope after asking, from a tap. */
+    async enableTilt() {
+      if (tiltOn || !matchMedia('(pointer: coarse)').matches) return;
+      if (!needsPermission) return startTilt();
+      try { if ((await DeviceOrientationEvent.requestPermission()) === 'granted') startTilt(); } catch { /* declined */ }
+    },
+    /** Put another casting candidate on the 3D stage; they pop up fresh. */
+    setCandidate(id) {
+      if (id === candidate) return;
+      candidate = id;
+      const layer = findLayer(`cand-${id}`);
+      if (layer) { layer.enter = 0; layer.hop = 0.6; }
+    },
     setLang() {
-      repaintCovers(covers, { house, t });
+      repaintCovers(covers, { ...plate, t });
       for (const sp of spreads) {
         if (!sp.pages) continue;
         repaintPage(sp.pages.L, pageOpts(sp.j, 'L'));
@@ -362,10 +541,10 @@ export async function createStage({ canvas, getTarget, getArea, t, onAction, red
       }
     },
     celebrate(kind) {
-      const pippi = findLayer('pippi');
-      if (kind === 'oracle' && pippi?.root.visible) {
-        pippi.hop = 1;
-        burst.spawn('coins', topOf(pippi, 0.35), 18);
+      const ginger = findLayer('ginger');
+      if (kind === 'oracle' && ginger?.root.visible) {
+        ginger.hop = 1;
+        burst.spawn('coins', topOf(ginger, 0.35), 18);
       }
     },
     collect(id) {

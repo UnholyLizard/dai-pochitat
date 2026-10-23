@@ -69,6 +69,20 @@
       <img alt="" width="1351" height="1600">
     </div>
   </div>
+  <p class="book-hint" aria-hidden="true" data-book-hint><span data-i18n="hero.hint">листай — и страницы перевернутся</span></p>
+  <button class="zoom-btn" type="button" data-zoom-open hidden data-i18n-attr="aria-label:zoom.open" aria-label="Рассмотреть книгу поближе">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-zoom"/></svg>
+  </button>
+  <div class="zoom-ui" data-zoom-ui hidden role="dialog" aria-modal="true" aria-labelledby="zoom-hint">
+    <p class="zoom-ui__hint" id="zoom-hint" data-i18n="zoom.hint">Тяни, чтобы двигать книгу. Разводи пальцы или крути колёсико, чтобы приблизить.</p>
+    <div class="zoom-ui__tools">
+      <button type="button" data-zoom-out data-i18n-attr="aria-label:zoom.out" aria-label="Отдалить"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-minus"/></svg></button>
+      <button type="button" data-zoom-in data-i18n-attr="aria-label:zoom.in" aria-label="Приблизить"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-plus"/></svg></button>
+      <button type="button" class="zoom-ui__close" data-zoom-close>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg><span data-i18n="zoom.close">Вернуться к чтению</span>
+      </button>
+    </div>
+  </div>
   <div class="grain" aria-hidden="true"></div>
   <div class="read-progress" aria-hidden="true"></div>
 
@@ -94,7 +108,7 @@
         <svg class="i-day" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lamp"/></svg>
       </button>
       <button class="hud__btn hud__icon" type="button" data-sound-toggle aria-pressed="true" data-i18n-attr="aria-label:ui.sound" aria-label="Звук">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sound"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sound-on"/></svg>
       </button>
       <div class="lang" role="group" aria-label="Язык / Language">
         <button type="button" data-lang="ru" lang="ru" aria-pressed="true">RU</button>
@@ -109,9 +123,10 @@
       <li><a href="#top"><span data-i18n="toc.cover">Обложка</span><i></i><b>—</b></a></li>
       <li><a href="#house"><span data-i18n="toc.house">Жёлтый дом у моря</span><i></i><b>1</b></a></li>
       <li><a href="#room"><span data-i18n="toc.room">Комната, где шуршат страницы</span><i></i><b>3</b></a></li>
-      <li><a href="#chest"><span data-i18n="toc.chest">Сундук Пеппи</span><i></i><b>5</b></a></li>
-      <li><a href="#events"><span data-i18n="toc.events">Праздники и встречи</span><i></i><b>7</b></a></li>
-      <li><a href="#find"><span data-i18n="toc.find">Как нас найти</span><i></i><b>9</b></a></li>
+      <li><a href="#casting"><span data-i18n="toc.casting">Кастинг: ищем библиотекаря</span><i></i><b>5</b></a></li>
+      <li><a href="#chest"><span data-i18n="toc.chest">Волшебный сундук</span><i></i><b>7</b></a></li>
+      <li><a href="#events"><span data-i18n="toc.events">Праздники и встречи</span><i></i><b>9</b></a></li>
+      <li><a href="#find"><span data-i18n="toc.find">Как нас найти</span><i></i><b>11</b></a></li>
     </ol>
     <button class="toc__install" type="button" data-install hidden>
       <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-install"/></svg>
@@ -139,13 +154,12 @@
             <span data-i18n="hero.open">Открыть книгу</span>
             <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-arrow-down"/></svg>
           </a>
-          <button class="btn btn--sun" type="button" data-open="pippi">
-            <span data-i18n="hero.pippi">Познакомиться с Пеппи</span>
+          <button class="btn btn--sun" type="button" data-open="librarian">
+            <span data-i18n="hero.meet">Познакомиться с библиотекарем</span>
           </button>
         </div>
-        <p class="hero__hint" aria-hidden="true"><span data-i18n="hero.hint">листай — и страницы перевернутся</span></p>
       </div>
-      <p class="doodle doodle--book" aria-hidden="true">
+      <p class="doodle doodle--book" aria-hidden="true" data-book-doodle>
         <span data-i18n="hero.doodle">тут живут истории</span>
         <svg viewBox="0 0 80 60"><path d="M6 8c20 2 44 10 56 34m0 0-12-4m12 4 2-12"/></svg>
       </p>
@@ -164,8 +178,8 @@
           <li><b>3–17</b><span data-i18n="house.s3">лет нашим читателям</span></li>
         </ul>
         <aside class="note">
-          <img src="/art/pippi-avatar.webp" alt="" width="280" height="256" loading="lazy">
-          <p data-i18n="house.note">«Я проверила — дом очень крепкий. Я его немножко потрясла». — Пеппи</p>
+          <img src="/art/ginger-avatar.webp" alt="" width="280" height="256" loading="lazy">
+          <p data-i18n="house.note">«Я проверила — дом очень крепкий. Я его немножко потрясла». — наша библиотекарша</p>
         </aside>
         <button class="peek" type="button" data-peek="owl" data-i18n="ui.peek">Кажется, на этой странице кто-то прячется</button>
       </article>
@@ -191,12 +205,23 @@
       </article>
     </section>
 
-    <!-- Spread 3: Pippi's chest — the book oracle -->
-    <section class="chapter" id="chest" data-spread="3" aria-labelledby="chest-title">
+    <!-- Spread 3: casting for the librarian's role -->
+    <section class="chapter" id="casting" data-spread="3" aria-labelledby="casting-title">
+      <article class="card card--casting">
+        <p class="card__chapter"><span class="card__num">3</span><span data-i18n="casting.label">Глава третья</span></p>
+        <h2 id="casting-title" data-i18n="casting.title">Кастинг: ищем библиотекаря!</h2>
+        <p data-i18n="casting.p1">Наша рыжая библиотекарша справляется отлично, но мы решили устроить настоящий кастинг. Послушай каждого кандидата и отдай свой голос — кого выберешь, тот и будет отвечать тебе в чате.</p>
+        <div class="casting" data-casting></div>
+        <button class="peek" type="button" data-peek="parrot" data-i18n="ui.peek">Кажется, на этой странице кто-то прячется</button>
+      </article>
+    </section>
+
+    <!-- Spread 4: the treasure chest — the book oracle -->
+    <section class="chapter" id="chest" data-spread="4" aria-labelledby="chest-title">
       <article class="card card--oracle">
-        <p class="card__chapter"><span class="card__num">3</span><span data-i18n="chest.label">Глава третья</span></p>
-        <h2 id="chest-title" data-i18n="chest.title">Сундук Пеппи</h2>
-        <p data-i18n="chest.p1">Не знаешь, что почитать? Скажи, сколько тебе лет и какое у тебя настроение, — Пеппи пороется в сундуке и найдёт книгу. Честное пиратское!</p>
+        <p class="card__chapter"><span class="card__num">4</span><span data-i18n="chest.label">Глава четвёртая</span></p>
+        <h2 id="chest-title" data-i18n="chest.title">Волшебный сундук</h2>
+        <p data-i18n="chest.p1">Не знаешь, что почитать? Скажи, сколько тебе лет и какое у тебя настроение, — и сундук сам выберет книгу. Честное пиратское!</p>
         <form class="oracle" data-oracle>
           <fieldset class="chips">
             <legend data-i18n="chest.age">Мне…</legend>
@@ -225,10 +250,10 @@
       </article>
     </section>
 
-    <!-- Spread 4: celebrations -->
-    <section class="chapter" id="events" data-spread="4" aria-labelledby="events-title">
+    <!-- Spread 5: celebrations -->
+    <section class="chapter" id="events" data-spread="5" aria-labelledby="events-title">
       <article class="card">
-        <p class="card__chapter"><span class="card__num">4</span><span data-i18n="events.label">Глава четвёртая</span></p>
+        <p class="card__chapter"><span class="card__num">5</span><span data-i18n="events.label">Глава пятая</span></p>
         <h2 id="events-title" data-i18n="events.title">Праздники и встречи</h2>
         <p data-i18n="events.p1">Громкие чтения, книжные клубы, обмен книгами и, конечно, дни рождения — с тортом из книг и подарками.</p>
         <ol class="tickets" data-events></ol>
@@ -236,10 +261,10 @@
       </article>
     </section>
 
-    <!-- Spread 5: find us -->
-    <section class="chapter" id="find" data-spread="5" aria-labelledby="find-title">
+    <!-- Spread 6: find us -->
+    <section class="chapter" id="find" data-spread="6" aria-labelledby="find-title">
       <article class="card">
-        <p class="card__chapter"><span class="card__num">5</span><span data-i18n="find.label">Глава пятая</span></p>
+        <p class="card__chapter"><span class="card__num">6</span><span data-i18n="find.label">Глава шестая</span></p>
         <h2 id="find-title" data-i18n="find.title">Как нас найти</h2>
         <address class="where">
           <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pin"/></svg>
@@ -269,46 +294,46 @@
     </section>
   </main>
 
-  <!-- Spread 6: the back cover -->
-  <footer class="chapter chapter--end" id="end" data-spread="6">
+  <!-- Spread 7: the back cover -->
+  <footer class="chapter chapter--end" id="end" data-spread="7">
     <div class="the-end">
       <p class="the-end__big" data-i18n="end.title">Конец первой книги.</p>
       <p class="the-end__sub" data-i18n="end.sub">Продолжение — в библиотеке.</p>
       <p class="the-end__meta"><span data-i18n="end.meta">© 2026 «Дай почитать!» · некоммерческая библиотека · Бар, Черногория</span></p>
+      <button class="badger" type="button" data-critter="badger" data-i18n-attr="aria-label:critter.badger.name" aria-label="Барсук-чаёвник">
+        <img src="/art/critter-badger.webp" alt="" width="372" height="384" loading="lazy">
+      </button>
     </div>
-    <button class="badger" type="button" data-critter="badger" data-i18n-attr="aria-label:critter.badger.name" aria-label="Барсук-чаёвник">
-      <img src="/art/critter-badger.webp" alt="" width="372" height="384" loading="lazy">
-    </button>
   </footer>
 
-  <!-- Pippi, the librarian -->
-  <div class="pippi-dock">
-    <p class="pippi-teaser" data-pippi-teaser hidden>
-      <span data-i18n="pippi.teaser">Привет! Помочь найти книжку?</span>
-      <button type="button" class="pippi-teaser__x" data-teaser-close data-i18n-attr="aria-label:ui.close" aria-label="Закрыть">×</button>
+  <!-- The librarian (whoever the reader chose in the casting) -->
+  <div class="librarian-dock">
+    <p class="librarian-teaser" data-librarian-teaser hidden>
+      <span data-i18n="librarian.teaser">Привет! Помочь найти книжку?</span>
+      <button type="button" class="librarian-teaser__x" data-teaser-close data-i18n-attr="aria-label:ui.close" aria-label="Закрыть">×</button>
     </p>
-    <button class="pippi-fab" type="button" data-open="pippi" aria-haspopup="dialog" aria-controls="pippi" data-i18n-attr="aria-label:pippi.open" aria-label="Спросить Пеппи">
-      <img src="/art/pippi-avatar.webp" alt="" width="280" height="256">
+    <button class="librarian-fab" data-who="ginger" type="button" data-open="librarian" aria-haspopup="dialog" aria-controls="librarian" data-i18n-attr="aria-label:librarian.open" aria-label="Спросить библиотекаря">
+      <img src="/art/ginger-avatar.webp" alt="" width="280" height="256" data-librarian-face>
     </button>
   </div>
 
-  <section id="pippi" class="chat" popover="manual" role="dialog" aria-labelledby="chat-title">
+  <section id="librarian" class="chat" popover="manual" role="dialog" aria-labelledby="chat-title">
     <header class="chat__head">
-      <img class="chat__avatar" src="/art/pippi-avatar.webp" alt="" width="280" height="256">
+      <img class="chat__avatar" src="/art/ginger-avatar.webp" alt="" width="280" height="256" data-librarian-face>
       <div>
-        <h2 class="chat__title" id="chat-title" data-i18n="pippi.title">Пеппи</h2>
-        <p class="chat__status" data-i18n="pippi.status">библиотекарь · на месте</p>
+        <h2 class="chat__title" id="chat-title" data-librarian-name>Рыжик</h2>
+        <p class="chat__status"><span data-librarian-role>действующая библиотекарша</span> · <span data-i18n="librarian.status">на месте</span></p>
       </div>
-      <button class="chat__close" type="button" data-close="pippi" data-i18n-attr="aria-label:ui.close" aria-label="Закрыть">
+      <button class="chat__close" type="button" data-close="librarian" data-i18n-attr="aria-label:ui.close" aria-label="Закрыть">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
       </button>
     </header>
     <ol class="chat__log" data-chat-log aria-live="polite" aria-relevant="additions"></ol>
     <div class="chat__chips" data-chat-chips></div>
     <form class="chat__form" data-chat-form>
-      <label class="visually-hidden" for="chat-input" data-i18n="pippi.label">Сообщение для Пеппи</label>
-      <input id="chat-input" name="q" autocomplete="off" maxlength="300" placeholder="Спроси меня о чём-нибудь…" data-i18n-attr="placeholder:pippi.placeholder">
-      <button type="submit" data-i18n-attr="aria-label:pippi.send" aria-label="Отправить">
+      <label class="visually-hidden" for="chat-input" data-i18n="librarian.label">Сообщение библиотекарю</label>
+      <input id="chat-input" name="q" autocomplete="off" maxlength="300" placeholder="Спроси меня о чём-нибудь…" data-i18n-attr="placeholder:librarian.placeholder">
+      <button type="submit" data-i18n-attr="aria-label:librarian.send" aria-label="Отправить">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-send"/></svg>
       </button>
     </form>
@@ -341,7 +366,8 @@
     <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.5a2.5 2.5 0 0 0 0 5V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a2.5 2.5 0 0 0 0-5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9h6M9 12h6M9 15h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
     <symbol id="i-contents" viewBox="0 0 24 24"><path d="M4 5.5C7 4 10 4 12 6c2-2 5-2 8-.5V19c-3-1.5-6-1.5-8 .5-2-2-5-2-8-.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 6v13.5" stroke="currentColor" stroke-width="1.8"/></symbol>
     <symbol id="i-lamp" viewBox="0 0 24 24"><path d="M8 3h8l3 7H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v9M8 21h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10 13.5l-1.5 1.5M14 13.5l1.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="lamp-rays"/></symbol>
-    <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path class="wave" d="M15.5 9.5a3.5 3.5 0 0 1 0 5M18 7.5a6.5 6.5 0 0 1 0 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="mute" d="M15.5 9.5l5 5m0-5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-sound-on" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5M18 7.5a6.5 6.5 0 0 1 0 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-sound-off" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15.5 9.5l5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
     <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.4" fill="currentColor"/></symbol>
     <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 4v15m0 0-6-6m6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
@@ -353,6 +379,9 @@
     <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor"/></symbol>
     <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
     <symbol id="i-install" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v7m0 0-3-3m3 3 3-3M10 18.5h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M10.5 7.8v5.4M7.8 10.5h5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
     <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 4v14m6-12v14" stroke="currentColor" stroke-width="1.8"/></symbol>
   </svg>
 </body>
