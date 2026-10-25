@@ -139,19 +139,34 @@ function headerResult(books, total, q, origin, lang, T) {
   };
 }
 
-/** Build the answerInlineQuery payload for one inline query. */
+const CACHE_SECONDS = 300;
+const MIN_QUERY = 2; // "п", "пу" … are keystrokes, not searches: they all share the default list
+
+/** Build the answerInlineQuery payload for one inline query (shared answers are cached per language/query/page). */
 export async function inlineAnswer(env, query, origin) {
   const lang = ru(query.from?.language_code) ? 'ru' : 'en';
-  const T = UI[lang];
-  const q = (query.query ?? '').trim().slice(0, 64);
+  const raw = (query.query ?? '').trim().slice(0, 64);
+  const q = raw.length < MIN_QUERY ? '' : raw;
   const offset = Math.max(parseInt(query.offset, 10) || 0, 0);
-  const limit = offset === 0 ? PAGE_FIRST : PAGE_NEXT;
 
+  // The answer doesn't depend on who asks, so repeated terms skip D1 entirely.
+  const cache = typeof caches === 'undefined' ? null : caches.default;
+  const key = new Request(`${origin}/__inline/${lang}/${offset}?q=${encodeURIComponent(q.toLowerCase())}`);
+  const hit = await cache?.match(key).catch(() => null);
+  if (hit) return { ...(await hit.json()), inline_query_id: query.id };
+
+  const payload = await buildAnswer(env, q, lang, offset, origin);
+  await cache?.put(key, new Response(JSON.stringify(payload), { headers: { 'cache-control': `public, max-age=${CACHE_SECONDS}` } })).catch(() => {});
+  return { ...payload, inline_query_id: query.id };
+}
+
+async function buildAnswer(env, q, lang, offset, origin) {
+  const T = UI[lang];
+  const limit = offset === 0 ? PAGE_FIRST : PAGE_NEXT;
   const { books, total } = await search(env, q, limit, offset);
 
   const base = {
-    inline_query_id: query.id,
-    cache_time: 300,
+    cache_time: CACHE_SECONDS,
     button: { text: T.app, web_app: { url: `${origin}/?tgapp=1` } },
   };
   if (!books.length && offset === 0) {
