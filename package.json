@@ -5,13 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/postbuild.mjs",
+    "build": "node scripts/make-inline-covers.mjs && vite build && node scripts/postbuild.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "check": "eslint . && npm run build",
     "art": "node scripts/gen-art.mjs",
     "art:cut": "node scripts/cutout.mjs",
     "deploy": "npm run build && wrangler deploy && wrangler d1 migrations apply DB --remote",
+    "covers:jpg": "node scripts/make-inline-covers.mjs",
     "art:icons": "node scripts/icons.mjs",
     "db:local": "wrangler d1 migrations apply DB --local",
     "dev:worker": "npm run build && npm run db:local && wrangler dev"

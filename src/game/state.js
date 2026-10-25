@@ -105,6 +105,41 @@ export const game = {
     bus.emit('game', state);
   },
 
+  /** Everything worth keeping on the server (the anonymous casting voter id stays on this device). */
+  exportProgress() {
+    const copy = { ...state };
+    delete copy.voter;
+    return copy;
+  },
+
+  /** Fold progress saved on the server into this device's: nothing earned on either side is lost. */
+  mergeRemote(remote) {
+    if (!remote || typeof remote !== 'object') return;
+    const times = (a, b) => {
+      const out = { ...a };
+      for (const [k, v] of Object.entries(b ?? {}).slice(0, 200)) {
+        if (typeof v === 'number' && k.length <= 40) out[k] = out[k] ? Math.min(out[k], v) : v;
+      }
+      return out;
+    };
+    const list = (a, b) => [...new Set([...a, ...(Array.isArray(b) ? b.filter((x) => typeof x === 'string').slice(0, 500) : [])])];
+    state.stamps = times(state.stamps, remote.stamps);
+    state.found = times(state.found, remote.found);
+    state.wish = list(state.wish, remote.wish);
+    state.solved = list(state.solved, remote.solved);
+    if (!state.name && typeof remote.name === 'string') state.name = remote.name.slice(0, 40);
+    state.coins = Math.max(state.coins, Number(remote.coins) || 0, Object.keys(state.stamps).length + Object.keys(state.found).length);
+    state.visits = Math.max(state.visits, Number(remote.visits) || 0);
+    if (!state.vote && LIBRARIANS.some((l) => l.id === remote.vote)) state.vote = remote.vote;
+    save();
+    if (state.librarian === DEFAULT_LIBRARIAN && remote.librarian !== DEFAULT_LIBRARIAN && LIBRARIANS.some((l) => l.id === remote.librarian)) {
+      state.librarian = remote.librarian;
+      save();
+      bus.emit('librarian', state.librarian);
+    }
+    bus.emit('game', state);
+  },
+
   reset() {
     // Progress starts over; the casting choice and anonymous voter id are preferences, not progress.
     const { cardNo, visits, lastVisit, librarian, vote, voter } = state;

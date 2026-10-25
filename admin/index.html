@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru" data-theme="day">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Админка — Дай почитать!</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script type="module" src="/src/admin/admin.js"></script>
+</head>
+<body>
+  <header class="bar">
+    <a class="bar__home" href="/">← <span>Дай почитать!</span></a>
+    <h1>Админка</h1>
+    <span class="bar__who" data-who></span>
+  </header>
+  <main>
+    <p class="note" data-status>Загрузка…</p>
+    <div data-app hidden>
+      <nav class="tabs" role="tablist">
+        <button type="button" role="tab" aria-selected="true" data-tab="chats">Диалоги</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="users">Читатели</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="bot">Бот</button>
+      </nav>
+
+      <section data-panel="chats">
+        <div class="split">
+          <ul class="list" data-threads></ul>
+          <div class="thread" data-thread hidden>
+            <h2 data-thread-title></h2>
+            <ol class="msgs" data-msgs></ol>
+            <form data-reply>
+              <input name="text" maxlength="500" autocomplete="off" placeholder="Ответ читателю (появится в его чате на сайте)…" required>
+              <button type="submit">Отправить</button>
+            </form>
+          </div>
+        </div>
+        <p class="note" data-no-threads hidden>Пока никто не писал Наташе.</p>
+      </section>
+
+      <section data-panel="users" hidden>
+        <p class="note" data-stats></p>
+        <table>
+          <thead><tr><th>Читатель</th><th>Telegram</th><th>Роль</th><th>Последний вход</th><th></th></tr></thead>
+          <tbody data-users></tbody>
+        </table>
+      </section>
+
+      <section data-panel="bot" hidden>
+        <ul class="checks" data-checks></ul>
+        <button type="button" data-connect>Подключить webhook</button>
+        <p class="note" data-connect-result></p>
+        <details>
+          <summary>Как настроить бота</summary>
+          <ol>
+            <li>Создайте бота у <b>@BotFather</b> (<code>/newbot</code>), скопируйте токен.</li>
+            <li>Выполните <code>npx wrangler secret put</code> для трёх имён: <code>TG_BOT_TOKEN</code> (токен), <code>TG_BOT_USERNAME</code> (имя бота без @) и <code>TG_WEBHOOK_SECRET</code> (любая случайная строка из латиницы и цифр).</li>
+            <li>Задеплойте, войдите на сайте через Telegram <b>первым</b> — вы станете владельцем.</li>
+            <li>У @BotFather выполните <code>/setinline</code> (включает поиск книг через <code>@бот запрос</code>; подсказка: «название, автор или тема») и один раз нажмите Start у бота — иначе он не сможет писать вам.</li>
+            <li>Нажмите «Подключить webhook» выше: он же задаёт кнопку меню бота, которая открывает сайт как Telegram Mini App с автоматическим входом (<code>/?tgapp=1</code>).</li>
+            <li> Готово: сообщения читателей приходят в бот, а ответом (reply) на них вы пишете в чат на сайте.</li>
+          </ol>
+        </details>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

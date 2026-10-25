@@ -9,22 +9,62 @@
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": [
+      "/api/*"
+    ]
   },
   // No database_id: Wrangler provisions the database on the first deploy.
   "d1_databases": [
-    { "binding": "DB", "database_name": "dai-pochitat-casting", "migrations_dir": "migrations" }
+    {
+      "binding": "DB",
+      "database_name": "dai-pochitat-casting",
+      "database_id": "2d45da78-4050-4e5b-8c99-4599681d7062",
+      "migrations_dir": "migrations"
+    }
   ],
   "ratelimits": [
-    { "name": "VOTE_LIMIT", "namespace_id": "1701", "simple": { "limit": 20, "period": 60 } }
+    {
+      "name": "VOTE_LIMIT",
+      "namespace_id": "1701",
+      "simple": {
+        "limit": 20,
+        "period": 60
+      }
+    },
+    {
+      "name": "API_LIMIT",
+      "namespace_id": "1702",
+      "simple": {
+        "limit": 30,
+        "period": 60
+      }
+    },
+    {
+      "name": "CHAT_LIMIT",
+      "namespace_id": "1703",
+      "simple": {
+        "limit": 12,
+        "period": 60
+      }
+    }
   ],
+  // Telegram bot (create it with @BotFather). Secrets, set once with `wrangler secret put`:
+  //   TG_BOT_TOKEN, TG_WEBHOOK_SECRET (any random string of A-Z a-z 0-9 _ -), TG_BOT_USERNAME (without @)
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1,
-    "traces": { "enabled": true }
+    "traces": {
+      "enabled": true
+    }
+  },
+  "vars": {
+    "BOT_USERNAME": "DaiPochitatBot"
   },
   "routes": [
-    { "pattern": "dai-pochitat-mne.craft-tower.com", "custom_domain": true }
+    {
+      "pattern": "dai-pochitat-mne.craft-tower.com",
+      "custom_domain": true
+    }
   ],
   "workers_dev": true
 }

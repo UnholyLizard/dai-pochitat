@@ -89,7 +89,7 @@ export class PopLayer {
 
   hit(uv) { return this.art.hit(uv.x, uv.y); }
 
-  update(dt, time, rise, matrix, { motion, glow }) {
+  update(dt, time, rise, matrix, { motion, glow, scale = 1 }) {
     this.rise = rise;
     // Folded layers stay visible: they lie flat on the page like a real pop-up book.
     this.root.visible = !(this.gone && this.leaving >= 1);
@@ -138,7 +138,7 @@ export class PopLayer {
     const flyScale = f > 0 ? 1 - clamp01((f - 0.4) / 0.6) ** 2 : 1;
     this.hinge.position.y = jump + leave + flyUp;
     const s = this.gone ? 1 - this.leaving : 1;
-    this.hinge.scale.setScalar(Math.max(0.001, s * flyScale * (1 + this.hover * 0.04)));
+    this.hinge.scale.setScalar(Math.max(0.001, scale * s * flyScale * (1 + this.hover * 0.04)));
     this.material.emissiveIntensity = glow + this.hover * 0.25;
   }
 }
@@ -168,7 +168,7 @@ export class PinLayer {
 
   get interactive() { return false; }
 
-  update(dt, time, rise, matrix, { motion }) {
+  update(dt, time, rise, matrix, { motion, scale = 1 }) {
     this.rise = rise;
     this.root.visible = rise > 0.02;
     if (!this.root.visible) return;
@@ -177,6 +177,6 @@ export class PinLayer {
     const bob = motion ? Math.sin(time * 2.4) * 0.04 : 0;
     this.pin.position.y = (this.def.lift ?? 0) * rise + bob * rise;
     this.pin.rotation.y = motion ? time * 0.8 : 0;
-    this.pin.scale.setScalar(Math.max(0.001, rise));
+    this.pin.scale.setScalar(Math.max(0.001, scale * rise));
   }
 }

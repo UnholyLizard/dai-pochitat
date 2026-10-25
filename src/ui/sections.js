@@ -9,16 +9,27 @@ import { sfx } from '../game/sfx.js';
 
 /* ── A book card (oracle + chat) ───────────────────────────────────────── */
 export function bookCard(b, { compact = false } = {}) {
-  const ages = b.age[1] >= 99 ? t('oracle.agesPlus', { min: b.age[0] }) : t('oracle.ages', { min: b.age[0], max: b.age[1] });
+  const curLang = getLang();
+  const title = typeof b.title === 'object' ? L(b.title) : (b[`title_${curLang}`] || b.title_ru || b.title || '');
+  const author = typeof b.author === 'object' ? L(b.author) : (b[`author_${curLang}`] || b.author_ru || b.author || '');
+  const says = typeof b.says === 'object' ? L(b.says) : (b[`says_${curLang}`] || b.says_ru || b.says || '');
+  const ages = b.age
+    ? (b.age[1] >= 99 ? t('oracle.agesPlus', { min: b.age[0] }) : t('oracle.ages', { min: b.age[0], max: b.age[1] }))
+    : (b.age_min != null ? (b.age_max >= 99 ? t('oracle.agesPlus', { min: b.age_min }) : t('oracle.ages', { min: b.age_min, max: b.age_max })) : '');
   const wanted = game.state.wish.includes(b.id);
+  const coverUrl = b.cover_url || b.coverUrl;
+  const color = b.color || b.dominant_color || '#2f8a84';
   return html`
     <article class="bookcard" data-book="${b.id}">
-      <div class="bookcard__cover" style="--c:${b.color}" aria-hidden="true"><span>${L(b.title)}</span></div>
+      <div class="bookcard__cover" style="--c:${color}" aria-hidden="true">
+        ${coverUrl ? html`<img class="bookcard__cover-img" src="${coverUrl}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : ''}
+        <span>${title}</span>
+      </div>
       <div>
-        <h3>${L(b.title)}</h3>
-        <p class="bookcard__author">${L(b.author)}</p>
+        <h3>${title}</h3>
+        <p class="bookcard__author">${author}</p>
         <span class="bookcard__age">${ages}</span>
-        <p class="bookcard__says">${L(b.says)}</p>
+        ${says ? html`<p class="bookcard__says">${says}</p>` : ''}
       </div>
       <div class="bookcard__actions">
         ${compact ? '' : html`<button class="btn btn--sun btn--small" type="button" data-oracle-next>${t('oracle.another')}</button>`}

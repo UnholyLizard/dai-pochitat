@@ -1,5 +1,5 @@
 import { bus, prefs, $, $$, fragment, artUrl } from '../lib/core.js';
-import { getLang, L } from '../i18n/index.js';
+import { getLang, L, t } from '../i18n/index.js';
 import { game } from '../game/state.js';
 import { sfx } from '../game/sfx.js';
 import { bookById } from '../content/books.js';
@@ -8,6 +8,8 @@ import { bookCard } from '../ui/sections.js';
 import { isNight } from '../ui/chrome.js';
 import { createLibrarian } from './librarian.js';
 import { canInstall, isIOS, isStandalone } from '../pwa.js';
+import { auth } from '../lib/auth.js';
+import { createNatasha } from './natasha.js';
 
 const panel = $('#librarian');
 const log = $('[data-chat-log]');
@@ -16,6 +18,18 @@ const form = $('[data-chat-form]');
 const input = $('#chat-input');
 const fab = $('.librarian-fab');
 const teaser = $('[data-librarian-teaser]');
+const natashaLog = $('[data-natasha-log]');
+const natashaDot = $('[data-natasha-dot]');
+const tabs = $$('[data-who-tab]');
+
+/** 'librarian' = the app's own (scripted) librarian, 'natasha' = the owner, live through Telegram. */
+let mode = 'librarian';
+const natasha = createNatasha({
+  log: natashaLog,
+  gate: $('[data-natasha-gate]'),
+  isActive: () => mode === 'natasha' && isOpen(),
+  onNew: () => { natashaDot.hidden = false; fab.classList.add('has-new'); },
+});
 
 const brain = createLibrarian();
 const history = [];
@@ -93,11 +107,41 @@ function dress() {
   for (const el of $$('[data-librarian-name]')) el.textContent = L(who.name);
   for (const el of $$('[data-librarian-role]')) el.textContent = L(who.role);
   fab.dataset.who = who.id;
+  dressHead();
+}
+
+/** The chat header shows whoever you're talking to. */
+function dressHead() {
+  const who = librarianById(game.state.librarian);
+  const live = mode === 'natasha';
+  $('[data-chat-face]').src = live ? `${import.meta.env.BASE_URL}favicon.svg` : artUrl(`${who.id}-avatar`);
+  $('[data-chat-name]').textContent = live ? t('natasha.name') : L(who.name);
+  $('[data-chat-role]').textContent = live ? t('natasha.role') : L(who.role);
+  $('[data-chat-presence]').textContent = live ? t('natasha.presence') : t('librarian.status');
+  input.placeholder = t(live ? 'natasha.placeholder' : 'librarian.placeholder');
+  panel.dataset.mode = mode;
+}
+
+export function setMode(next) {
+  mode = next;
+  for (const b of tabs) b.setAttribute('aria-selected', String(b.dataset.whoTab === mode));
+  const live = mode === 'natasha';
+  log.hidden = live;
+  if (live) {
+    natashaDot.hidden = true;
+    fab.classList.remove('has-new');
+    natasha.render();
+  } else {
+    natashaLog.hidden = true;
+    $('[data-natasha-gate]').hidden = true;
+  }
+  dressHead();
 }
 
 export function send(text) {
   const q = text.trim();
   if (!q) return;
+  if (mode !== 'librarian') setMode('librarian');
   if (!isOpen()) open();
   bubble('me', q);
   chips([]);
@@ -118,6 +162,11 @@ export function open() {
   teaser.hidden = true;
   if (!greeted) greet();
   if (matchMedia('(pointer: fine)').matches) setTimeout(() => input.focus(), 250);
+}
+
+export function openNatasha() {
+  open();
+  setMode('natasha');
 }
 
 export function close() {
@@ -141,7 +190,16 @@ export function initLibrarian({ actions }) {
     e.preventDefault();
     const q = input.value;
     input.value = '';
-    send(q);
+    if (mode === 'natasha') {
+      if (q.trim() && auth.user) natasha.send(q.trim());
+    } else send(q);
+  });
+  for (const b of tabs) b.addEventListener('click', () => setMode(b.dataset.whoTab));
+  // Signing in or out changes what the Natasha tab can show; replies are noticed in the background.
+  bus.on('auth', () => {
+    natasha.reset();
+    if (mode === 'natasha') natasha.render();
+    else natasha.watch();
   });
 
   // A small hello bubble, once a day, if the visitor hasn't met the librarian yet.

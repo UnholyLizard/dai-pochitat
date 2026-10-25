@@ -44,6 +44,9 @@ const headers = `/*
 /icons/*
   Cache-Control: public, max-age=604800
 
+/covers-jpg/*
+  Cache-Control: public, max-age=604800
+
 /sw.js
   Cache-Control: no-cache
 

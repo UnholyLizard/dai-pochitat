@@ -4,6 +4,7 @@ import '@fontsource-variable/literata/wght-italic.css';
 import '@fontsource-variable/nunito/wght.css';
 import '@fontsource/caveat/700.css';
 import './styles/main.css';
+import './styles/catalog.css';
 import { bus, reducedMotion, $, $$, artUrl, viewport } from './lib/core.js';
 import { initI18n, t, L, setLang } from './i18n/index.js';
 import { game } from './game/state.js';
@@ -13,9 +14,12 @@ import { initPassport, openPassport } from './game/passport.js';
 import { initTheme, setNight, isNight, initScroll, getTarget, goTo, bookArea } from './ui/chrome.js';
 import { initOracle, initSections, syncCritterButtons } from './ui/sections.js';
 import { initLibrarian, send as askLibrarian, open as openLibrarian, close as closeLibrarian } from './librarian/chat.js';
+import { initCatalog, openCatalog } from './ui/catalog.js';
 import { bookById } from './content/books.js';
 import { initPWA, install } from './pwa.js';
 import { initCasting } from './ui/casting.js';
+import { initMenu } from './ui/menu.js';
+import { initAuth } from './lib/auth.js';
 
 initI18n();
 initTheme();
@@ -23,6 +27,8 @@ initSound();
 initFeedback();
 initPassport();
 initSections();
+initCatalog();
+initMenu();
 initScroll();
 game.visit();
 initPWA();
@@ -57,6 +63,7 @@ function librarianAction(a) {
       goTo(a.id);
       break;
     case 'oracle': goTo('chest'); break;
+    case 'catalog': openCatalog(); break;
     case 'theme': setNight(!isNight(), { byUser: true }); break;
     case 'passport': openPassport(); break;
     case 'lang': setLang(a.lang); break;
@@ -72,6 +79,7 @@ function librarianAction(a) {
   }
 }
 initLibrarian({ actions: librarianAction });
+initAuth();
 
 const casting = initCasting({
   onPick: (id) => stage?.setCandidate(id),

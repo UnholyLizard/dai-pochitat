@@ -2,6 +2,8 @@ node_modules/
 dist/
 .env
 .env.*
+.dev.vars
+public/covers-jpg/
 art/raw/
 art/*.png
 art/*.cjs
@@ -11,3 +13,4 @@ dev-dist/
 .claude/
 art/ref/
 graphify-out/
+Дай почитать каталог книг/

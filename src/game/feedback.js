@@ -37,7 +37,7 @@ const imgIcon = (src) => html`<img src="${src}" alt="">`;
 function flyCoin(from) {
   const counter = $('.hud__coins');
   if (!counter || reducedMotion.matches) return Promise.resolve();
-  const to = counter.querySelector('svg').getBoundingClientRect();
+  const to = (counter.querySelector('.hud__coin-icon') ?? counter).getBoundingClientRect();
   const coin = document.createElement('div');
   coin.className = 'flying-coin';
   coin.innerHTML = '<svg viewBox="0 0 24 24"><use href="#i-coin"/></svg>';

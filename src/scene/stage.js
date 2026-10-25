@@ -413,6 +413,8 @@ export async function createStage({ canvas, getTarget, getArea, getZoomArea, t, 
 
     // Pop-ups.
     const glowAmt = lerp(0.36, 0.1, nightMix);
+    const MIN_SCALE = 0.70;
+
     for (let j = 1; j <= LAST; j++) {
       const sp = spreads[j];
       if (!sp.ready) continue;
@@ -421,13 +423,64 @@ export async function createStage({ canvas, getTarget, getArea, getZoomArea, t, 
         const def = layer.def;
         let rise = riseFor(B, j, def.delay);
         let host = def.page;
-        let show = d > -1 && d < 1 && (!def.candidate || def.candidate === candidate);
+
+        // Spread visibility:
+        // Spread 1 is hidden only when the front cover is completely closed (B <= 0.04).
+        // Spread LAST is hidden only when the back cover is completely closed (d >= 0.8).
+        let show = (j === 1 ? d > -0.96 : d > -1) && (j === LAST ? d < 0.8 : d < 1) && (!def.candidate || def.candidate === candidate);
         if (d > 1e-4 && def.page === 'R' && j < LAST) { host = 'SF'; show &&= theta !== null && theta < Math.PI / 2; }
         if (d < -1e-4 && def.page === 'L' && j > 1) { host = 'SB'; show &&= theta !== null && theta > Math.PI / 2; }
         if (!show) rise = 0;
+
+        let z = def.z;
+        let scale = 1;
+
+        if (j === 1 && d < 0) {
+          // Spread 1: front cover opening / closing.
+          // Size reduction/enlargement happens while the cover is turning (B: 0.06 → 0.58).
+          // Once the book is open, popups stand up / fall down at 100% size.
+          const openCover = clamp01((B - 0.06) / 0.52);
+          const slipK = 1 - easeInOut(openCover);
+          const tip = def.z - (def.h + (def.lift ?? 0));
+          const maxSlip = tip < -1.04 ? -1.04 - tip + 0.06 : 0.2;
+          z += maxSlip * slipK;
+          scale = MIN_SCALE + (1.0 - MIN_SCALE) * (1 - slipK);
+        } else if (j === LAST && d > 0.3) {
+          // Spread LAST: back cover closing / opening.
+          // Popups have already fallen flat at 100% size (d: 0 → 0.3).
+          // While the back cover swings closed (d: 0.3 → 0.8), they reduce to 0.70 and slip in.
+          const closeCover = easeInOut(clamp01((d - 0.3) / 0.5));
+          const tip = def.z - (def.h + (def.lift ?? 0));
+          const maxSlip = tip < -1.04 ? -1.04 - tip + 0.06 : 0.2;
+          z += maxSlip * closeCover;
+          scale = MIN_SCALE + (1.0 - MIN_SCALE) * (1 - closeCover);
+        } else if (d > 0 && j < LAST) {
+          // Outgoing spread during page turn (d: 0 → 1):
+          // First (d: 0 → 0.28): popups fall flat at 100% size (scale = 1.0).
+          // During sheet flip (d: 0.28 → 0.68): flat cutouts reduce in size from 1.0 to 0.70 and slip inward.
+          // After sheet flip (d >= 0.68): rest at MIN_SCALE (0.70).
+          const turnProgress = clamp01((d - 0.28) / 0.40);
+          const slipK = easeInOut(turnProgress);
+          const slipDir = def.z < 0 ? 1 : -1;
+          const slipDist = Math.min(0.24, (def.h + (def.lift ?? 0)) * 0.18);
+          z += slipDir * slipDist * slipK;
+          scale = MIN_SCALE + (1.0 - MIN_SCALE) * (1 - slipK);
+        } else if (d < 0 && j > 1) {
+          // Incoming spread during page turn (1 + d: 0 → 1):
+          // Before sheet flip (1 + d <= 0.28): rest at MIN_SCALE (0.70).
+          // During sheet flip (1 + d: 0.28 → 0.68): flat cutouts enlarge in size from 0.70 to 1.0 and slip into place.
+          // After sheet lands (1 + d >= 0.68): popups erect (stand up) into 3D at 100% size (scale = 1.0)!
+          const turnProgress = clamp01((1 + d - 0.28) / 0.40);
+          const slipK = 1 - easeInOut(turnProgress);
+          const slipDir = def.z < 0 ? 1 : -1;
+          const slipDist = Math.min(0.24, (def.h + (def.lift ?? 0)) * 0.18);
+          z += slipDir * slipDist * slipK;
+          scale = MIN_SCALE + (1.0 - MIN_SCALE) * (1 - slipK);
+        }
+
         const offset = 0.001 + layer.order * 0.00008;
-        book.frame(host, def.s, def.z, offset, tmpM);
-        if (show) layer.update(dt, time, rise, tmpM, { motion, glow: glowAmt });
+        book.frame(host, def.s, z, offset, tmpM);
+        if (show) layer.update(dt, time, rise, tmpM, { motion, glow: glowAmt, scale });
         else layer.root.visible = false;
       }
     }
