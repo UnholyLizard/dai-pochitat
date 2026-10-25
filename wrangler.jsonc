@@ -58,7 +58,7 @@
     }
   },
   "vars": {
-    "BOT_USERNAME": "DaiPochitatBot"
+    "TG_BOT_USERNAME": "DaiPochitatBot"
   },
   "routes": [
     {

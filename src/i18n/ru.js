@@ -122,6 +122,9 @@ export default {
   'passport.secretHint': 'Назови его в библиотеке — тебя ждёт сюрприз!',
   'passport.reset': 'Начать заново',
   'passport.resetConfirm': 'Стереть все монетки, штампы и найденных жителей?',
+  'passport.resetYes': 'Да, начать заново',
+  'passport.resetCancel': 'Отмена',
+  'passport.resetDone': 'Читательский билет начат заново!',
   'passport.local': 'Билет хранится только в этом браузере.',
 
   'ui.catalog': 'Каталог книг',

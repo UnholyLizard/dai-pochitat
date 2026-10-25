@@ -61,11 +61,15 @@ export const game = {
     if (state.found[id]) return false;
     state.found[id] = Date.now();
     addCoin({ type: 'critter', id, origin });
-    if (CRITTERS.every((c) => state.found[c.id])) setTimeout(() => game.award('tracker'), 1400);
+    if (CRITTERS.every((c) => state.found[c.id])) {
+      setTimeout(() => game.award('tracker'), 1400);
+      bus.emit('allFound');
+    }
     return true;
   },
 
   isFound: (id) => !!state.found[id],
+  isAllFound: () => CRITTERS.every((c) => !!state.found[c.id]),
 
   setName(name) {
     state.name = name.trim().slice(0, 40);

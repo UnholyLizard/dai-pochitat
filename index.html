@@ -104,45 +104,58 @@
         <svg class="hud__coin-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-coin"/></svg>
         <span class="visually-hidden" id="coin-label" data-i18n="ui.coins">монеток — открыть читательский билет</span>
       </button>
+      <button class="hud__btn hud__icon hud__theme" type="button" data-theme-toggle aria-pressed="false" data-i18n-attr="aria-label:ui.night" aria-label="Вечерний режим">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lamp"/></svg>
+      </button>
       <button class="hud__btn hud__icon hud__burger" type="button" popovertarget="menu" aria-haspopup="menu" data-i18n-attr="aria-label:ui.menu" aria-label="Меню">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-menu"/></svg>
       </button>
     </div>
   </header>
 
-
   <div id="menu" class="menu" popover aria-labelledby="menu-title">
-    <p class="menu__title" id="menu-title" data-i18n="ui.menu">Меню</p>
+    <div class="menu__header">
+      <p class="menu__title" id="menu-title" data-i18n="ui.menu">Меню</p>
+      <button class="menu__close" type="button" data-menu-close data-i18n-attr="aria-label:ui.close" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </div>
     <div class="menu__account" data-account></div>
+
+    <nav class="menu__toc" aria-label="Оглавление">
+      <p class="menu__section-title">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-contents"/></svg>
+        <span data-i18n="ui.toc">Оглавление</span>
+      </p>
+      <ol class="toc__list">
+        <li><a href="#top"><span data-i18n="toc.cover">Обложка</span><i></i><b>—</b></a></li>
+        <li><a href="#house"><span data-i18n="toc.house">Жёлтый дом у моря</span><i></i><b>1</b></a></li>
+        <li><a href="#room"><span data-i18n="toc.room">Комната, где шуршат страницы</span><i></i><b>3</b></a></li>
+        <li><a href="#casting"><span data-i18n="toc.casting">Кастинг: ищем библиотекаря</span><i></i><b>5</b></a></li>
+        <li><a href="#chest"><span data-i18n="toc.chest">Волшебный сундук</span><i></i><b>7</b></a></li>
+        <li><a href="#events"><span data-i18n="toc.events">Праздники и встречи</span><i></i><b>9</b></a></li>
+        <li><a href="#find"><span data-i18n="toc.find">Как нас найти</span><i></i><b>11</b></a></li>
+        <li><a href="#catalog" data-open="catalog"><span data-i18n="toc.catalog">Каталог всех книг (1300+)</span><i></i><b>✦</b></a></li>
+      </ol>
+      <button class="toc__install" type="button" data-install hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-install"/></svg>
+        <span data-i18n="pwa.install">Поселить книгу на телефоне — работает и без интернета</span>
+      </button>
+    </nav>
+
+    <div class="menu__divider"></div>
+
     <ul class="menu__list">
-      <li><button type="button" popovertarget="toc"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-contents"/></svg><span data-i18n="ui.toc">Оглавление</span></button></li>
       <li><button type="button" data-theme-toggle aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lamp"/></svg><span data-i18n="ui.night">Вечерний режим</span></button></li>
       <li><button type="button" data-sound-toggle aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sound-on"/></svg><span data-i18n="ui.sound">Звук</span></button></li>
       <li><a href="/admin/" data-admin-link hidden><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-admin"/></svg><span data-i18n="ui.admin">Админка</span></a></li>
     </ul>
+
     <div class="lang" role="group" aria-label="Язык / Language">
       <button type="button" data-lang="ru" lang="ru" aria-pressed="true">RU</button>
       <button type="button" data-lang="en" lang="en" aria-pressed="false">EN</button>
     </div>
   </div>
-
-  <nav id="toc" class="toc" popover aria-labelledby="toc-title">
-    <p class="toc__title" id="toc-title" data-i18n="ui.toc">Оглавление</p>
-    <ol class="toc__list">
-      <li><a href="#top"><span data-i18n="toc.cover">Обложка</span><i></i><b>—</b></a></li>
-      <li><a href="#house"><span data-i18n="toc.house">Жёлтый дом у моря</span><i></i><b>1</b></a></li>
-      <li><a href="#room"><span data-i18n="toc.room">Комната, где шуршат страницы</span><i></i><b>3</b></a></li>
-      <li><a href="#casting"><span data-i18n="toc.casting">Кастинг: ищем библиотекаря</span><i></i><b>5</b></a></li>
-      <li><a href="#chest"><span data-i18n="toc.chest">Волшебный сундук</span><i></i><b>7</b></a></li>
-      <li><a href="#events"><span data-i18n="toc.events">Праздники и встречи</span><i></i><b>9</b></a></li>
-      <li><a href="#find"><span data-i18n="toc.find">Как нас найти</span><i></i><b>11</b></a></li>
-      <li><a href="#catalog" data-open="catalog"><span data-i18n="toc.catalog">Каталог всех книг (1300+)</span><i></i><b>✦</b></a></li>
-    </ol>
-    <button class="toc__install" type="button" data-install hidden>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-install"/></svg>
-      <span data-i18n="pwa.install">Поселить книгу на телефоне — работает и без интернета</span>
-    </button>
-  </nav>
 
   <main id="main">
     <!-- Spread 0: the closed book -->
@@ -336,7 +349,7 @@
       <img class="chat__avatar" src="/art/ginger-avatar.webp" alt="" width="280" height="256" data-chat-face>
       <div>
         <h2 class="chat__title" id="chat-title" data-chat-name>Рыжик</h2>
-        <p class="chat__status" data-chat-status><span data-chat-role>действующая библиотекарша</span> · <span data-chat-presence data-i18n="librarian.status">на месте</span></p>
+        <p class="chat__status" data-chat-status><span data-chat-role>действующая библиотекарша</span></p>
       </div>
       <button class="chat__close" type="button" data-close="librarian" data-i18n-attr="aria-label:ui.close" aria-label="Закрыть">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
@@ -454,7 +467,7 @@
     </symbol>
     <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.5a2.5 2.5 0 0 0 0 5V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a2.5 2.5 0 0 0 0-5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9h6M9 12h6M9 15h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
     <symbol id="i-contents" viewBox="0 0 24 24"><path d="M4 5.5C7 4 10 4 12 6c2-2 5-2 8-.5V19c-3-1.5-6-1.5-8 .5-2-2-5-2-8-.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 6v13.5" stroke="currentColor" stroke-width="1.8"/></symbol>
-    <symbol id="i-lamp" viewBox="0 0 24 24"><path d="M8 3h8l3 7H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v9M8 21h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10 13.5l-1.5 1.5M14 13.5l1.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="lamp-rays"/></symbol>
+    <symbol id="i-lamp" viewBox="0 0 24 24"><path d="M8 3h8l3 7H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v11M8 21h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
     <symbol id="i-sound-on" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5M18 7.5a6.5 6.5 0 0 1 0 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
     <symbol id="i-sound-off" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15.5 9.5l5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
     <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.4" fill="currentColor"/></symbol>

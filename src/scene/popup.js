@@ -55,6 +55,11 @@ export class PopLayer {
     this.tab = null;
 
     const geo = new THREE.PlaneGeometry(w, h).translate(0, h / 2 + lift, 0);
+    if (def.flipX) {
+      const uvs = geo.attributes.uv;
+      for (let i = 0; i < uvs.count; i++) uvs.setX(i, 1 - uvs.getX(i));
+      uvs.needsUpdate = true;
+    }
     this.material = cutoutMaterial(art.texture);
     this.mesh = new THREE.Mesh(geo, this.material);
     this.mesh.castShadow = true;
@@ -64,7 +69,10 @@ export class PopLayer {
 
     if (lift > 0.02) {
       const tw = Math.min(0.06, w * 0.18);
-      const tab = new THREE.Mesh(new THREE.PlaneGeometry(tw, lift + 0.02).translate(0, (lift + 0.02) / 2, -0.002), tabMaterial);
+      const tabOverlap = def.tabOverlap ?? (def.art === 'bunting' ? 0.16 : 0.02);
+      const tabH = lift + tabOverlap;
+      this.tabH = tabH;
+      const tab = new THREE.Mesh(new THREE.PlaneGeometry(tw, tabH).translate(0, tabH / 2, -0.002), tabMaterial);
       tab.castShadow = true;
       this.hinge.add(tab);
       this.tab = tab;
@@ -87,7 +95,7 @@ export class PopLayer {
 
   get interactive() { return !!(this.def.action || this.def.critter) && !this.gone; }
 
-  hit(uv) { return this.art.hit(uv.x, uv.y); }
+  hit(uv) { return this.art.hit(this.def.flipX ? 1 - uv.x : uv.x, uv.y); }
 
   update(dt, time, rise, matrix, { motion, glow, scale = 1 }) {
     this.rise = rise;
@@ -124,7 +132,7 @@ export class PopLayer {
     // Swing: the sun and the cloud drift in opposite directions; the sun's tab follows it.
     this.swing += (this.swingTarget - this.swing) * Math.min(1, dt * 3.5);
     this.mesh.position.y = this.swing;
-    if (this.tab) this.tab.scale.y = (this.size.lift + this.swing + 0.02) / (this.size.lift + 0.02);
+    if (this.tab) this.tab.scale.y = (this.tabH + this.swing) / this.tabH;
     // Boat rolls on the waves; the road sign turns round three times.
     this.mesh.rotation.z = this.wave > 0 ? Math.sin(this.wave * Math.PI * 4) * 0.2 * Math.sin(this.wave * Math.PI) : 0;
     this.mesh.rotation.y = this.spin > 0 ? easeInOut(this.spin) * Math.PI * 6 : 0;

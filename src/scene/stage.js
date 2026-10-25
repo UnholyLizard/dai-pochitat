@@ -36,7 +36,7 @@ function riseFor(B, j, delay = 0) {
  * @param {(key: string) => string} o.t
  * @param {(a: object) => void} o.onAction
  */
-export async function createStage({ canvas, getTarget, getArea, getZoomArea, t, onAction, onBookRect, reducedMotion, night: startNight, isFound, candidate: startCandidate }) {
+export async function createStage({ canvas, getTarget, getArea, getZoomArea, t, onAction, onBookRect, reducedMotion, night: startNight, isFound, isAllFound = () => false, candidate: startCandidate }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.NeutralToneMapping;
@@ -115,7 +115,7 @@ export async function createStage({ canvas, getTarget, getArea, getZoomArea, t, 
         const layer = def.pin ? new PinLayer(def) : new PopLayer(def, arts[order], order);
         layer.order = order;
         layer.root.visible = false;
-        if (def.critter && isFound(def.critter)) { layer.gone = true; layer.leaving = 1; }
+        if (def.critter && isFound(def.critter) && !isAllFound()) { layer.gone = true; layer.leaving = 1; }
         sp.layers.push(layer);
         book.group.add(layer.root);
       });
@@ -311,8 +311,12 @@ export async function createStage({ canvas, getTarget, getArea, getZoomArea, t, 
     if (hit === 'cover') return onAction({ type: 'open', x: e.clientX, y: e.clientY });
     const def = hit.def;
     if (def.critter) {
-      hit.gone = true;
-      hit.hoverTarget = 0;
+      if (!isAllFound()) {
+        hit.gone = true;
+        hit.hoverTarget = 0;
+      } else {
+        hit.hop = 0.8;
+      }
       onAction({ type: 'critter', id: def.critter, x: e.clientX, y: e.clientY });
       return;
     }
@@ -601,10 +605,36 @@ export async function createStage({ canvas, getTarget, getArea, getZoomArea, t, 
       }
     },
     collect(id) {
+      if (isAllFound()) {
+        this.returnCritters();
+        return;
+      }
       for (const sp of spreads) for (const l of sp.layers) if (l.def?.critter === id) l.gone = true;
     },
+    returnCritters() {
+      for (const sp of spreads) {
+        for (const l of sp.layers) {
+          if (l.def?.critter) {
+            l.gone = false;
+            l.leaving = 0;
+            l.enter = 0;
+            l.hop = 0.8;
+          }
+        }
+      }
+    },
     reset() {
-      for (const sp of spreads) for (const l of sp.layers) if (l.def?.critter) { l.gone = false; l.leaving = 0; }
+      for (const sp of spreads) {
+        for (const l of sp.layers) {
+          if (l.def?.critter) {
+            l.gone = false;
+            l.leaving = 0;
+            l.enter = 1;
+            l.hop = 0;
+            l.root.visible = true;
+          }
+        }
+      }
     },
   };
 }

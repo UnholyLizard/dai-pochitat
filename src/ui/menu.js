@@ -61,6 +61,8 @@ export function initMenu() {
 
   // Picking a destination closes the menu; the toggles (theme, sound, language) keep it open.
   menu.addEventListener('click', (e) => {
-    if (e.target.closest('[data-menu-close]')) menu.hidePopover?.();
+    if (e.target.closest('[data-menu-close]') || e.target.closest('a[href^="#"]') || e.target.closest('[data-open="catalog"]')) {
+      menu.hidePopover?.();
+    }
   });
 }

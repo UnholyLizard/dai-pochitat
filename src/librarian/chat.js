@@ -117,7 +117,6 @@ function dressHead() {
   $('[data-chat-face]').src = live ? `${import.meta.env.BASE_URL}favicon.svg` : artUrl(`${who.id}-avatar`);
   $('[data-chat-name]').textContent = live ? t('natasha.name') : L(who.name);
   $('[data-chat-role]').textContent = live ? t('natasha.role') : L(who.role);
-  $('[data-chat-presence]').textContent = live ? t('natasha.presence') : t('librarian.status');
   input.placeholder = t(live ? 'natasha.placeholder' : 'librarian.placeholder');
   panel.dataset.mode = mode;
 }
@@ -185,6 +184,86 @@ export function initLibrarian({ actions }) {
   for (const b of $$('[data-close="librarian"]')) b.addEventListener('click', () => { close(); fab.focus(); });
   panel.addEventListener('keydown', (e) => { if (e.key === 'Escape') { close(); fab.focus(); } });
   panel.addEventListener('toggle', (e) => { if (e.newState === 'closed') fab.classList.remove('is-open'); });
+
+  // Prevent scrolling inside the chat window from scrolling the main website
+  const canElementScroll = (el, deltaY) => {
+    if (!el || el === panel) return false;
+    if (el.scrollHeight <= el.clientHeight) return false;
+    const { overflowY } = window.getComputedStyle(el);
+    if (overflowY !== 'auto' && overflowY !== 'scroll') return false;
+    if (deltaY < 0) return el.scrollTop > 1;
+    if (deltaY > 0) return el.scrollTop + el.clientHeight < el.scrollHeight - 1;
+    return false;
+  };
+
+  const findScrollable = (target, deltaY) => {
+    let el = target;
+    while (el && el !== panel) {
+      if (canElementScroll(el, deltaY)) return el;
+      if (el.scrollHeight > el.clientHeight) {
+        const { overflowY } = window.getComputedStyle(el);
+        if (overflowY === 'auto' || overflowY === 'scroll') return null;
+      }
+      el = el.parentElement;
+    }
+    return null;
+  };
+
+  panel.addEventListener('wheel', (e) => {
+    if (!findScrollable(e.target, e.deltaY)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  let touchStartY = 0;
+  let overscrollOffset = 0;
+  let isDamping = false;
+
+  panel.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      touchStartY = e.touches[0].clientY;
+      overscrollOffset = 0;
+      isDamping = false;
+      log.style.transition = 'none';
+      natashaLog.style.transition = 'none';
+    }
+  }, { passive: true });
+
+  panel.addEventListener('touchmove', (e) => {
+    if (e.touches.length !== 1) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    const currentY = e.touches[0].clientY;
+    const deltaY = touchStartY - currentY;
+    touchStartY = currentY;
+    if (Math.abs(deltaY) < 1) return;
+    const scrollable = findScrollable(e.target, deltaY);
+    if (!scrollable) {
+      if (e.cancelable) e.preventDefault();
+      const activeLog = mode === 'natasha' ? natashaLog : log;
+      if (activeLog && e.target.closest?.('.chat__log')) {
+        overscrollOffset -= deltaY * 0.35;
+        const clamped = Math.sign(overscrollOffset) * Math.min(22, Math.sqrt(Math.abs(overscrollOffset)) * 3.2);
+        activeLog.style.transform = `translateY(${clamped.toFixed(1)}px)`;
+        isDamping = true;
+      }
+    } else if (isDamping) {
+      const activeLog = mode === 'natasha' ? natashaLog : log;
+      activeLog.style.transform = '';
+      isDamping = false;
+    }
+  }, { passive: false });
+
+  const releaseDamping = () => {
+    if (isDamping) {
+      const activeLog = mode === 'natasha' ? natashaLog : log;
+      activeLog.style.transition = 'transform 0.35s cubic-bezier(0.18, 0.9, 0.32, 1.2)';
+      activeLog.style.transform = '';
+      isDamping = false;
+      overscrollOffset = 0;
+    }
+  };
+  panel.addEventListener('touchend', releaseDamping, { passive: true });
+  panel.addEventListener('touchcancel', releaseDamping, { passive: true });
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();

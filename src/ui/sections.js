@@ -167,9 +167,13 @@ export function initSections() {
   bus.on('lang', () => { drawEvents(); drawFind(); });
 }
 
-/** Hide keyboard "peek" buttons and the badger once their critter is found. */
+/** Hide keyboard "peek" buttons and the badger once their critter is found, or show all when all are found. */
 export function syncCritterButtons() {
-  for (const b of $$('[data-peek]')) b.hidden = game.isFound(b.dataset.peek);
+  const all = game.isAllFound();
+  for (const b of $$('[data-peek]')) b.hidden = !all && game.isFound(b.dataset.peek);
   const badger = $('[data-critter="badger"]');
-  if (badger) badger.hidden = game.isFound('badger');
+  if (badger) {
+    badger.hidden = !all && game.isFound('badger');
+    if (!game.isFound('badger')) badger.style.translate = '';
+  }
 }

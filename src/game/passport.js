@@ -1,14 +1,17 @@
-import { bus, $, $$, html, render, artUrl } from '../lib/core.js';
+import { bus, $, $$, html, render, raw, artUrl } from '../lib/core.js';
 import { t, plural, L } from '../i18n/index.js';
 import { game, rankOf } from './state.js';
 import { STAMPS, CRITTERS, RANKS } from '../content/game.js';
 import { bookById } from '../content/books.js';
 import { LIBRARY } from '../content/library.js';
 import { sfx } from './sfx.js';
+import { toast, imgIcon, coinIcon } from './feedback.js';
 
 const dialog = $('#passport');
 const body = $('[data-passport]');
 let seen = new Set(Object.keys(game.state.stamps));
+let activeCritterId = null;
+let confirmingReset = false;
 
 // Each stamp keeps the same jaunty angle on every render.
 const tilt = (id) => ((id.charCodeAt(0) * 37 + id.length * 11) % 30) - 15;
@@ -22,6 +25,7 @@ function view() {
   const avatar = CRITTERS.find((c) => s.found[c.id]);
   const fresh = new Set(Object.keys(s.stamps).filter((id) => !seen.has(id)));
   seen = new Set(Object.keys(s.stamps));
+  const activeCritter = (activeCritterId && s.found[activeCritterId]) ? CRITTERS.find((c) => c.id === activeCritterId) : null;
 
   return html`
     <header class="pp-head">
@@ -66,12 +70,36 @@ function view() {
     <section class="pp-section">
       <h3>${t('passport.critters')}</h3>
       <ul class="pp-critters">
-        ${CRITTERS.map((c) => html`
-          <li class="pp-critter ${s.found[c.id] ? 'is-found' : ''}">
-            <img src="${artUrl(c.art)}" alt="" width="72" height="72" loading="lazy">
-            <span>${s.found[c.id] ? t(`critter.${c.id}.name`) : '?'}</span>
-          </li>`)}
+        ${CRITTERS.map((c) => {
+          const found = !!s.found[c.id];
+          return found
+            ? html`
+              <li class="pp-critter is-found">
+                <button type="button" class="pp-critter__btn ${activeCritterId === c.id ? 'is-active' : ''}" data-pp-critter="${c.id}" aria-label="${t(`critter.${c.id}.name`)}">
+                  <img src="${artUrl(c.art)}" alt="" width="72" height="72" loading="lazy">
+                  <span class="pp-critter__name">${t(`critter.${c.id}.name`)}</span>
+                </button>
+              </li>`
+            : html`
+              <li class="pp-critter pp-critter--locked" aria-label="${t('passport.critters')}">
+                <div class="pp-critter__placeholder" aria-hidden="true">
+                  <span class="pp-critter__mark">?</span>
+                </div>
+                <span class="pp-critter__name pp-critter__name--locked">?</span>
+              </li>`;
+        })}
       </ul>
+      ${activeCritter ? html`
+        <div class="pp-critter-card" role="region" aria-live="polite">
+          <img src="${artUrl(activeCritter.art)}" alt="" class="pp-critter-card__img" width="56" height="56">
+          <div class="pp-critter-card__text">
+            <h4>${t(`critter.${activeCritter.id}.name`)}</h4>
+            <p>${t(`critter.${activeCritter.id}.fact`)}</p>
+          </div>
+          <button type="button" class="pp-critter-card__close" data-close-critter aria-label="${t('ui.close')}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
+          </button>
+        </div>` : ''}
     </section>
 
     <section class="pp-section">
@@ -84,10 +112,18 @@ function view() {
         : html`<p class="pp-empty">${t('passport.wishEmpty')}</p>`}
     </section>
 
-    <footer class="pp-foot">
-      <span>${t('passport.local')}</span>
-      <button type="button" data-pp-reset>${t('passport.reset')}</button>
-    </footer>`;
+    <div class="pp-foot">
+      <span class="pp-foot-info">${t('passport.local')}</span>
+      ${confirmingReset ? html`
+        <div class="pp-reset-confirm" role="alert">
+          <p class="pp-reset-confirm__msg">${t('passport.resetConfirm')}</p>
+          <div class="pp-reset-confirm__actions">
+            <button type="button" class="btn btn--small pp-btn--reset" data-pp-confirm-reset>${t('passport.resetYes')}</button>
+            <button type="button" class="btn btn--small pp-btn--cancel" data-pp-cancel-reset>${t('passport.resetCancel')}</button>
+          </div>
+        </div>` : html`
+        <button type="button" class="pp-reset-btn" data-pp-reset>${t('passport.reset')}</button>`}
+    </div>`;
 }
 
 function draw() {
@@ -119,6 +155,11 @@ export function initPassport() {
     });
   }
 
+  dialog.addEventListener('close', () => {
+    confirmingReset = false;
+    activeCritterId = null;
+  });
+
   let timer;
   body.addEventListener('input', (e) => {
     if (!e.target.matches('[data-pp-name]')) return;
@@ -128,7 +169,56 @@ export function initPassport() {
   body.addEventListener('click', (e) => {
     const un = e.target.closest('[data-unwish]');
     if (un) game.toggleWish(un.dataset.unwish);
-    if (e.target.closest('[data-pp-reset]') && confirm(t('passport.resetConfirm'))) game.reset();
+
+    const critterBtn = e.target.closest('[data-pp-critter]');
+    if (critterBtn) {
+      const id = critterBtn.dataset.ppCritter;
+      if (!game.isFound(id)) return;
+      const c = CRITTERS.find((x) => x.id === id);
+      activeCritterId = activeCritterId === id ? null : id;
+      draw();
+      sfx.pop();
+      if (activeCritterId && c) {
+        toast(raw(`${t('toast.found', { name: t(`critter.${id}.name`) })}<br><small>${t(`critter.${id}.fact`)}</small>`), {
+          icon: imgIcon(artUrl(c.art)),
+          ms: 5200,
+        });
+      }
+      return;
+    }
+
+    if (e.target.closest('[data-close-critter]')) {
+      activeCritterId = null;
+      draw();
+      return;
+    }
+
+    if (e.target.closest('[data-pp-reset]')) {
+      confirmingReset = true;
+      draw();
+      const confirmBox = $('.pp-reset-confirm', body);
+      confirmBox?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      $('[data-pp-confirm-reset]', body)?.focus();
+      return;
+    }
+
+    if (e.target.closest('[data-pp-cancel-reset]')) {
+      confirmingReset = false;
+      draw();
+      return;
+    }
+
+    if (e.target.closest('[data-pp-confirm-reset]')) {
+      confirmingReset = false;
+      activeCritterId = null;
+      seen.clear();
+      dialog.close();
+      window.scrollTo(0, 0);
+      game.reset();
+      sfx.pop();
+      toast(raw(t('passport.resetDone')), { icon: coinIcon });
+      return;
+    }
   });
 
   bus.on('game', () => dialog.open && draw());

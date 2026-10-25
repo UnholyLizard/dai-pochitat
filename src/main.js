@@ -5,11 +5,12 @@ import '@fontsource-variable/nunito/wght.css';
 import '@fontsource/caveat/700.css';
 import './styles/main.css';
 import './styles/catalog.css';
-import { bus, reducedMotion, $, $$, artUrl, viewport } from './lib/core.js';
+import { bus, reducedMotion, $, $$, raw, artUrl, viewport } from './lib/core.js';
 import { initI18n, t, L, setLang } from './i18n/index.js';
 import { game } from './game/state.js';
+import { CRITTERS } from './content/game.js';
 import { initSound, sfx } from './game/sfx.js';
-import { initFeedback, toast } from './game/feedback.js';
+import { initFeedback, toast, imgIcon } from './game/feedback.js';
 import { initPassport, openPassport } from './game/passport.js';
 import { initTheme, setNight, isNight, initScroll, getTarget, goTo, bookArea } from './ui/chrome.js';
 import { initOracle, initSections, syncCritterButtons } from './ui/sections.js';
@@ -39,20 +40,38 @@ const center = (el) => { const r = el.getBoundingClientRect(); return { x: r.lef
 
 /* ── Book folk (collectibles) ─────────────────────────────────────────── */
 function collect(id, origin) {
-  if (!game.collect(id, origin)) return;
+  if (!game.collect(id, origin)) {
+    if (game.isAllFound()) {
+      sfx.pop();
+      const c = CRITTERS.find((x) => x.id === id);
+      if (c) {
+        toast(raw(`${t('toast.found', { name: t(`critter.${id}.name`) })}<br><small>${t(`critter.${id}.fact`)}</small>`), {
+          icon: imgIcon(artUrl(c.art)),
+          ms: 5200,
+        });
+      }
+    }
+    return;
+  }
   stage?.collect(id);
   sfx.pop();
 }
 syncCritterButtons();
 bus.on('game', syncCritterButtons);
 bus.on('reset', () => { stage?.reset(); syncCritterButtons(); });
+bus.on('allFound', () => { stage?.returnCritters(); syncCritterButtons(); });
 
 for (const b of $$('[data-peek]')) b.addEventListener('click', () => collect(b.dataset.peek, center(b)));
 $('[data-critter="badger"]')?.addEventListener('click', (e) => {
   const b = e.currentTarget;
-  collect('badger', center(b));
-  b.animate([{ translate: '0 28%' }, { translate: '0 -20%' }, { translate: '0 110%' }], { duration: 900, easing: 'ease-in-out' })
-    .finished.then(syncCritterButtons);
+  if (!game.isAllFound()) {
+    collect('badger', center(b));
+    b.animate([{ translate: '0 28%' }, { translate: '0 -20%' }, { translate: '0 110%' }], { duration: 900, easing: 'ease-in-out' })
+      .finished.then(syncCritterButtons);
+  } else {
+    b.animate([{ translate: '0 0' }, { translate: '0 -20%' }, { translate: '0 0' }], { duration: 400, easing: 'ease-out' });
+    collect('badger', center(b));
+  }
 });
 
 /* ── What the librarian can do on the page ────────────────────────────────────── */
@@ -156,9 +175,15 @@ function placeByBook(r) {
     // Under the closed cover, on its left: the scroll hint. Beside it: the hand-written note.
     if (window.scrollY <= 2) {
       hint.style.top = `${Math.round(r.bottom + 26)}px`;
-      const leftPos = Math.max(16, Math.round(vw >= 860 ? r.left : r.left + 8));
-      hint.style.left = `${leftPos}px`;
-      hint.style.right = 'auto';
+      if (vw >= 860) {
+        hint.style.left = `${Math.max(16, Math.round(r.left))}px`;
+        hint.style.right = 'auto';
+        hint.style.translate = 'none';
+      } else {
+        hint.style.left = '50%';
+        hint.style.right = 'auto';
+        hint.style.translate = '-50% 0';
+      }
     }
     if (vw >= 860) {
       doodle.style.left = `${Math.round(r.left + 30)}px`;
@@ -191,7 +216,7 @@ function placeByBook(r) {
 function setZoom(on) {
   if (!stage || on === zoomed) return;
   zoomed = on;
-  if (on) { closeLibrarian(); $('#toc')?.hidePopover?.(); }
+  if (on) { closeLibrarian(); $('#menu')?.hidePopover?.(); $('#toc')?.hidePopover?.(); }
   stage.setZoom(on);
   document.documentElement.classList.toggle('is-zoomed', on);
   stageEl.classList.toggle('is-zoomed', on);
@@ -238,16 +263,23 @@ function webglOK() {
 
 function fail() {
   const img = $('.stage__fallback img');
-  img.src = artUrl('house');
+  if (img) img.src = artUrl('house');
+  stageEl.classList.remove('is-ready');
   stageEl.classList.add('is-failed');
 }
 
 async function boot3d() {
   if (!webglOK()) { fail(); return; }
+  const canvas = $('#stage-canvas');
+  canvas?.addEventListener('webglcontextlost', (e) => {
+    e.preventDefault();
+    console.warn('[stage] WebGL context lost, switching to 2D fallback');
+    fail();
+  });
   try {
     const { createStage } = await import('./scene/stage.js');
     stage = await createStage({
-      canvas: $('#stage-canvas'),
+      canvas,
       getTarget,
       getArea: bookArea,
       getZoomArea: zoomArea,
@@ -256,6 +288,7 @@ async function boot3d() {
       reducedMotion,
       night: isNight(),
       isFound: game.isFound,
+      isAllFound: game.isAllFound,
       candidate: casting.selected,
       onAction: sceneAction,
     });

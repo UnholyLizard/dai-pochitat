@@ -100,12 +100,19 @@ export function initScroll() {
   addEventListener('scroll', update, { passive: true });
   addEventListener('resize', measure);
   new ResizeObserver(measure).observe(document.body);
+  bus.on('reset', () => {
+    target = 0;
+    current = 0;
+    scrollTo({ top: 0, behavior: 'instant' });
+    bus.emit('spread', 0);
+  });
 
   // In-page links land where their spread is open, not at the section's top.
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href^="#"]');
     if (!a || a.hash.length < 2 || !sections.some((s) => s.el.id === a.hash.slice(1))) return;
     e.preventDefault();
+    $('#menu')?.hidePopover?.();
     $('#toc')?.hidePopover?.();
     goTo(a.hash.slice(1));
     history.replaceState(null, '', a.hash);

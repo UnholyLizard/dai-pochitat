@@ -218,6 +218,10 @@ export default {
   'passport.secret': 'Secret word for the librarian',
   'passport.secretHint': 'Say it at the library for a surprise!',
   'passport.reset': 'Start over',
+  'passport.resetConfirm': 'Reset all coins, stamps, and found Book folk?',
+  'passport.resetYes': 'Yes, start over',
+  'passport.resetCancel': 'Cancel',
+  'passport.resetDone': 'Library card has been reset!',
   'passport.local': 'Your card lives only in this browser.',
 
   'ui.catalog': 'Book catalog',
