@@ -41,6 +41,10 @@ export default {
   'find.email': 'Написать письмо',
   'find.maps': 'Открыть на карте',
 
+  'end.studioEyebrow': 'Сайт спроектирован и создан в студии',
+  'end.studioRole': 'Design, Web & Software Engineering Studio',
+  'menu.studioLabel': 'Создано в студии',
+
   'toast.found': 'Нашёлся житель: <b>{name}</b>',
   'toast.stamp': 'Новый штамп: <b>{name}</b>',
   'toast.rank': 'Новое звание: <b>{rank}</b>!',

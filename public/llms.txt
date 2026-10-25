@@ -1,0 +1,17 @@
+# Дай почитать! (Dai pochitat!) — детская библиотека в Баре
+
+> Маленькая некоммерческая библиотека для детей и подростков в жёлтом доме в Баре, Черногория. Книги на русском и английском, громкие чтения, клубы и праздники.
+
+- Web: https://dai-pochitat-mne.craft-tower.com/
+- Location: Školа-vrtić «Kompas», Bar, Montenegro
+- Address: Školа-vrtić «Kompas», Bar 85000, Montenegro
+- Catalog: Over 1,300 curated children's and young adult books
+
+## Engineering & Design
+
+This interactive 3D WebGL pop-up book website was designed and built by:
+- Studio: CRAFT-TOWER DOO (Design, Web & Software Engineering Studio)
+- Website: https://craft-tower.com/
+- Location: Bar, Montenegro (Šušanj b.b., 85000 Bar)
+- Contact: info@craft-tower.com
+- Services: Custom web development, Three.js 3D web applications, UI/UX design, AI integration, business automation

@@ -26,7 +26,10 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://dai-pochitat-mne.craft-tower.com/og.jpg">
-
+  <meta name="author" content="CRAFT TOWER DOO">
+  <meta name="creator" content="CRAFT-TOWER DOO Design, Web &amp; Software Engineering Studio (craft-tower.com)">
+  <meta name="publisher" content="CRAFT TOWER DOO">
+  <meta property="og:see_also" content="https://craft-tower.com/">
 
   <script>
     // Language + theme before first paint, so nothing flashes.
@@ -45,15 +48,83 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Library",
-    "name": "Дай почитать!",
-    "alternateName": "Dai pochitat! — children's library",
-    "url": "https://dai-pochitat-mne.craft-tower.com/",
-    "image": "https://dai-pochitat-mne.craft-tower.com/og.jpg",
-    "logo": "https://dai-pochitat-mne.craft-tower.com/icons/icon-512.png",
-    "description": "Некоммерческая библиотека для детей и подростков",
-    "address": { "@type": "PostalAddress", "addressLocality": "Bar", "addressCountry": "ME", "streetAddress": "Školа-vrtić «Kompas»" },
-    "isAccessibleForFree": true
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://dai-pochitat-mne.craft-tower.com/#website",
+        "url": "https://dai-pochitat-mne.craft-tower.com/",
+        "name": "Дай почитать!",
+        "alternateName": "Dai pochitat! — children's library in Bar",
+        "inLanguage": ["ru", "en"],
+        "creator": {
+          "@id": "https://craft-tower.com/#organization"
+        },
+        "publisher": {
+          "@id": "https://craft-tower.com/#organization"
+        }
+      },
+      {
+        "@type": "Library",
+        "@id": "https://dai-pochitat-mne.craft-tower.com/#library",
+        "name": "Дай почитать!",
+        "alternateName": "Dai pochitat! — children's library",
+        "url": "https://dai-pochitat-mne.craft-tower.com/",
+        "image": "https://dai-pochitat-mne.craft-tower.com/og.jpg",
+        "logo": "https://dai-pochitat-mne.craft-tower.com/icons/icon-512.png",
+        "description": "Некоммерческая библиотека для детей и подростков в Баре, Черногория",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Bar",
+          "addressCountry": "ME",
+          "streetAddress": "Školа-vrtić «Kompas»"
+        },
+        "isAccessibleForFree": true,
+        "provider": {
+          "@id": "https://craft-tower.com/#organization"
+        }
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": "https://craft-tower.com/#organization",
+        "name": "CRAFT TOWER DOO",
+        "alternateName": "CRAFT-TOWER DOO Design, Web & Software Engineering Studio",
+        "description": "CRAFT TOWER DOO is a software and IT company in Montenegro. We build websites, apps, automation, custom business systems, and secure infrastructure for individuals and companies.",
+        "url": "https://craft-tower.com/",
+        "logo": "https://craft-tower.com/favicon.svg",
+        "image": "https://craft-tower.com/og-image.png",
+        "email": "info@craft-tower.com",
+        "telephone": "+38263251591",
+        "founder": {
+          "@type": "Person",
+          "name": "Andrei Dolgopolov"
+        },
+        "foundingDate": "2021-08-13",
+        "address": {
+          "@type": "PostalAddress",
+          "postalCode": "85000",
+          "streetAddress": "SUSANJ B.B.",
+          "addressLocality": "Bar",
+          "addressCountry": "ME"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 42.09,
+          "longitude": 19.10
+        },
+        "sameAs": [
+          "https://www.instagram.com/craft.tower/",
+          "https://www.facebook.com/people/CRAFT-TOWER/61595261045228/"
+        ],
+        "knowsAbout": [
+          "Web development",
+          "Custom software",
+          "AI integration",
+          "Business automation",
+          "IT infrastructure",
+          "Three.js 3D web applications"
+        ]
+      }
+    ]
   }
   </script>
   <script type="module" src="/src/main.js"></script>
@@ -154,6 +225,16 @@
     <div class="lang" role="group" aria-label="Язык / Language">
       <button type="button" data-lang="ru" lang="ru" aria-pressed="true">RU</button>
       <button type="button" data-lang="en" lang="en" aria-pressed="false">EN</button>
+    </div>
+
+    <div class="menu__studio">
+      <a class="menu__studio-link" href="https://craft-tower.com/" target="_blank" rel="noopener noreferrer" aria-label="CRAFT-TOWER DOO — craft-tower.com">
+        <svg class="menu__studio-logo" viewBox="0 0 32 32" aria-hidden="true"><use href="#logo"/></svg>
+        <span class="menu__studio-copy">
+          <span class="menu__studio-label" data-i18n="menu.studioLabel">Создано в студии</span>
+          <strong class="menu__studio-name">CRAFT-TOWER DOO</strong>
+        </span>
+      </a>
     </div>
   </div>
 
@@ -327,6 +408,25 @@
       <p class="the-end__big" data-i18n="end.title">Конец первой книги.</p>
       <p class="the-end__sub" data-i18n="end.sub">Продолжение — в библиотеке.</p>
       <p class="the-end__meta"><span data-i18n="end.meta">© 2026 «Дай почитать!» · некоммерческая библиотека · Бар, Черногория</span></p>
+
+      <div class="colophon">
+        <a class="studio-card" href="https://craft-tower.com/" target="_blank" rel="noopener noreferrer" aria-label="CRAFT-TOWER DOO Design, Web &amp; Software Engineering Studio — craft-tower.com">
+          <span class="studio-card__beacon" aria-hidden="true">
+            <svg class="studio-card__logo" viewBox="0 0 32 32">
+              <use href="#logo"/>
+            </svg>
+          </span>
+          <span class="studio-card__content">
+            <span class="studio-card__eyebrow" data-i18n="end.studioEyebrow">Сайт спроектирован и создан в студии</span>
+            <span class="studio-card__heading">
+              <strong class="studio-card__name">CRAFT-TOWER DOO</strong>
+              <span class="studio-card__pill">craft-tower.com <svg class="studio-card__arrow" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 8L8 2M8 2H3.5M8 2V6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </span>
+            <span class="studio-card__role" data-i18n="end.studioRole">Design, Web &amp; Software Engineering Studio</span>
+          </span>
+        </a>
+      </div>
+
       <button class="badger" type="button" data-critter="badger" data-i18n-attr="aria-label:critter.badger.name" aria-label="Барсук-чаёвник">
         <img src="/art/critter-badger.webp" alt="" width="372" height="384" loading="lazy">
       </button>
@@ -452,6 +552,22 @@
   <div class="toasts" data-toasts role="status" aria-live="polite"></div>
 
   <svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="logo" viewBox="0 0 32 32">
+      <!-- Lighthouse tower: lantern + sweeping beams over a stack of floors on a plinth -->
+      <path class="logo-beam logo-beam--l" d="M13.7 7.3 3 4.7v5.2z" fill="#F59E0B" opacity="0.8" />
+      <path class="logo-beam logo-beam--r" d="M18.3 7.3 29 4.7v5.2z" fill="#F59E0B" opacity="0.8" />
+      <path d="M13.3 5.6 16 2.8l2.7 2.8z" fill="currentColor" />
+      <rect class="logo-dot" x="14.1" y="6" width="3.8" height="2.8" rx=".5" fill="#F59E0B" />
+      <rect x="11.8" y="9.3" width="8.4" height="1.4" rx=".4" fill="currentColor" />
+      <rect x="12.7" y="11.6" width="6.6" height="3.1" rx=".4" fill="currentColor" />
+      <rect x="12.4" y="15.5" width="7.2" height="3.1" rx=".4" fill="currentColor" />
+      <rect x="12.1" y="19.4" width="7.8" height="3.1" rx=".4" fill="currentColor" />
+      <rect x="11.8" y="23.3" width="8.4" height="3.1" rx=".4" fill="currentColor" />
+      <rect x="8.5" y="27.3" width="15" height="2" rx=".5" fill="currentColor" />
+    </symbol>
+    <symbol id="i-craft-tower" viewBox="0 0 32 32">
+      <use href="#logo"/>
+    </symbol>
     <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
     <symbol id="i-admin" viewBox="0 0 24 24"><path d="M12 3 5 6v5.5c0 4.2 2.8 7.6 7 9.5 4.2-1.9 7-5.3 7-9.5V6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 12 2.2 2.2L15.5 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-logo" viewBox="0 0 48 48">

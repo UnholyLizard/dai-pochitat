@@ -83,6 +83,9 @@ export default {
   'end.title': 'The end of book one.',
   'end.sub': 'To be continued — at the library.',
   'end.meta': '© 2026 “Dai pochitat!” · a non-profit library · Bar, Montenegro',
+  'end.studioEyebrow': 'Designed and built by',
+  'end.studioRole': 'Design, Web & Software Engineering Studio',
+  'menu.studioLabel': 'Crafted by studio',
 
   'librarian.teaser': 'Hi! Want help finding a book?',
   'librarian.open': 'Ask the librarian',
