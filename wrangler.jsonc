@@ -64,6 +64,14 @@
     {
       "pattern": "dai-pochitat-mne.craft-tower.com",
       "custom_domain": true
+    },
+    {
+      "pattern": "dai-pochitat.app",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.dai-pochitat.app",
+      "custom_domain": true
     }
   ],
   "workers_dev": true
