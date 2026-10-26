@@ -10,9 +10,17 @@
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
     "run_worker_first": [
-      "/api/*"
+      "/api/*",
+      "/covers/*",
+      "/covers-jpg/*"
     ]
   },
+  "r2_buckets": [
+    {
+      "binding": "COVERS_BUCKET",
+      "bucket_name": "dai-pochitat-covers"
+    }
+  ],
   // No database_id: Wrangler provisions the database on the first deploy.
   "d1_databases": [
     {

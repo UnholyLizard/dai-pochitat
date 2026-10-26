@@ -67,6 +67,11 @@ export default defineConfig({
             options: { cacheName: 'dp-art', expiration: { maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 60 } },
           },
           {
+            urlPattern: ({ url, sameOrigin }) => sameOrigin && /\/covers(?:-jpg)?\/[^/]+$/.test(url.pathname),
+            handler: 'CacheFirst',
+            options: { cacheName: 'dp-covers', expiration: { maxEntries: 300, maxAgeSeconds: 60 * 60 * 24 * 60 } },
+          },
+          {
             urlPattern: ({ url, sameOrigin }) => sameOrigin && /\.(?:woff2|png|jpg)$/.test(url.pathname),
             handler: 'CacheFirst',
             options: { cacheName: 'dp-static', expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 365 } },

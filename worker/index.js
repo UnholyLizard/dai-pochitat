@@ -9,6 +9,7 @@ import { json, log } from './util.js';
 import { accountRoutes } from './account.js';
 import { adminRoutes } from './admin.js';
 import { webhook } from './telegram.js';
+import { serveCover } from './covers.js';
 
 const CANDIDATES = new Set(['ginger', 'cinder', 'patches', 'mila', 'nika', 'tim', 'marko', 'bookmark']);
 const VOTER = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -153,8 +154,13 @@ async function listCollections(env) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
+
+    // Book covers served from R2
+    if (url.pathname.startsWith('/covers/') || url.pathname.startsWith('/covers-jpg/')) {
+      return await serveCover(request, env, ctx);
+    }
 
     // Accounts, Natasha's chat, admin and the Telegram webhook
     if (url.pathname === '/api/tg/webhook' && request.method === 'POST') return webhook(request, env);

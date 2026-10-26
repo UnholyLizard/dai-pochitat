@@ -3,6 +3,7 @@ dist/
 .env
 .env.*
 .dev.vars
+public/covers/
 public/covers-jpg/
 art/raw/
 art/*.png
