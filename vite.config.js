@@ -13,7 +13,7 @@ export default defineConfig({
     assetsInlineLimit: 0,
     chunkSizeWarningLimit: 900,
     // The admin console is a second page: dist/admin/index.html → /admin/
-    rollupOptions: { input: { main: 'index.html', admin: 'admin/index.html' } },
+    rollupOptions: { input: { main: 'index.html', admin: 'admin/index.html', catalog: 'catalog/index.html' } },
   },
   plugins: [
     VitePWA({
@@ -57,7 +57,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg}', 'assets/*-{latin,cyrillic}-*.woff2', 'art/{house,ginger-avatar}.webp'],
         globIgnores: ['**/*-ext-*.woff2'],
         navigateFallback: 'index.html',
-        navigateFallbackDenylist: [/^\/(?:robots\.txt|sitemap\.xml)$/, /^\/api\//, /^\/admin(?:\/|$)/],
+        navigateFallbackDenylist: [/^\/(?:robots\.txt|sitemap\.xml)$/, /^\/api\//, /^\/admin(?:\/|$)/, /^\/catalog(?:\/|$)/],
         cleanupOutdatedCaches: true,
         maximumFileSizeToCacheInBytes: 1_500_000,
         runtimeCaching: [

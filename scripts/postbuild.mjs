@@ -6,11 +6,14 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const dist = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'dist');
-const html = await readFile(resolve(dist, 'index.html'), 'utf8');
+// Every built page contributes its inline scripts to the one site-wide CSP.
+const html = (await Promise.all(['index.html', 'catalog/index.html'].map((f) => readFile(resolve(dist, f), 'utf8')))).join('\n');
 
 // Executable inline scripts only (JSON-LD data blocks are not subject to script-src).
 const hashes = [...html.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*application\/ld\+json)[^>]*>([\s\S]*?)<\/script>/g)]
-  .map(([, body]) => `'sha256-${createHash('sha256').update(body).digest('base64')}'`);
+  // Browsers normalise CRLF to LF in script text before hashing it, so hash the same thing.
+  .map(([, body]) => `'sha256-${createHash('sha256').update(body.replace(/\r\n?/g, '\n')).digest('base64')}'`)
+  .filter((h, i, all) => all.indexOf(h) === i);
 
 const csp = [
   "default-src 'self'",

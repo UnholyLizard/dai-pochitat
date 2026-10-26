@@ -283,7 +283,8 @@ export function buildCatalogDataset() {
           author_me: '',
           raw_author: author,
           illustrator: row[3]?.text || '',
-          publisher: row[5]?.text || row[4]?.text || '',
+          // row[4] is the annotation in these sheets: never fall back to it.
+          publisher: row[5]?.text || '',
           year: null,
           isbn: null,
           age_min: 4,

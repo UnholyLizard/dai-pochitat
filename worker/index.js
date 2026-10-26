@@ -10,6 +10,7 @@ import { accountRoutes } from './account.js';
 import { adminRoutes } from './admin.js';
 import { webhook } from './telegram.js';
 import { serveCover } from './covers.js';
+import { HIDDEN_STATUSES } from './books-admin.js';
 
 const CANDIDATES = new Set(['ginger', 'cinder', 'patches', 'mila', 'nika', 'tim', 'marko', 'bookmark']);
 const VOTER = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -109,6 +110,9 @@ async function listBooks(url, env) {
     binds.push(age, age);
   }
 
+  // Lost and archived books are managed from the admin console only.
+  where.push(`b.status NOT IN (${HIDDEN_STATUSES.map((s) => `'${s}'`).join(', ')})`);
+
   const lang = url.searchParams.get('lang');
   if (lang) {
     where.push('b.language = ?');
@@ -143,8 +147,8 @@ async function listBooks(url, env) {
 }
 
 async function getBook(id, env) {
-  const book = await env.DB.prepare('SELECT * FROM books WHERE id = ? OR code = ?').bind(id, id).first();
-  if (!book) return json({ error: 'not found' }, 404);
+  const book = await env.DB.prepare('SELECT * FROM books WHERE id = ?1 OR code = ?1').bind(id).first();
+  if (!book || HIDDEN_STATUSES.includes(book.status)) return json({ error: 'not found' }, 404);
   return json({ book }, 200, { 'cache-control': 'public, max-age=300, s-maxage=86400' });
 }
 

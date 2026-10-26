@@ -35,6 +35,9 @@
     // Language + theme before first paint, so nothing flashes.
     (() => {
       try {
+        // Old Telegram links opened the catalog modal on the home page; it is a page of its own now.
+        const book = new URLSearchParams(location.search).get('book');
+        if (book) { location.replace('/catalog/?book=' + encodeURIComponent(book)); return; }
         const prefs = JSON.parse(localStorage.getItem('dp:prefs') || '{}');
         const q = new URLSearchParams(location.search).get('lang');
         const lang = ['ru', 'en'].includes(q) ? q : prefs.lang || (/^(ru|uk|be|kk)\b/i.test(navigator.language) ? 'ru' : 'en');
@@ -164,10 +167,10 @@
     </a>
 
     <div class="hud">
-      <button class="hud__btn hud__catalog" type="button" data-open="catalog" data-i18n-attr="aria-label:ui.catalog" aria-label="Каталог книг">
+      <a class="hud__btn hud__catalog" href="/catalog/" data-i18n-attr="aria-label:ui.catalog" aria-label="Каталог книг">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-catalog"/></svg>
         <span class="hud__label" data-i18n="ui.catalogShort">Каталог</span>
-      </button>
+      </a>
       <button class="hud__btn hud__coins" type="button" data-open="passport" aria-describedby="coin-label">
         <svg class="hud__card-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ticket"/></svg>
         <span aria-hidden="true">:</span>
@@ -206,7 +209,7 @@
         <li><a href="#chest"><span data-i18n="toc.chest">Волшебный сундук</span><i></i><b>7</b></a></li>
         <li><a href="#events"><span data-i18n="toc.events">Праздники и встречи</span><i></i><b>9</b></a></li>
         <li><a href="#find"><span data-i18n="toc.find">Как нас найти</span><i></i><b>11</b></a></li>
-        <li><a href="#catalog" data-open="catalog"><span data-i18n="toc.catalog">Каталог всех книг (1300+)</span><i></i><b>✦</b></a></li>
+        <li><a href="/catalog/"><span data-i18n="toc.catalog">Каталог всех книг (1300+)</span><i></i><b>✦</b></a></li>
       </ol>
       <button class="toc__install" type="button" data-install hidden>
         <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-install"/></svg>
@@ -348,10 +351,10 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-key"/></svg>
             <span data-i18n="chest.go">Открыть сундук!</span>
           </button>
-          <button class="btn btn--ghost btn--wide" type="button" data-open="catalog" style="margin-top: 0.65rem;">
+          <a class="btn btn--ghost btn--wide" href="/catalog/" style="margin-top: 0.65rem;">
             <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-catalog"/></svg>
             <span data-i18n="chest.browseAll">Полистать весь каталог (1300+ книг)</span>
-          </button>
+          </a>
         </form>
         <div class="oracle__result" data-oracle-result aria-live="polite"></div>
         <button class="peek" type="button" data-peek="dragon" data-i18n="ui.peek">Кажется, на этой странице кто-то прячется</button>
@@ -478,79 +481,6 @@
       </button>
     </form>
   </section>
-
-  <!-- Full Library Catalog Shelf Browser -->
-  <dialog id="catalog" class="catalog-modal" closedby="any" aria-labelledby="catalog-title">
-    <header class="catalog-head">
-      <div class="catalog-title-group">
-        <h2 class="catalog-title" id="catalog-title"><span class="catalog-title__full" data-i18n="catalog.title">Каталог библиотеки «Дай почитать!»</span><span class="catalog-title__short" data-i18n="catalog.titleShort">Каталог</span></h2>
-        <span class="catalog-badge"><span class="catalog-badge__full" data-i18n="catalog.badge">1 315 книг на полках</span><span class="catalog-badge__short" data-i18n="catalog.badgeShort">1 315 книг</span></span>
-      </div>
-      <button class="catalog-close" type="button" data-close="catalog" data-i18n-attr="aria-label:catalog.close" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
-      </button>
-    </header>
-
-    <div class="catalog-controls">
-      <div class="catalog-search-row">
-        <div class="catalog-search-wrap">
-          <svg class="catalog-search-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-catalog"/></svg>
-          <input class="catalog-search-input" type="search" autocomplete="off" placeholder="Поиск по названию, автору или теме… (/ для поиска)" data-catalog-search data-i18n-attr="placeholder:catalog.search">
-          <button class="catalog-search-clear" type="button" data-catalog-clear aria-label="Очистить"><svg viewBox="0 0 24 24" style="width: 16px; height: 16px;"><use href="#i-close"/></svg></button>
-        </div>
-        <button class="catalog-filters-toggle" type="button" aria-expanded="true" aria-controls="catalog-filters" data-catalog-filters-toggle>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
-          <span data-i18n="catalog.filters">Фильтры</span>
-          <b class="catalog-filters-toggle__count" data-catalog-filters-count hidden></b>
-        </button>
-      </div>
-
-      <div class="catalog-filters" id="catalog-filters" data-catalog-filters>
-        <div class="catalog-pills-row" role="group" aria-label="Возраст">
-          <button class="catalog-pill is-active" type="button" data-age-group="" data-i18n="catalog.allAges">Все возрасты</button>
-          <button class="catalog-pill" type="button" data-age-group="little" data-i18n="age.little">0–6 лет</button>
-          <button class="catalog-pill" type="button" data-age-group="middle" data-i18n="age.middle">7–10 лет</button>
-          <button class="catalog-pill" type="button" data-age-group="big" data-i18n="age.big">11–15 лет</button>
-          <button class="catalog-pill" type="button" data-age-group="adult" data-i18n="age.adult">16+</button>
-        </div>
-        <div class="catalog-pills-row" role="group" aria-label="Язык оригинала" data-i18n-attr="aria-label:catalog.langGroup">
-          <button class="catalog-pill is-active" type="button" data-language="" data-i18n="catalog.langAll">Все языки</button>
-          <button class="catalog-pill" type="button" data-language="ru" data-i18n="catalog.langRu">Русский</button>
-          <button class="catalog-pill" type="button" data-language="en" data-i18n="catalog.langEn">Английский</button>
-          <button class="catalog-pill" type="button" data-language="me" data-i18n="catalog.langMe">Черногорский</button>
-        </div>
-        <div class="catalog-pills-row" role="group" aria-label="Настроение">
-          <button class="catalog-pill is-active" type="button" data-mood="" data-i18n="catalog.allMoods">Все настроения</button>
-          <button class="catalog-pill" type="button" data-mood="funny" data-i18n="mood.funny">смешное</button>
-          <button class="catalog-pill" type="button" data-mood="adventure" data-i18n="mood.adventure">с приключениями</button>
-          <button class="catalog-pill" type="button" data-mood="magic" data-i18n="mood.magic">волшебное</button>
-          <button class="catalog-pill" type="button" data-mood="spooky" data-i18n="mood.spooky">страшноватое</button>
-          <button class="catalog-pill" type="button" data-mood="friends" data-i18n="mood.friends">про дружбу</button>
-          <button class="catalog-pill" type="button" data-mood="animals" data-i18n="mood.animals">про животных</button>
-          <button class="catalog-pill" type="button" data-mood="real" data-i18n="mood.real">про жизнь</button>
-        </div>
-        <div class="catalog-pills-row" role="group" aria-label="Тематические коллекции">
-          <button class="catalog-pill catalog-pill--collection is-active" type="button" data-collection="" data-i18n="catalog.allCollections">Все коллекции</button>
-          <button class="catalog-pill catalog-pill--collection" type="button" data-collection="love_and_warmth" data-i18n="catalog.colLove">Про любовь и семью</button>
-          <button class="catalog-pill catalog-pill--collection" type="button" data-collection="winter_and_new_year" data-i18n="catalog.colWinter">Зимние истории</button>
-          <button class="catalog-pill catalog-pill--collection" type="button" data-collection="important_topics" data-i18n="catalog.colRights">На важные темы</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="catalog-body">
-      <div class="catalog-grid" data-catalog-grid></div>
-      <div class="catalog-loadmore-wrap">
-        <p class="catalog-status" data-catalog-status></p>
-        <button class="btn btn--primary btn--small" type="button" data-catalog-loadmore hidden></button>
-      </div>
-    </div>
-
-    <!-- Book Detail Drawer Inspector -->
-    <div id="book-drawer" class="book-drawer" hidden role="dialog" aria-modal="true">
-      <div class="book-drawer__content"></div>
-    </div>
-  </dialog>
 
   <!-- Reader's card -->
   <dialog id="passport" class="passport" closedby="any" aria-labelledby="passport-title">

@@ -9,6 +9,10 @@ let lang = document.documentElement.lang === 'en' ? 'en' : 'ru';
 
 const attrPairs = (el) => el.dataset.i18nAttr.split(';').map((p) => p.split(':').map((s) => s.trim()));
 
+// Pages other than the home page name their own title / description keys on <html>.
+const titleKey = () => document.documentElement.dataset.titleKey || 'meta.title';
+const descKey = () => document.documentElement.dataset.descKey || 'meta.desc';
+
 export const getLang = () => lang;
 
 export function t(key, vars) {
@@ -38,8 +42,8 @@ function apply() {
   }
   for (const el of $$('[data-i18n-attr]')) for (const [attr, key] of attrPairs(el)) el.setAttribute(attr, t(key));
   for (const b of $$('[data-lang]')) b.setAttribute('aria-pressed', String(b.dataset.lang === lang));
-  document.title = t('meta.title');
-  document.querySelector('meta[name="description"]')?.setAttribute('content', t('meta.desc'));
+  document.title = t(titleKey());
+  document.querySelector('meta[name="description"]')?.setAttribute('content', t(descKey()));
 }
 
 export function setLang(next) {
@@ -58,6 +62,6 @@ export function initI18n() {
     if (missing.length) console.warn('[i18n] en is missing', missing);
   }
   if (lang !== 'ru') apply();
-  else document.title = t('meta.title');
+  else document.title = t(titleKey());
   for (const b of $$('[data-lang]')) b.addEventListener('click', () => setLang(b.dataset.lang));
 }

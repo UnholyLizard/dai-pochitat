@@ -58,8 +58,8 @@ function ftsMatch(q) {
 async function search(env, q, limit, offset) {
   const match = ftsMatch(q);
   const from = match
-    ? "FROM books_fts f JOIN books b ON b.rowid = f.rowid WHERE books_fts MATCH ? AND b.status != 'lost'"
-    : "FROM books b WHERE b.status != 'lost'";
+    ? "FROM books_fts f JOIN books b ON b.rowid = f.rowid WHERE books_fts MATCH ? AND b.status NOT IN ('lost', 'archived')"
+    : "FROM books b WHERE b.status NOT IN ('lost', 'archived')";
   const order = match ? 'ORDER BY f.rank, b.code' : "ORDER BY (b.cover_url IS NULL OR b.cover_url = ''), b.code";
   const binds = match ? [match] : [];
   const [rows, count] = await Promise.all([
@@ -93,11 +93,11 @@ function caption(b, lang, T) {
 }
 
 function photoResult(b, origin, lang, T) {
-  const poster = b.cover_url ? `${origin}${COVER_DIR}/${b.code}.jpg` : `${origin}${FALLBACK_POSTER}`;
+  const poster = b.cover_url ? `${origin}${COVER_DIR}/${b.code}.jpg?v=${b.updated_at}` : `${origin}${FALLBACK_POSTER}`;
   const author = pick(b, 'author', lang);
-  const rows = [[{ text: T.open, url: `${origin}/?book=${encodeURIComponent(b.code)}` }]];
+  const rows = [[{ text: T.open, url: `${origin}/catalog/?book=${encodeURIComponent(b.code)}` }]];
   if (author && author.length <= 40) rows.push([{ text: T.more(author), switch_inline_query_current_chat: author }]);
-  else rows.push([{ text: T.catalog, url: `${origin}/` }]);
+  else rows.push([{ text: T.catalog, url: `${origin}/catalog/` }]);
   return {
     type: 'photo',
     id: b.code,
@@ -116,7 +116,7 @@ function headerResult(books, total, q, origin, lang, T) {
   const top = books.slice(0, 10);
   const items = top.map((b) => {
     const author = pick(b, 'author', lang);
-    return `📖 <a href="${esc(`${origin}/?book=${encodeURIComponent(b.code)}`)}">${esc(pick(b, 'title', lang))}</a>${author ? `\n      ${esc(author)}` : ''}${b.year ? ` (${b.year})` : ''}`;
+    return `📖 <a href="${esc(`${origin}/catalog/?book=${encodeURIComponent(b.code)}`)}">${esc(pick(b, 'title', lang))}</a>${author ? `\n      ${esc(author)}` : ''}${b.year ? ` (${b.year})` : ''}`;
   });
   const rest = total - top.length;
   const text = [`📚 <b>${esc(title)}</b>`, '', ...items.flatMap((i) => [i, '']), rest > 0 ? `<i>${T.andMore(rest)}</i>` : '', `<i>${T.shared}</i>`].join('\n').replace(/\n{3,}/g, '\n\n');
@@ -126,7 +126,7 @@ function headerResult(books, total, q, origin, lang, T) {
   const hint = q && first && first.toLowerCase().includes(q.split(/\s+/)[0].toLowerCase()) && first.length <= 40 ? first : '';
   const keyboard = [];
   if (hint) keyboard.push([{ text: T.more(hint), switch_inline_query_current_chat: hint }]);
-  keyboard.push([{ text: T.catalog, url: `${origin}/` }]);
+  keyboard.push([{ text: T.catalog, url: `${origin}/catalog/` }]);
 
   return {
     type: 'article',

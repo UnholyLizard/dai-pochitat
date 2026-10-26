@@ -1,4 +1,8 @@
 export default {
+  'catalog.pageTitle': 'Catalog — Dai pochitat!',
+  'catalog.pageDesc': 'The catalog of the “Dai pochitat!” children’s library in Bar: over a thousand books in Russian, English and Montenegrin. Search by title, author or topic; filter by age and mood.',
+  'catalog.back': 'Dai pochitat! — back to the home page',
+  'catalog.skip': 'Skip to the books',
   'meta.title': 'Dai pochitat! — a children’s library in Bar',
   'meta.desc': 'A tiny non-profit library for kids and teens in a yellow house in Bar, Montenegro. Books in Russian and English, read-alouds, clubs and parties.',
 

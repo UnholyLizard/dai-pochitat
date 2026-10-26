@@ -1,12 +1,13 @@
-// Full physical library catalog browser: shelf view, live FTS search, faceted filters, and book inspector.
+// Full physical library catalog browser (the /catalog/ page): shelf view, live FTS search, faceted
+// filters and the book inspector. Filters and the open book live in the URL, so every view can be linked.
 import { bus, $, $$, html, render } from '../lib/core.js';
 import { t, L, getLang } from '../i18n/index.js';
 import { game } from '../game/state.js';
 import { sfx } from '../game/sfx.js';
-import { send as askLibrarian, open as openLibrarian } from '../librarian/chat.js';
 import { BOOKS } from '../content/books.js';
 
 let modal = null;
+let onAsk = () => {};
 let drawer = null;
 let searchInput = null;
 let gridEl = null;
@@ -211,7 +212,7 @@ function openBookDrawer(book) {
     </button>
     <div class="book-drawer__left">
       <div class="book-drawer__cover">
-        ${coverUrl ? html`<img src="${coverUrl}" alt="" loading="lazy">` : ''}
+        ${coverUrl ? html`<img src="${coverUrl}" alt="" decoding="async">` : ''}
       </div>
       <div class="book-drawer__actions">
         <button class="btn btn--small btn--wide" type="button" data-wish="${book.id}" aria-pressed="${wanted}">
@@ -256,36 +257,35 @@ function openBookDrawer(book) {
   `);
 
   drawer.removeAttribute('hidden');
+  openBook = book;
+  document.documentElement.classList.add('is-modal-open');
+  syncUrl();
+  $('[data-drawer-close]', drawer)?.focus({ preventScroll: true });
 }
 
 function closeBookDrawer() {
-  if (drawer) drawer.setAttribute('hidden', '');
-}
-
-export function openCatalog({ q = '', ageGroup = '', mood = '', collection = '' } = {}) {
-  if (!modal) return;
-  if (q) state.q = q;
-  if (ageGroup) state.ageGroup = ageGroup;
-  if (mood) state.mood = mood;
-  if (collection) state.collection = collection;
-
-  if (searchInput && q) searchInput.value = q;
-  syncFilterPills();
-
-  document.documentElement.classList.add('is-modal-open');
-  document.body.classList.add('is-modal-open');
-
-  if (typeof modal.showModal === 'function' && !modal.open) {
-    modal.showModal();
-  }
-  fetchBooks({ reset: true });
-}
-
-export function closeCatalog() {
+  if (!drawer || drawer.hidden) return;
+  drawer.setAttribute('hidden', '');
+  openBook = null;
   document.documentElement.classList.remove('is-modal-open');
-  document.body.classList.remove('is-modal-open');
-  if (modal?.open) modal.close();
-  closeBookDrawer();
+  syncUrl();
+}
+
+const PARAMS = { q: 'q', ageGroup: 'age_group', mood: 'mood', collection: 'collection', language: 'lang' };
+let openBook = null;
+
+/** Filters + open book → query string (replaceState: browsing the shelf is not navigation). */
+function syncUrl() {
+  const params = new URLSearchParams();
+  for (const [key, name] of Object.entries(PARAMS)) if (state[key]) params.set(name, state[key]);
+  if (openBook) params.set('book', openBook.code || openBook.id);
+  const qs = params.toString();
+  history.replaceState(null, '', `${location.pathname}${qs ? `?${qs}` : ''}${location.hash}`);
+}
+
+function readUrl() {
+  const params = new URLSearchParams(location.search);
+  for (const [key, name] of Object.entries(PARAMS)) state[key] = params.get(name) ?? '';
 }
 
 function syncFilterPills() {
@@ -311,30 +311,17 @@ function syncFilterPills() {
   }
 }
 
-export function initCatalog() {
+export function initCatalog({ onAsk: ask } = {}) {
   modal = $('#catalog');
   if (!modal) return;
+  if (ask) onAsk = ask;
+  readUrl();
 
   drawer = $('#book-drawer');
   searchInput = $('[data-catalog-search]', modal);
   gridEl = $('[data-catalog-grid]', modal);
   statusEl = $('[data-catalog-status]', modal);
   loadMoreBtn = $('[data-catalog-loadmore]', modal);
-
-  // Global openers
-  for (const b of $$('[data-open="catalog"]')) {
-    b.addEventListener('click', (e) => {
-      e.preventDefault();
-      openCatalog();
-    });
-  }
-
-  // Closer
-  $('[data-close="catalog"]', modal)?.addEventListener('click', closeCatalog);
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) closeCatalog();
-  });
-  modal.addEventListener('cancel', closeCatalog);
 
   // Drawer closer
   drawer?.addEventListener('click', (e) => {
@@ -343,10 +330,10 @@ export function initCatalog() {
 
   // Keyboard shortcut: '/' opens catalog search
   window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeBookDrawer();
     if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
       e.preventDefault();
-      openCatalog();
-      setTimeout(() => searchInput?.focus(), 50);
+      searchInput?.focus();
     }
   });
 
@@ -355,6 +342,7 @@ export function initCatalog() {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
       state.q = searchInput.value.trim();
+      syncUrl();
       fetchBooks({ reset: true });
     }, 280);
   });
@@ -363,6 +351,7 @@ export function initCatalog() {
   $('[data-catalog-clear]', modal)?.addEventListener('click', () => {
     if (searchInput) searchInput.value = '';
     state.q = '';
+    syncUrl();
     fetchBooks({ reset: true });
   });
 
@@ -381,6 +370,7 @@ export function initCatalog() {
       state.language = state.language === pill.dataset.language ? '' : pill.dataset.language;
     }
     syncFilterPills();
+    syncUrl();
     fetchBooks({ reset: true });
   });
 
@@ -394,6 +384,7 @@ export function initCatalog() {
     state.language = '';
     if (searchInput) searchInput.value = '';
     syncFilterPills();
+    syncUrl();
     fetchBooks({ reset: true });
   });
 
@@ -433,34 +424,40 @@ export function initCatalog() {
     }
   });
 
-  // Ask about book in drawer -> chat with librarian
+  // Wish-list hearts (cards and drawer)
+  modal.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-wish]');
+    if (!btn) return;
+    const on = game.toggleWish(btn.dataset.wish);
+    btn.setAttribute('aria-pressed', String(on));
+    const label = btn.querySelector('span');
+    if (label) label.textContent = t(on ? 'oracle.wanted' : 'oracle.want');
+    if (on) sfx.pop();
+  });
+
+  // Ask about book in drawer -> chat with the librarian on the home page
   drawer?.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-ask-about]');
     if (!btn) return;
-    const bookId = btn.dataset.askAbout;
-    const book = state.books.find((b) => b.id === bookId);
-    if (!book) return;
-
-    closeBookDrawer();
-    closeCatalog();
-    const title = getLocalizedField(book, 'title');
-    openLibrarian();
-    askLibrarian(t('oracle.askText', { title }));
+    const book = openBook ?? state.books.find((b) => b.id === btn.dataset.askAbout);
+    if (book) onAsk(t('oracle.askText', { title: getLocalizedField(book, 'title') }));
   });
 
-  // Deep link from the Telegram inline bot: /?book=DP-0001 opens that book's card.
+  // Deep link: /catalog/?book=DP-0001 opens that book's card over the shelf.
   const wanted = new URLSearchParams(location.search).get('book');
   if (wanted) {
     fetch(`/api/books/${encodeURIComponent(wanted)}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (!data?.book) return;
-        if (!state.books.some((b) => b.id === data.book.id)) state.books.push(data.book);
-        openCatalog();
-        openBookDrawer(data.book);
+        if (data?.book) openBookDrawer(data.book);
+        else syncUrl();
       })
       .catch(() => {});
   }
+
+  syncFilterPills();
+  if (searchInput) searchInput.value = state.q;
+  fetchBooks({ reset: true });
 
   // Update on language change
   bus.on('lang', () => {

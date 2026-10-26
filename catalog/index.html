@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ru" data-theme="day" data-title-key="catalog.pageTitle" data-desc-key="catalog.pageDesc">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Каталог — Дай почитать!</title>
+  <meta name="description" content="Каталог детской библиотеки «Дай почитать!» в Баре: больше тысячи книг на русском, английском и черногорском. Поиск по названию, автору и теме, фильтры по возрасту и настроению.">
+  <meta name="theme-color" content="#f4e8cf">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="canonical" href="https://dai-pochitat-mne.craft-tower.com/catalog/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Каталог — Дай почитать!">
+  <meta property="og:description" content="Больше тысячи книг для детей и подростков: ищите по названию, автору или настроению.">
+  <meta property="og:image" content="https://dai-pochitat-mne.craft-tower.com/og.jpg">
+  <script>
+    // Language + theme before first paint, so nothing flashes.
+    (() => {
+      try {
+        const prefs = JSON.parse(localStorage.getItem('dp:prefs') || '{}');
+        const q = new URLSearchParams(location.search).get('lang');
+        const lang = ['ru', 'en'].includes(q) ? q : prefs.lang || (/^(ru|uk|be|kk)\b/i.test(navigator.language) ? 'ru' : 'en');
+        const theme = prefs.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day');
+        document.documentElement.lang = lang;
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === 'night' ? '#141a30' : '#f4e8cf';
+      } catch { /* storage blocked: defaults stay */ }
+    })();
+  </script>
+  <script type="module" src="/src/catalog/page.js"></script>
+</head>
+<body class="catalog-body-page">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-catalog" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="11.5" cy="10.5" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m14 13 3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-5 16-3.5-6.5z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M11.5 13.5 20 4" stroke="currentColor" stroke-width="1.9"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></symbol>
+    <symbol id="i-lamp" viewBox="0 0 24 24"><path d="M8 3h8l3 7H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v11M8 21h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <a class="skip-link" href="#catalog-main" data-i18n="catalog.skip">К книгам</a>
+
+  <div id="catalog" class="catalog-page">
+    <header class="catalog-head">
+      <a class="catalog-back" href="/" data-i18n-attr="aria-label:catalog.back" aria-label="Дай почитать! — на главную">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Дай почитать!</span>
+      </a>
+      <div class="catalog-title-group">
+        <h1 class="catalog-title" id="catalog-title"><span class="catalog-title__full" data-i18n="catalog.title">Каталог библиотеки «Дай почитать!»</span><span class="catalog-title__short" data-i18n="catalog.titleShort">Каталог</span></h1>
+        <span class="catalog-badge"><span class="catalog-badge__full" data-i18n="catalog.badge">1 315 книг на полках</span><span class="catalog-badge__short" data-i18n="catalog.badgeShort">1 315 книг</span></span>
+      </div>
+      <div class="catalog-tools">
+        <div class="catalog-lang" role="group" aria-label="Language">
+          <button type="button" data-lang="ru" lang="ru" aria-pressed="true">RU</button>
+          <button type="button" data-lang="en" lang="en" aria-pressed="false">EN</button>
+        </div>
+        <button class="catalog-theme" type="button" data-theme-toggle aria-pressed="false" data-i18n-attr="aria-label:ui.night" aria-label="Вечерний режим">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lamp"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="catalog-controls">
+      <div class="catalog-search-row">
+        <div class="catalog-search-wrap">
+          <svg class="catalog-search-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-catalog"/></svg>
+          <input class="catalog-search-input" type="search" autocomplete="off" placeholder="Поиск по названию, автору или теме… (/ для поиска)" data-catalog-search data-i18n-attr="placeholder:catalog.search">
+          <button class="catalog-search-clear" type="button" data-catalog-clear aria-label="Очистить"><svg viewBox="0 0 24 24" style="width: 16px; height: 16px;"><use href="#i-close"/></svg></button>
+        </div>
+        <button class="catalog-filters-toggle" type="button" aria-expanded="true" aria-controls="catalog-filters" data-catalog-filters-toggle>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+          <span data-i18n="catalog.filters">Фильтры</span>
+          <b class="catalog-filters-toggle__count" data-catalog-filters-count hidden></b>
+        </button>
+      </div>
+
+      <div class="catalog-filters" id="catalog-filters" data-catalog-filters>
+        <div class="catalog-pills-row" role="group" aria-label="Возраст">
+          <button class="catalog-pill is-active" type="button" data-age-group="" data-i18n="catalog.allAges">Все возрасты</button>
+          <button class="catalog-pill" type="button" data-age-group="little" data-i18n="age.little">0–6 лет</button>
+          <button class="catalog-pill" type="button" data-age-group="middle" data-i18n="age.middle">7–10 лет</button>
+          <button class="catalog-pill" type="button" data-age-group="big" data-i18n="age.big">11–15 лет</button>
+          <button class="catalog-pill" type="button" data-age-group="adult" data-i18n="age.adult">16+</button>
+        </div>
+        <div class="catalog-pills-row" role="group" aria-label="Язык оригинала" data-i18n-attr="aria-label:catalog.langGroup">
+          <button class="catalog-pill is-active" type="button" data-language="" data-i18n="catalog.langAll">Все языки</button>
+          <button class="catalog-pill" type="button" data-language="ru" data-i18n="catalog.langRu">Русский</button>
+          <button class="catalog-pill" type="button" data-language="en" data-i18n="catalog.langEn">Английский</button>
+          <button class="catalog-pill" type="button" data-language="me" data-i18n="catalog.langMe">Черногорский</button>
+        </div>
+        <div class="catalog-pills-row" role="group" aria-label="Настроение">
+          <button class="catalog-pill is-active" type="button" data-mood="" data-i18n="catalog.allMoods">Все настроения</button>
+          <button class="catalog-pill" type="button" data-mood="funny" data-i18n="mood.funny">смешное</button>
+          <button class="catalog-pill" type="button" data-mood="adventure" data-i18n="mood.adventure">с приключениями</button>
+          <button class="catalog-pill" type="button" data-mood="magic" data-i18n="mood.magic">волшебное</button>
+          <button class="catalog-pill" type="button" data-mood="spooky" data-i18n="mood.spooky">страшноватое</button>
+          <button class="catalog-pill" type="button" data-mood="friends" data-i18n="mood.friends">про дружбу</button>
+          <button class="catalog-pill" type="button" data-mood="animals" data-i18n="mood.animals">про животных</button>
+          <button class="catalog-pill" type="button" data-mood="real" data-i18n="mood.real">про жизнь</button>
+        </div>
+        <div class="catalog-pills-row" role="group" aria-label="Тематические коллекции">
+          <button class="catalog-pill catalog-pill--collection is-active" type="button" data-collection="" data-i18n="catalog.allCollections">Все коллекции</button>
+          <button class="catalog-pill catalog-pill--collection" type="button" data-collection="love_and_warmth" data-i18n="catalog.colLove">Про любовь и семью</button>
+          <button class="catalog-pill catalog-pill--collection" type="button" data-collection="winter_and_new_year" data-i18n="catalog.colWinter">Зимние истории</button>
+          <button class="catalog-pill catalog-pill--collection" type="button" data-collection="important_topics" data-i18n="catalog.colRights">На важные темы</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-body">
+      <div class="catalog-grid" data-catalog-grid></div>
+      <div class="catalog-loadmore-wrap">
+        <p class="catalog-status" data-catalog-status></p>
+        <button class="btn btn--primary btn--small" type="button" data-catalog-loadmore hidden></button>
+      </div>
+    </div>
+
+    <main class="catalog-body" id="catalog-main">
+      <div class="catalog-grid" data-catalog-grid></div>
+      <div class="catalog-loadmore-wrap">
+        <p class="catalog-status" data-catalog-status></p>
+        <button class="btn btn--primary btn--small" type="button" data-catalog-loadmore hidden></button>
+      </div>
+    </main>
+
+    <!-- Book Detail Drawer Inspector -->
+    <div id="book-drawer" class="book-drawer" hidden role="dialog" aria-modal="true" aria-label="Книга">
+      <div class="book-drawer__content"></div>
+    </div>
+  </div>
+</body>
+</html>

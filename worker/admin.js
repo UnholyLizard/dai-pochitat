@@ -4,6 +4,7 @@ import { json, readJson, sameOrigin } from './util.js';
 import { currentUser } from './account.js';
 import { botReady, tg } from './telegram.js';
 import { isAdmin, saveReply, thread } from './store.js';
+import { booksAdminRoutes } from './books-admin.js';
 
 const ROLES = new Set(['admin', 'user']);
 
@@ -46,6 +47,9 @@ export async function adminRoutes(request, env, url) {
     if (!Number.isInteger(id)) return json({ error: 'bad request' }, 400);
     return json({ messages: await thread(env, id, 0, 300) });
   }
+
+  const books = await booksAdminRoutes(request, env, url);
+  if (books) return books;
 
   if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
   const body = await readJson(request, 2048);

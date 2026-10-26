@@ -19,6 +19,7 @@
     <div data-app hidden>
       <nav class="tabs" role="tablist">
         <button type="button" role="tab" aria-selected="true" data-tab="chats">Диалоги</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="books">Книги</button>
         <button type="button" role="tab" aria-selected="false" data-tab="users">Читатели</button>
         <button type="button" role="tab" aria-selected="false" data-tab="bot">Бот</button>
       </nav>
@@ -36,6 +37,17 @@
           </div>
         </div>
         <p class="note" data-no-threads hidden>Пока никто не писал Наташе.</p>
+      </section>
+
+      <section data-panel="books" hidden>
+        <div class="toolbar">
+          <input type="search" data-b-q placeholder="Поиск: шифр, ISBN, название, автор…" autocomplete="off">
+          <select data-b-status aria-label="Статус"></select>
+          <button type="button" class="primary" data-b-add>+ Добавить книгу</button>
+        </div>
+        <p class="note" data-b-count></p>
+        <ul class="books" data-b-list></ul>
+        <button type="button" class="ghost" data-b-more hidden>Показать ещё</button>
       </section>
 
       <section data-panel="users" hidden>
@@ -64,5 +76,100 @@
       </section>
     </div>
   </main>
+
+  <dialog class="editor" data-b-editor>
+    <form method="dialog" data-b-form autocomplete="off">
+      <header class="editor__head">
+        <h2 data-b-title>Книга</h2>
+        <button type="button" class="ghost" data-b-close aria-label="Закрыть">✕</button>
+      </header>
+
+      <fieldset class="find">
+        <legend>Найти данные</legend>
+        <p class="note">Заполните то, что известно (можно частично) — Google Books и Gemini дополнят остальное и переведут описание. Заполняются только пустые поля.</p>
+        <div class="grid">
+          <label>ISBN<input name="isbn" inputmode="text" maxlength="24"></label>
+          <label>Издательство<input name="publisher" maxlength="200"></label>
+        </div>
+        <button type="button" class="primary" data-b-lookup>✨ Найти и дополнить</button>
+        <span class="note" data-b-lookup-msg role="status"></span>
+        <ul class="cands" data-b-cands></ul>
+      </fieldset>
+
+      <fieldset>
+        <legend>Обложка</legend>
+        <div class="cover">
+          <img alt="" data-b-cover hidden>
+          <div>
+            <input type="file" accept="image/*" data-b-file>
+            <p class="note">Любой формат: сайт получит WebP до 600 px, Telegram — JPEG до 480×720.</p>
+            <button type="button" class="ghost" data-b-cover-clear hidden>Убрать обложку</button>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Название и авторы</legend>
+        <div class="grid">
+          <label>Название (RU) *<input name="title_ru" required maxlength="300"></label>
+          <label>Название (EN)<input name="title_en" maxlength="300"></label>
+          <label>Название (ME)<input name="title_me" maxlength="300"></label>
+          <label>Автор (RU)<input name="author_ru" maxlength="200"></label>
+          <label>Автор (EN)<input name="author_en" maxlength="200"></label>
+          <label>Автор (ME)<input name="author_me" maxlength="200"></label>
+          <label>Иллюстратор<input name="illustrator" maxlength="200"></label>
+          <label>Год<input name="year" type="number" min="1000" max="2100"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Описание</legend>
+        <label>Аннотация (RU)<textarea name="annotation_ru" rows="4" maxlength="4000"></textarea></label>
+        <label>Аннотация (EN)<textarea name="annotation_en" rows="4" maxlength="4000"></textarea></label>
+        <label>Аннотация (ME)<textarea name="annotation_me" rows="4" maxlength="4000"></textarea></label>
+        <div class="grid">
+          <label>Наташа говорит (RU)<input name="says_ru" maxlength="500"></label>
+          <label>Наташа говорит (EN)<input name="says_en" maxlength="500"></label>
+          <label>Наташа говорит (ME)<input name="says_me" maxlength="500"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Полка</legend>
+        <div class="grid">
+          <label>Шифр<input name="code" maxlength="32" placeholder="авто: DP-…" pattern="[A-Za-z0-9][A-Za-z0-9._\-]*"></label>
+          <label>Раздел<select name="primary_section"></select></label>
+          <label>Язык книги<select name="language"></select></label>
+          <label>Статус<select name="status"></select></label>
+          <label>Возраст от<input name="age_min" type="number" min="0" max="99" value="0"></label>
+          <label>Возраст до<input name="age_max" type="number" min="0" max="99" value="99"></label>
+          <label>Цвет карточки<input name="dominant_color" type="color" value="#2f8a84"></label>
+          <label>Теги (через запятую)<input name="tags" maxlength="300"></label>
+        </div>
+        <label>Заметки о состоянии<input name="condition_notes" maxlength="500"></label>
+      </fieldset>
+
+      <p class="error" data-b-error role="alert" hidden></p>
+      <footer class="editor__foot">
+        <button type="button" class="danger" data-b-delete hidden>Удалить…</button>
+        <span class="spacer"></span>
+        <button type="button" class="ghost" data-b-cancel>Отмена</button>
+        <button type="submit" class="primary" data-b-save>Сохранить</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="confirm" data-b-confirm>
+    <form method="dialog" data-b-confirm-form>
+      <h2>Удалить книгу безвозвратно?</h2>
+      <p data-b-confirm-text></p>
+      <p class="note">Будут удалены запись, обложки и привязки к подборкам. Если книга лишь потерялась или списана — поставьте ей статус «Потеряна» или «В архиве»: она исчезнет с сайта, но останется в базе.</p>
+      <label>Для подтверждения введите шифр <b data-b-confirm-code></b><input name="typed" autocomplete="off" required></label>
+      <footer class="editor__foot">
+        <button type="button" class="ghost" data-b-confirm-cancel>Отмена</button>
+        <button type="submit" class="danger" data-b-confirm-ok disabled>Удалить</button>
+      </footer>
+    </form>
+  </dialog>
 </body>
 </html>

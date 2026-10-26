@@ -4,7 +4,6 @@ import '@fontsource-variable/literata/wght-italic.css';
 import '@fontsource-variable/nunito/wght.css';
 import '@fontsource/caveat/700.css';
 import './styles/main.css';
-import './styles/catalog.css';
 import { bus, reducedMotion, $, $$, raw, artUrl, viewport } from './lib/core.js';
 import { initI18n, t, L, setLang } from './i18n/index.js';
 import { game } from './game/state.js';
@@ -15,7 +14,6 @@ import { initPassport, openPassport } from './game/passport.js';
 import { initTheme, setNight, isNight, initScroll, getTarget, goTo, bookArea } from './ui/chrome.js';
 import { initOracle, initSections, syncCritterButtons } from './ui/sections.js';
 import { initLibrarian, send as askLibrarian, open as openLibrarian, close as closeLibrarian } from './librarian/chat.js';
-import { initCatalog, openCatalog } from './ui/catalog.js';
 import { bookById } from './content/books.js';
 import { initPWA, install } from './pwa.js';
 import { initCasting } from './ui/casting.js';
@@ -28,7 +26,6 @@ initSound();
 initFeedback();
 initPassport();
 initSections();
-initCatalog();
 initMenu();
 initScroll();
 game.visit();
@@ -82,7 +79,7 @@ function librarianAction(a) {
       goTo(a.id);
       break;
     case 'oracle': goTo('chest'); break;
-    case 'catalog': openCatalog(); break;
+    case 'catalog': location.assign('/catalog/'); break;
     case 'theme': setNight(!isNight(), { byUser: true }); break;
     case 'passport': openPassport(); break;
     case 'lang': setLang(a.lang); break;
@@ -98,6 +95,13 @@ function librarianAction(a) {
   }
 }
 initLibrarian({ actions: librarianAction });
+// The catalog page sends "ask the librarian about this book" back here.
+const ask = new URLSearchParams(location.search).get('ask');
+if (ask) {
+  history.replaceState(null, '', location.pathname + location.hash);
+  openLibrarian();
+  askLibrarian(ask.slice(0, 300));
+}
 initAuth();
 
 const casting = initCasting({

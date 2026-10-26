@@ -719,7 +719,7 @@ html[data-theme="night"] .book-drawer__close {
 .book-drawer__cover {
   position: relative;
   width: 100%;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 2 / 3; /* placeholder until the poster loads (or when there is none) */
   border-radius: 14px;
   overflow: hidden;
   background: var(--dominant, #3a4a58);
@@ -729,12 +729,21 @@ html[data-theme="night"] .book-drawer__close {
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-/* Whole cover, never cropped: contained in the frame, dominant colour fills the rest */
+/* The frame takes the poster's own proportions (portrait, square or landscape): no letterboxing. */
+.book-drawer__cover:has(img) {
+  aspect-ratio: auto;
+  background: none;
+  box-shadow: none;
+}
+
 .book-drawer__cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
   display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(62vh, 560px);
+  object-fit: contain;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
 .book-drawer__quote {
@@ -807,4 +816,92 @@ html[data-theme="night"] .book-drawer__tag {
   gap: 0.75rem;
   flex-wrap: wrap;
   margin-top: 1.25rem;
+}
+
+/* ── The /catalog/ page ─────────────────────────────────────────────── */
+body.catalog-body-page {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg, #fbf7ee);
+  color: var(--ink, #282119);
+}
+
+html[data-theme="night"] body.catalog-body-page {
+  background: #181d2f;
+  color: #e9ecf5;
+}
+
+.catalog-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header and filters stay on screen while the shelf scrolls under them. */
+.catalog-page .catalog-head {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg, #fbf7ee);
+}
+
+html[data-theme="night"] .catalog-page .catalog-head {
+  background: #181d2f;
+}
+
+.catalog-page .catalog-controls {
+  position: sticky;
+  top: var(--catalog-head-h, 72px);
+  z-index: 19;
+}
+
+.catalog-page .catalog-body {
+  overflow: visible;
+  flex: 1;
+}
+
+.catalog-page .catalog-title {
+  margin: 0;
+}
+
+.catalog-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font: 800 0.95rem/1 var(--font-ui, system-ui);
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.catalog-back svg { width: 20px; height: 20px; }
+.catalog-back:hover { text-decoration: underline; }
+
+.catalog-tools { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
+
+.catalog-lang { display: inline-flex; border: 1.5px solid var(--line, rgba(0, 0, 0, 0.15)); border-radius: 999px; overflow: hidden; }
+.catalog-lang button {
+  border: 0; background: none; color: inherit; cursor: pointer;
+  font: 800 0.8rem/1 var(--font-ui, system-ui); padding: 0 0.8rem; min-height: 38px;
+}
+.catalog-lang button[aria-pressed='true'] { background: var(--ink, #282119); color: var(--bg, #fbf7ee); }
+html[data-theme="night"] .catalog-lang button[aria-pressed='true'] { background: #e9ecf5; color: #181d2f; }
+
+.catalog-theme {
+  width: 38px; height: 38px; display: grid; place-items: center; cursor: pointer;
+  border-radius: 50%; border: 1.5px solid var(--line, rgba(0, 0, 0, 0.15)); background: none; color: inherit;
+}
+.catalog-theme svg { width: 20px; height: 20px; }
+.catalog-theme[aria-pressed='true'] { background: var(--sun, #f4c242); color: #282119; border-color: transparent; }
+
+/* The inspector is a full-screen overlay on the page (inside the old modal it filled the dialog). */
+.catalog-page .book-drawer { position: fixed; }
+
+@media (max-width: 640px) {
+  .catalog-head { flex-wrap: wrap; row-gap: 0.4rem; }
+  .catalog-title-group { order: 3; flex-basis: 100%; }
+  .catalog-tools { order: 2; }
+  .catalog-page .catalog-controls { top: var(--catalog-head-h, 104px); }
 }

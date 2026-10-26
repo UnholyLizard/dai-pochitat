@@ -3,6 +3,7 @@ import '@fontsource-variable/nunito/wght.css';
 import '@fontsource/caveat/700.css';
 import './admin.css';
 import { api } from '../lib/api.js';
+import { initBooks } from './books.js';
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
@@ -25,6 +26,7 @@ function showTab(name) {
   for (const b of $$('[data-tab]')) b.setAttribute('aria-selected', String(b.dataset.tab === name));
   for (const p of $$('[data-panel]')) p.hidden = p.dataset.panel !== name;
   if (name === 'bot') loadBot();
+  if (name === 'books') initBooks();
 }
 
 function renderThreads() {
