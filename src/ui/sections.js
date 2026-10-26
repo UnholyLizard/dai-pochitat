@@ -22,7 +22,7 @@ export function bookCard(b, { compact = false } = {}) {
   return html`
     <article class="bookcard" data-book="${b.id}">
       <div class="bookcard__cover" style="--c:${color}" aria-hidden="true">
-        ${coverUrl ? html`<img class="bookcard__cover-img" src="${coverUrl}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : ''}
+        ${coverUrl ? html`<img class="bookcard__cover-img" src="${coverUrl}" alt="" loading="lazy" decoding="async">` : ''}
         <span>${title}</span>
       </div>
       <div>
@@ -51,6 +51,12 @@ document.addEventListener('click', (e) => {
   btn.querySelector('span').textContent = t(on ? 'oracle.wanted' : 'oracle.want');
   if (on) sfx.pop();
 });
+
+// Broken covers are dropped from the card. Inline onerror is blocked by the CSP, and
+// load errors do not bubble, so listen in the capture phase.
+document.addEventListener('error', (e) => {
+  if (e.target instanceof HTMLImageElement && e.target.classList.contains('bookcard__cover-img')) e.target.remove();
+}, true);
 
 /* ── The magic chest ─────────────────────────────────────────────────────── */
 const queues = new Map();

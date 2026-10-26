@@ -6,6 +6,7 @@ import { loadArt, loadImage, setAnisotropy } from './art.js';
 import { ensureFonts, pageTexture, repaintPage, coverTextures, repaintCovers, edgeTexture, contactShadowTexture, glowTexture, thoughtTexture } from './paper.js';
 import { Dust, Burst } from './particles.js';
 import { artUrl, viewport } from '../lib/core.js';
+import { isTelegramMiniApp } from '../lib/auth.js';
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -126,7 +127,7 @@ export async function createStage({ canvas, getTarget, getArea, getZoomArea, t, 
 
   // ── Atmosphere ──
   const glow = glowTexture();
-  const dust = new Dust(small() ? 90 : 170, glow);
+  const dust = new Dust(isTelegramMiniApp() ? 40 : (small() ? 90 : 170), glow);
   scene.add(dust.points);
   const burst = new Burst();
   scene.add(burst.group);
@@ -158,7 +159,8 @@ export async function createStage({ canvas, getTarget, getArea, getZoomArea, t, 
     if (w === size.w && h === size.h) return;
     size.w = w;
     size.h = h;
-    renderer.setPixelRatio(Math.min(devicePixelRatio, small() ? 1.5 : 2));
+    const maxDpr = isTelegramMiniApp() ? 1.0 : (small() ? 1.5 : 2);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, maxDpr));
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     dust.uniforms.scale.value = (h * renderer.getPixelRatio()) / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2));

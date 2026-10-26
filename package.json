@@ -15,6 +15,7 @@
     "covers:jpg": "node scripts/make-inline-covers.mjs",
     "art:icons": "node scripts/icons.mjs",
     "db:local": "wrangler d1 migrations apply DB --local",
+    "bot:setup": "node scripts/setup-telegram.mjs",
     "dev:worker": "npm run build && npm run db:local && wrangler dev"
   },
   "dependencies": {

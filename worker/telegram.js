@@ -49,6 +49,38 @@ export async function verifyInitData(env, initData) {
 
 export const displayName = (u) => [u.first_name, u.last_name].filter(Boolean).join(' ') || u.username || `#${u.id}`;
 
+/**
+ * Check data received from the Telegram Login Widget (HMAC-SHA256, key is SHA256 of bot token).
+ * https://core.telegram.org/widgets/login#checking-authorization
+ */
+export async function verifyWidgetAuth(env, data) {
+  if (!env.TG_BOT_TOKEN || !data || typeof data !== 'object') return null;
+  const hash = data.hash;
+  if (typeof hash !== 'string' || !hash) return null;
+  const authDate = Number(data.auth_date);
+  if (!Number.isFinite(authDate) || Date.now() / 1000 - authDate > INIT_DATA_MAX_AGE) return null;
+
+  const check = Object.keys(data)
+    .filter((k) => k !== 'hash' && data[k] != null && data[k] !== '')
+    .sort()
+    .map((k) => `${k}=${data[k]}`)
+    .join('\n');
+
+  const secret = await crypto.subtle.digest('SHA-256', enc.encode(env.TG_BOT_TOKEN));
+  const key = await crypto.subtle.importKey('raw', secret, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const signature = toHex(await crypto.subtle.sign('HMAC', key, enc.encode(check)));
+  if (!safeEqual(signature, hash)) return null;
+
+  const id = Number(data.id);
+  if (!Number.isInteger(id) || id <= 0) return null;
+  return {
+    id,
+    first_name: data.first_name ? String(data.first_name) : '',
+    last_name: data.last_name ? String(data.last_name) : '',
+    username: data.username ? String(data.username) : '',
+  };
+}
+
 /** Forward a reader's question to every admin; returns how many chats it reached. */
 export async function forwardToNatasha(env, user, text) {
   const admins = await adminsOf(env);

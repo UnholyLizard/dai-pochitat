@@ -483,8 +483,8 @@
   <dialog id="catalog" class="catalog-modal" closedby="any" aria-labelledby="catalog-title">
     <header class="catalog-head">
       <div class="catalog-title-group">
-        <h2 class="catalog-title" id="catalog-title" data-i18n="catalog.title">Каталог библиотеки «Дай почитать!»</h2>
-        <span class="catalog-badge" data-i18n="catalog.badge">1 315 книг на полках</span>
+        <h2 class="catalog-title" id="catalog-title"><span class="catalog-title__full" data-i18n="catalog.title">Каталог библиотеки «Дай почитать!»</span><span class="catalog-title__short" data-i18n="catalog.titleShort">Каталог</span></h2>
+        <span class="catalog-badge"><span class="catalog-badge__full" data-i18n="catalog.badge">1 315 книг на полках</span><span class="catalog-badge__short" data-i18n="catalog.badgeShort">1 315 книг</span></span>
       </div>
       <button class="catalog-close" type="button" data-close="catalog" data-i18n-attr="aria-label:catalog.close" aria-label="Закрыть">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
@@ -492,19 +492,32 @@
     </header>
 
     <div class="catalog-controls">
-      <div class="catalog-search-wrap">
-        <svg class="catalog-search-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-catalog"/></svg>
-        <input class="catalog-search-input" type="search" autocomplete="off" placeholder="Поиск по названию, автору или теме… (/ для поиска)" data-catalog-search data-i18n-attr="placeholder:catalog.search">
-        <button class="catalog-search-clear" type="button" data-catalog-clear aria-label="Очистить"><svg viewBox="0 0 24 24" style="width: 16px; height: 16px;"><use href="#i-close"/></svg></button>
+      <div class="catalog-search-row">
+        <div class="catalog-search-wrap">
+          <svg class="catalog-search-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-catalog"/></svg>
+          <input class="catalog-search-input" type="search" autocomplete="off" placeholder="Поиск по названию, автору или теме… (/ для поиска)" data-catalog-search data-i18n-attr="placeholder:catalog.search">
+          <button class="catalog-search-clear" type="button" data-catalog-clear aria-label="Очистить"><svg viewBox="0 0 24 24" style="width: 16px; height: 16px;"><use href="#i-close"/></svg></button>
+        </div>
+        <button class="catalog-filters-toggle" type="button" aria-expanded="true" aria-controls="catalog-filters" data-catalog-filters-toggle>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+          <span data-i18n="catalog.filters">Фильтры</span>
+          <b class="catalog-filters-toggle__count" data-catalog-filters-count hidden></b>
+        </button>
       </div>
 
-      <div class="catalog-filters">
+      <div class="catalog-filters" id="catalog-filters" data-catalog-filters>
         <div class="catalog-pills-row" role="group" aria-label="Возраст">
           <button class="catalog-pill is-active" type="button" data-age-group="" data-i18n="catalog.allAges">Все возрасты</button>
           <button class="catalog-pill" type="button" data-age-group="little" data-i18n="age.little">0–6 лет</button>
           <button class="catalog-pill" type="button" data-age-group="middle" data-i18n="age.middle">7–10 лет</button>
           <button class="catalog-pill" type="button" data-age-group="big" data-i18n="age.big">11–15 лет</button>
           <button class="catalog-pill" type="button" data-age-group="adult" data-i18n="age.adult">16+</button>
+        </div>
+        <div class="catalog-pills-row" role="group" aria-label="Язык оригинала" data-i18n-attr="aria-label:catalog.langGroup">
+          <button class="catalog-pill is-active" type="button" data-language="" data-i18n="catalog.langAll">Все языки</button>
+          <button class="catalog-pill" type="button" data-language="ru" data-i18n="catalog.langRu">Русский</button>
+          <button class="catalog-pill" type="button" data-language="en" data-i18n="catalog.langEn">Английский</button>
+          <button class="catalog-pill" type="button" data-language="me" data-i18n="catalog.langMe">Черногорский</button>
         </div>
         <div class="catalog-pills-row" role="group" aria-label="Настроение">
           <button class="catalog-pill is-active" type="button" data-mood="" data-i18n="catalog.allMoods">Все настроения</button>

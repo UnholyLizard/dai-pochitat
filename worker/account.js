@@ -1,7 +1,7 @@
 // /api/me, /api/auth/*, /api/natasha — the signed-in reader's side.
 
 import { json, readJson, sameOrigin, randomHex, sha256, safeEqual, limited, tooMany } from './util.js';
-import { botReady, forwardToNatasha, verifyInitData } from './telegram.js';
+import { botReady, forwardToNatasha, verifyInitData, verifyWidgetAuth } from './telegram.js';
 import {
   createSession, userByToken, upsertUser, dropSession, publicUser, saveQuestion, thread, SESSION_MS,
 } from './store.js';
@@ -63,6 +63,43 @@ async function webappLogin(request, env) {
   });
 }
 
+/** Official Telegram Login Widget: verifies SHA256(bot_token) signature. */
+async function widgetLogin(request, env) {
+  const body = await readJson(request, 4096);
+  const from = await verifyWidgetAuth(env, body);
+  if (!from) return json({ error: 'bad widget auth' }, 401);
+  const user = await upsertUser(env, from);
+  const token = await createSession(env, user.id);
+  return json({ status: 'ok', user: publicUser(user), game: parseGame(user) }, 200, {
+    'set-cookie': setCookie(request, token, SESSION_MS / 1000),
+  });
+}
+
+/** Create a short-lived single-use handoff code so readers in Telegram Mini App can open their browser signed in. */
+async function createHandoff(request, env, user) {
+  const code = randomHex(16);
+  const now = Date.now();
+  await env.DB.prepare('INSERT INTO login_tokens (code, secret_hash, user_id, expires_at) VALUES (?, ?, ?, ?)')
+    .bind(code, 'handoff', user.id, now + 5 * 60 * 1000).run();
+  return json({ code });
+}
+
+/** Redeem a handoff code in the external browser. */
+async function exchangeHandoff(request, env) {
+  const body = await readJson(request, 1024);
+  if (typeof body?.code !== 'string' || !/^[0-9a-f]{32}$/.test(body.code)) return json({ error: 'bad request' }, 400);
+  const row = await env.DB.prepare('SELECT user_id FROM login_tokens WHERE code = ? AND secret_hash = ? AND expires_at > ?')
+    .bind(body.code, 'handoff', Date.now()).first();
+  if (!row) return json({ error: 'expired' }, 401);
+  await env.DB.prepare('DELETE FROM login_tokens WHERE code = ?').bind(body.code).run();
+  const user = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(row.user_id).first();
+  if (!user) return json({ error: 'user not found' }, 404);
+  const token = await createSession(env, user.id);
+  return json({ status: 'ok', user: publicUser(user), game: parseGame(user) }, 200, {
+    'set-cookie': setCookie(request, token, SESSION_MS / 1000),
+  });
+}
+
 async function logout(request, env) {
   const token = tokenOf(request);
   if (token) await dropSession(env, token);
@@ -97,7 +134,12 @@ export async function accountRoutes(request, env, url) {
   const post = request.method === 'POST';
   if (path === '/api/me' && request.method === 'GET') {
     const user = await currentUser(request, env);
-    return json({ user: user ? publicUser(user) : null, game: user ? parseGame(user) : null, login: botReady(env) });
+    return json({
+      user: user ? publicUser(user) : null,
+      game: user ? parseGame(user) : null,
+      login: botReady(env),
+      botUsername: env.TG_BOT_USERNAME ?? null,
+    });
   }
   if (!path.startsWith('/api/auth/') && path !== '/api/me/game' && path !== '/api/natasha') return null;
 
@@ -105,11 +147,14 @@ export async function accountRoutes(request, env, url) {
 
   if (path === '/api/auth/start' && post) return (await limited(request, env)) ? tooMany() : startLogin(request, env);
   if (path === '/api/auth/webapp' && post) return (await limited(request, env)) ? tooMany() : webappLogin(request, env);
+  if (path === '/api/auth/widget' && post) return (await limited(request, env)) ? tooMany() : widgetLogin(request, env);
+  if (path === '/api/auth/handoff/exchange' && post) return (await limited(request, env)) ? tooMany() : exchangeHandoff(request, env);
   if (path === '/api/auth/poll' && post) return pollLogin(request, env);
   if (path === '/api/auth/logout' && post) return logout(request, env);
 
   const user = await currentUser(request, env);
   if (!user) return json({ error: 'unauthorized' }, 401);
+  if (path === '/api/auth/handoff/create' && post) return createHandoff(request, env, user);
   if (path === '/api/me/game' && request.method === 'PUT') return saveGame(request, env, user);
   if (path === '/api/natasha') return natasha(request, env, user);
   return json({ error: 'not found' }, 404);

@@ -14,14 +14,15 @@ const hashes = [...html.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*application\/ld\
 
 const csp = [
   "default-src 'self'",
-  `script-src 'self' ${hashes.join(' ')}`.trim(),
+  `script-src 'self' https://telegram.org ${hashes.join(' ')}`.trim(),
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https://t.me https://*.telegram.org",
   "font-src 'self'",
-  "connect-src 'self'",
+  "connect-src 'self' https://api.telegram.org https://oauth.telegram.org",
+  "frame-src 'self' https://oauth.telegram.org https://web.telegram.org",
   "worker-src 'self'",
   "manifest-src 'self'",
-  "frame-ancestors 'none'",
+  "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org",
   "base-uri 'self'",
   "form-action 'self'",
   'upgrade-insecure-requests',
@@ -32,7 +33,7 @@ const headers = `/*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
-  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
   Strict-Transport-Security: max-age=31536000; includeSubDomains
 
 /assets/*

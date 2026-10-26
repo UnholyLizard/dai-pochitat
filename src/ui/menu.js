@@ -1,7 +1,7 @@
 // The hamburger menu: contents, evening mode, sound, language, Telegram account, admin link.
 import { bus, $ } from '../lib/core.js';
 import { t } from '../i18n/index.js';
-import { auth, isAdmin, startLogin, cancelLogin, logout } from '../lib/auth.js';
+import { auth, isAdmin, startLogin, cancelLogin, logout, isTelegramMiniApp, openInExternalBrowser } from '../lib/auth.js';
 
 const el = (tag, cls, text) => {
   const node = document.createElement(tag);
@@ -28,10 +28,20 @@ export function initMenu() {
       const sub = [auth.user.username && `@${auth.user.username}`, auth.user.role !== 'user' && t(`account.role.${auth.user.role}`)].filter(Boolean).join(' · ');
       if (sub) names.append(el('small', '', sub));
       row.append(names);
+
+      account.append(row, el('p', 'menu__hint', t('account.saved')));
+
+      if (isTelegramMiniApp()) {
+        const ext = el('button', 'menu__ext', t('account.openBrowser'));
+        ext.type = 'button';
+        ext.addEventListener('click', openInExternalBrowser);
+        account.append(ext);
+      }
+
       const out = el('button', 'menu__link', t('account.logout'));
       out.type = 'button';
       out.addEventListener('click', logout);
-      account.append(row, el('p', 'menu__hint', t('account.saved')), out);
+      account.append(out);
       return;
     }
 
@@ -47,12 +57,34 @@ export function initMenu() {
       account.append(open, el('p', 'menu__hint', t('account.waiting')), cancel);
       return;
     }
-    const login = el('button', 'menu__login', t('account.login'));
-    login.type = 'button';
-    login.addEventListener('click', () => startLogin().catch(() => {
+
+    if (isTelegramMiniApp()) {
+      const ext = el('button', 'menu__ext', t('account.openBrowser'));
+      ext.type = 'button';
+      ext.addEventListener('click', openInExternalBrowser);
+      account.append(ext);
+    }
+
+    // Official Telegram Login Widget
+    const widgetBox = el('div', 'menu__widget');
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://telegram.org/js/telegram-widget.js?22';
+    script.setAttribute('data-telegram-login', auth.botUsername || 'DaiPochitatBot');
+    script.setAttribute('data-size', 'large');
+    script.setAttribute('data-radius', '12');
+    script.setAttribute('data-request-access', 'write');
+    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+    widgetBox.append(script);
+    account.append(widgetBox);
+
+    // Bot login alternative
+    const botLogin = el('button', 'menu__link', t('account.loginBot'));
+    botLogin.type = 'button';
+    botLogin.addEventListener('click', () => startLogin().catch(() => {
       account.append(el('p', 'menu__hint', t('account.error')));
     }));
-    account.append(login, el('p', 'menu__hint', t('account.why')));
+    account.append(el('p', 'menu__hint', t('account.why')), botLogin);
   }
 
   bus.on('auth', render);

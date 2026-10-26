@@ -1,6 +1,6 @@
 // Full physical library catalog browser: shelf view, live FTS search, faceted filters, and book inspector.
 import { bus, $, $$, html, render } from '../lib/core.js';
-import { t, getLang } from '../i18n/index.js';
+import { t, L, getLang } from '../i18n/index.js';
 import { game } from '../game/state.js';
 import { sfx } from '../game/sfx.js';
 import { send as askLibrarian, open as openLibrarian } from '../librarian/chat.js';
@@ -18,6 +18,7 @@ let state = {
   ageGroup: '',
   mood: '',
   collection: '',
+  language: '',
   limit: 24,
   offset: 0,
   total: 0,
@@ -27,9 +28,11 @@ let state = {
 
 let debounceTimer = null;
 
+// Fallback records (BOOKS) keep { ru, en } pairs; API rows have flat *_ru / *_en columns.
 function getLocalizedField(b, field) {
   const lang = getLang();
-  return b[`${field}_${lang}`] || b[`${field}_ru`] || b[field] || '';
+  const value = b[`${field}_${lang}`] || b[`${field}_ru`] || b[field] || '';
+  return typeof value === 'object' ? (L(value) ?? '') : value;
 }
 
 function getLanguageLabel(code) {
@@ -55,6 +58,13 @@ function getBookAges(b) {
   return '';
 }
 
+// Covers are inline-free: production CSP blocks inline onload/onerror handlers,
+// so the fit class is set from listeners instead.
+// Width >= height: show the whole cover, contained and centred. Portrait keeps filling the frame.
+function markCover(img) {
+  img.classList.toggle('is-fit', img.naturalWidth >= img.naturalHeight);
+}
+
 function renderBookCard(b) {
   const title = getLocalizedField(b, 'title');
   const author = getLocalizedField(b, 'author');
@@ -68,7 +78,7 @@ function renderBookCard(b) {
   return html`
     <article class="catalog-card" data-book-id="${b.id}" style="--dominant:${color}">
       <div class="catalog-card__cover">
-        ${coverUrl ? html`<img class="catalog-card__cover-img" src="${coverUrl}" alt="" loading="lazy" decoding="async" onload="if (this.naturalWidth > this.naturalHeight) this.classList.add('is-landscape')" onerror="this.remove()">` : ''}
+        ${coverUrl ? html`<img class="catalog-card__cover-img" src="${coverUrl}" alt="" loading="lazy" decoding="async">` : ''}
         <span class="catalog-card__lang">${langBadge}</span>
         ${ages ? html`<span class="catalog-card__age">${ages}</span>` : ''}
         <button class="catalog-card__wish" type="button" data-wish="${b.id}" aria-pressed="${wanted}" title="${t(wanted ? 'oracle.wanted' : 'oracle.want')}">
@@ -100,6 +110,7 @@ async function fetchBooks({ reset = false } = {}) {
   if (state.ageGroup) params.set('age_group', state.ageGroup);
   if (state.mood) params.set('mood', state.mood);
   if (state.collection) params.set('collection', state.collection);
+  if (state.language) params.set('lang', state.language);
   params.set('limit', String(state.limit));
   params.set('offset', String(state.offset));
 
@@ -124,6 +135,7 @@ async function fetchBooks({ reset = false } = {}) {
       }
       if (state.ageGroup && b.ageGroup !== state.ageGroup) return false;
       if (state.mood && !b.moods?.includes(state.mood)) return false;
+      if (state.language && (b.language || 'ru') !== state.language) return false;
       return true;
     });
     state.total = filtered.length;
@@ -153,6 +165,9 @@ function updateUI() {
 
   // Render cards
   render(gridEl, html`${state.books.map(renderBookCard)}`);
+  for (const img of $$('.catalog-card__cover-img', gridEl)) {
+    if (img.complete && img.naturalWidth) markCover(img);
+  }
 
   // Status & Load More
   if (statusEl) {
@@ -196,7 +211,7 @@ function openBookDrawer(book) {
     </button>
     <div class="book-drawer__left">
       <div class="book-drawer__cover">
-        ${coverUrl ? html`<img src="${coverUrl}" alt="" loading="lazy" onload="if (this.naturalWidth > this.naturalHeight) this.classList.add('is-landscape')">` : ''}
+        ${coverUrl ? html`<img src="${coverUrl}" alt="" loading="lazy">` : ''}
       </div>
       <div class="book-drawer__actions">
         <button class="btn btn--small btn--wide" type="button" data-wish="${book.id}" aria-pressed="${wanted}">
@@ -283,6 +298,17 @@ function syncFilterPills() {
   for (const p of $$('[data-collection]', modal)) {
     p.classList.toggle('is-active', p.dataset.collection === state.collection);
   }
+  for (const p of $$('[data-language]', modal)) {
+    p.classList.toggle('is-active', p.dataset.language === state.language);
+  }
+
+  // Count of active filters stays visible on the toggle while the panel is hidden
+  const countEl = $('[data-catalog-filters-count]', modal);
+  if (countEl) {
+    const active = [state.ageGroup, state.mood, state.collection, state.language].filter(Boolean).length;
+    countEl.textContent = String(active);
+    countEl.hidden = active === 0;
+  }
 }
 
 export function initCatalog() {
@@ -351,6 +377,8 @@ export function initCatalog() {
       state.mood = state.mood === pill.dataset.mood ? '' : pill.dataset.mood;
     } else if ('collection' in pill.dataset) {
       state.collection = state.collection === pill.dataset.collection ? '' : pill.dataset.collection;
+    } else if ('language' in pill.dataset) {
+      state.language = state.language === pill.dataset.language ? '' : pill.dataset.language;
     }
     syncFilterPills();
     fetchBooks({ reset: true });
@@ -363,6 +391,7 @@ export function initCatalog() {
     state.ageGroup = '';
     state.mood = '';
     state.collection = '';
+    state.language = '';
     if (searchInput) searchInput.value = '';
     syncFilterPills();
     fetchBooks({ reset: true });
@@ -371,6 +400,24 @@ export function initCatalog() {
   // Load more button
   loadMoreBtn?.addEventListener('click', () => {
     fetchBooks({ reset: false });
+  });
+
+  // Cover images: fit mode is decided on load; broken covers are dropped.
+  // Capture phase, because load/error do not bubble.
+  gridEl?.addEventListener('load', (e) => {
+    if (e.target.matches('.catalog-card__cover-img')) markCover(e.target);
+  }, true);
+  gridEl?.addEventListener('error', (e) => {
+    if (e.target.matches('.catalog-card__cover-img')) e.target.remove();
+  }, true);
+
+  // Mobile filter toggle: hides the pill rows, keeps the search field
+  const filtersToggle = $('[data-catalog-filters-toggle]', modal);
+  const filtersPanel = $('[data-catalog-filters]', modal);
+  filtersToggle?.addEventListener('click', () => {
+    const expanded = filtersToggle.getAttribute('aria-expanded') !== 'true';
+    filtersToggle.setAttribute('aria-expanded', String(expanded));
+    if (filtersPanel) filtersPanel.hidden = !expanded;
   });
 
   // Card click -> open detail drawer

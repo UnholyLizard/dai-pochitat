@@ -86,6 +86,8 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: var(--header-h);
+    /* No blue flash over whatever is tapped; the buttons have their own :active feedback. */
+    -webkit-tap-highlight-color: transparent;
     @media (prefers-reduced-motion: reduce) { scroll-behavior: auto; }
   }
 
@@ -140,7 +142,8 @@
     pointer-events: none;
   }
   /* Magnifier: the book takes the whole screen above everything else. */
-  .stage.is-zoomed { z-index: 55; pointer-events: auto; background: var(--paper); }
+  /* touch-action: none keeps pinch and drag on the book instead of zooming the whole page. */
+  .stage.is-zoomed { z-index: 55; pointer-events: auto; background: var(--paper); touch-action: none; }
   .stage.is-zoomed .stage__canvas { cursor: grab; }
   .stage.is-zoomed .stage__canvas:active { cursor: grabbing; }
   html.is-zoomed { overflow: hidden; }
@@ -167,6 +170,8 @@
     rotate: 3deg;
     filter: drop-shadow(0 24px 30px rgb(90 50 15 / 0.3));
     opacity: 0;
+    /* Invisible while WebGL runs, but it sat above the canvas and swallowed every pointer event. */
+    pointer-events: none;
     transition: opacity 0.8s ease;
   }
   .stage.is-failed .stage__fallback { opacity: 1; }
@@ -424,6 +429,35 @@
   .menu__who small { font: 700 0.8rem/1.2 var(--font-ui); color: var(--ink-3); }
   .menu__avatar { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--cobalt); color: var(--cobalt-ink); font: 900 1.1rem/1 var(--font-ui); }
   .menu__hint { font: 600 0.85rem/1.35 var(--font-ui); color: var(--ink-3); }
+  .menu__widget {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 44px;
+    margin: 2px 0;
+  }
+  .menu__ext {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 42px;
+    padding: 0 14px;
+    border-radius: var(--radius-sm, 12px);
+    background: var(--terracotta);
+    color: #fff;
+    font: 800 0.92rem/1 var(--font-ui);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+    margin: 4px 0;
+  }
+  .menu__ext:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+  }
   .menu__login {
     display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 999px;
     background: var(--cobalt); color: var(--cobalt-ink); font: 800 0.98rem/1 var(--font-ui); text-decoration: none; text-align: center;
@@ -1402,6 +1436,7 @@
     gap: 10px;
     padding: 10px 16px max(16px, env(safe-area-inset-bottom));
     pointer-events: none;
+    touch-action: none;
   }
   .zoom-ui[hidden] { display: none; }
   .zoom-ui__hint {
