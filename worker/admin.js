@@ -5,6 +5,7 @@ import { currentUser } from './account.js';
 import { botReady, tg } from './telegram.js';
 import { isAdmin, saveReply, thread } from './store.js';
 import { booksAdminRoutes } from './books-admin.js';
+import { usersAdminRoutes } from './users-admin.js';
 
 const ROLES = new Set(['admin', 'user']);
 
@@ -50,6 +51,8 @@ export async function adminRoutes(request, env, url) {
 
   const books = await booksAdminRoutes(request, env, url);
   if (books) return books;
+  const readers = await usersAdminRoutes(request, env, url, me);
+  if (readers) return readers;
 
   if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
   const body = await readJson(request, 2048);
@@ -67,8 +70,9 @@ export async function adminRoutes(request, env, url) {
   if (me.role !== 'owner') return json({ error: 'forbidden' }, 403);
 
   if (path === '/api/admin/role') {
-    const target = await env.DB.prepare('SELECT id, role FROM users WHERE id = ?').bind(Number(body.user)).first();
-    if (!target || target.role === 'owner' || !ROLES.has(body.role)) return json({ error: 'bad request' }, 400);
+    const target = await env.DB.prepare('SELECT id, role, tg_id FROM users WHERE id = ?').bind(Number(body.user)).first();
+    // Custom readers have no Telegram account, so they can't receive Natasha's chat.
+    if (!target || target.role === 'owner' || target.tg_id < 0 || !ROLES.has(body.role)) return json({ error: 'bad request' }, 400);
     await env.DB.prepare('UPDATE users SET role = ? WHERE id = ?').bind(body.role, target.id).run();
     return json({ ok: true });
   }

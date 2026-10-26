@@ -143,7 +143,8 @@ html[data-theme="night"] .catalog-close:hover {
 /* ── Search & Filter Controls ───────────────────────────────────────── */
 .catalog-controls {
   padding: 1rem 1.75rem 0.75rem;
-  background: rgba(0, 0, 0, 0.02);
+  /* Solid, not translucent: the sticky bar slides over the shelf while scrolling */
+  background: var(--bg, #fbf7ee);
   border-bottom: 1px solid var(--line, rgba(0, 0, 0, 0.08));
   display: flex;
   flex-direction: column;
@@ -151,7 +152,7 @@ html[data-theme="night"] .catalog-close:hover {
 }
 
 html[data-theme="night"] .catalog-controls {
-  background: rgba(255, 255, 255, 0.02);
+  background: #181d2f;
   border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
@@ -440,6 +441,62 @@ html[data-theme="night"] .catalog-card {
   pointer-events: none;
 }
 
+/* Text stand-in for a cover: name, author and publisher on the book's own colour.
+   It shows only when there is no image (none given, or it failed to load). */
+.book-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 2.4rem 0.9rem 1rem;
+  text-align: center;
+  color: #fff;
+  background: var(--dominant, #3a4a58);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.book-fallback__title {
+  font-family: var(--serif, 'Literata', Georgia, serif);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.book-fallback__author {
+  font-size: 0.8rem;
+  font-style: italic;
+  opacity: 0.92;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.book-fallback__publisher {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.catalog-card__cover:has(.catalog-card__cover-img) .book-fallback,
+.book-drawer__cover:has(img) .book-fallback {
+  display: none;
+}
+
 .catalog-card__age {
   position: absolute;
   top: 8px;
@@ -662,15 +719,42 @@ html[data-theme="night"] .book-drawer__content {
 }
 
 @media (max-width: 680px) {
+  /* Phones: the book card takes the whole screen */
+  .book-drawer {
+    padding: 0;
+  }
+
   .book-drawer__content {
-    grid-template-columns: 1fr;
-    padding: 1.5rem;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 1.25rem 1rem 2rem;
     gap: 1.25rem;
   }
 
   .book-drawer__cover {
     width: min(100%, 240px);
     margin: 0 auto;
+  }
+
+  /* Stamps (tags) fill two rows and scroll sideways */
+  .book-drawer__content .book-drawer__tags {
+    display: grid;
+    grid-template-rows: repeat(2, auto);
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+    scrollbar-width: thin;
+  }
+
+  .book-drawer__tag {
+    white-space: nowrap;
   }
 }
 
@@ -904,4 +988,39 @@ html[data-theme="night"] .catalog-lang button[aria-pressed='true'] { background:
   .catalog-title-group { order: 3; flex-basis: 100%; }
   .catalog-tools { order: 2; }
   .catalog-page .catalog-controls { top: var(--catalog-head-h, 104px); }
+}
+
+/* Books that are out on loan */
+.catalog-card.is-out .catalog-card__cover-img { filter: grayscale(0.7) brightness(0.8); }
+.catalog-card__loan { position: absolute; left: 8px; bottom: 8px; z-index: 2; padding: 3px 10px; border-radius: 999px; background: var(--terracotta, #c8553d); color: #fff; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.02em; box-shadow: 0 2px 8px rgb(0 0 0 / 0.25); }
+.book-drawer__cover.is-out img { filter: grayscale(0.6) brightness(0.85); }
+.book-drawer__loan { display: inline-block; margin: 0.6rem 0 0; padding: 4px 12px; border-radius: 999px; background: color-mix(in srgb, var(--terracotta, #c8553d) 16%, transparent); color: var(--terracotta, #c8553d); font-weight: 800; font-size: 0.85rem; }
+
+/* Desktop: the catalog is a window over a dimmed backdrop (as the old modal was), not edge to edge.
+   The whole window scrolls under its sticky header; the inspector covers the window only. */
+@media (min-width: 900px) and (min-height: 600px) {
+  body.catalog-body-page { background: #2a241c; }
+  html[data-theme="night"] body.catalog-body-page { background: #070a14; }
+
+  .catalog-page {
+    position: relative;
+    width: min(94vw, 1180px);
+    max-width: none;
+    height: 90dvh;
+    min-height: 0;
+    margin: 5dvh auto;
+    border-radius: 24px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateZ(0); /* makes the fixed inspector fill the window, not the viewport */
+    background: var(--bg, #fbf7ee);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.08);
+  }
+  html[data-theme="night"] .catalog-page {
+    background: #181d2f;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+
+  .catalog-page .catalog-controls { position: static; }
+  .catalog-page .catalog-body { overflow: visible; flex: none; }
 }

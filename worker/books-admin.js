@@ -4,6 +4,7 @@
 
 import { json, readJson, log, limited, tooMany } from './util.js';
 import { lookup, normalizeIsbn } from './lookup.js';
+import { withLoans } from './loans.js';
 
 /** Statuses a reader never sees in the public catalog, Telegram inline search or deep links. */
 export const HIDDEN_STATUSES = ['lost', 'archived'];
@@ -122,7 +123,7 @@ async function list(env, url) {
     env.DB.prepare('SELECT status, COUNT(*) AS n FROM books GROUP BY status').all(),
   ]);
   return json({
-    books: rows.results ?? [],
+    books: await withLoans(env, rows.results ?? []),
     total: total?.n ?? 0,
     limit,
     offset,
@@ -170,6 +171,11 @@ async function update(env, id, body) {
   const cols = Object.keys(values).filter((c) => values[c] !== undefined);
   if (!cols.length) return bad('nothing to update');
 
+  // A book that is out stays 'borrowed' (or goes lost/archived); returning it is done through the loan.
+  if (values.status && ['available', 'reserved', 'repair'].includes(values.status) && current.status === 'borrowed'
+    && (await env.DB.prepare('SELECT 1 FROM loans WHERE book_id = ? AND returned_at IS NULL').bind(current.id).first())) {
+    return json({ error: 'the book is out: return it from the reader first' }, 409);
+  }
   const next = { ...publicRow(current), ...values, updated_at: Date.now() };
   if (next.age_min > next.age_max) return bad('age_min is above age_max');
   if ('age_min' in values && !('age_group' in values)) {
@@ -193,6 +199,7 @@ async function remove(env, id, url) {
   await env.DB.batch([
     env.DB.prepare('DELETE FROM books_fts WHERE rowid = ?').bind(book._rowid),
     env.DB.prepare('DELETE FROM collection_books WHERE book_id = ?').bind(book.id),
+    env.DB.prepare('DELETE FROM loans WHERE book_id = ?').bind(book.id),
     env.DB.prepare('DELETE FROM books WHERE id = ?').bind(book.id),
   ]);
   if (env.COVERS_BUCKET) {

@@ -51,11 +51,18 @@
       </section>
 
       <section data-panel="users" hidden>
+        <div class="toolbar">
+          <input type="search" data-u-q placeholder="Поиск: имя, @username, № билета, заметки…" autocomplete="off">
+          <select data-u-filter aria-label="Фильтр">
+            <option value="">Все читатели</option>
+            <option value="debt">С книгами на руках</option>
+            <option value="overdue">Просрочили возврат</option>
+            <option value="custom">Добавленные вручную</option>
+          </select>
+          <button type="button" class="primary" data-u-add>+ Добавить читателя</button>
+        </div>
         <p class="note" data-stats></p>
-        <table>
-          <thead><tr><th>Читатель</th><th>Telegram</th><th>Роль</th><th>Последний вход</th><th></th></tr></thead>
-          <tbody data-users></tbody>
-        </table>
+        <div data-u-list></div>
       </section>
 
       <section data-panel="bot" hidden>
@@ -149,12 +156,99 @@
         <label>Заметки о состоянии<input name="condition_notes" maxlength="500"></label>
       </fieldset>
 
+      <fieldset data-b-loan-box hidden>
+        <legend>Выдача</legend>
+        <p data-b-loan-text class="note"></p>
+        <button type="button" class="primary" data-b-loan-issue>Выдать читателю…</button>
+        <button type="button" class="ghost" data-b-loan-return hidden>Принять обратно</button>
+      </fieldset>
+
       <p class="error" data-b-error role="alert" hidden></p>
       <footer class="editor__foot">
         <button type="button" class="danger" data-b-delete hidden>Удалить…</button>
         <span class="spacer"></span>
         <button type="button" class="ghost" data-b-cancel>Отмена</button>
         <button type="submit" class="primary" data-b-save>Сохранить</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="editor" data-u-editor>
+    <form method="dialog" data-u-form autocomplete="off">
+      <header class="editor__head">
+        <h2 data-u-title>Читатель</h2>
+        <button type="button" class="ghost" data-u-close aria-label="Закрыть">✕</button>
+      </header>
+
+      <fieldset>
+        <legend>Читатель</legend>
+        <p class="note" data-u-tg></p>
+        <div class="grid">
+          <label>Имя *<input name="first_name" maxlength="64"></label>
+          <label>Фамилия<input name="last_name" maxlength="64"></label>
+          <label>№ читательского билета<input name="library_no" maxlength="32" placeholder="пусто — билет не подтверждён"></label>
+          <label>Контакты (телефон, родитель…)<input name="contact" maxlength="200"></label>
+        </div>
+        <label>Заметки для персонала<textarea name="notes" rows="4" maxlength="2000" placeholder="Видны только владельцу и админам"></textarea></label>
+      </fieldset>
+
+      <fieldset data-u-loans-box hidden>
+        <legend>Книги на руках</legend>
+        <ul class="loans" data-u-loans></ul>
+        <p class="note" data-u-no-loans hidden>Сейчас нет книг на руках.</p>
+        <button type="button" class="primary" data-u-issue>Выдать книгу…</button>
+        <details>
+          <summary>История выдач</summary>
+          <ul class="loans loans--history" data-u-history></ul>
+        </details>
+      </fieldset>
+
+      <fieldset data-u-role-box hidden>
+        <legend>Роль</legend>
+        <button type="button" class="ghost" data-u-role></button>
+      </fieldset>
+
+      <p class="error" data-u-error role="alert" hidden></p>
+      <footer class="editor__foot">
+        <button type="button" class="danger" data-u-delete hidden>Удалить…</button>
+        <span class="spacer"></span>
+        <button type="button" class="ghost" data-u-cancel>Закрыть</button>
+        <button type="submit" class="primary" data-u-save>Сохранить</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="editor editor--narrow" data-l-dialog>
+    <form method="dialog" data-l-form autocomplete="off">
+      <header class="editor__head">
+        <h2>Выдать книгу</h2>
+        <button type="button" class="ghost" data-l-close aria-label="Закрыть">✕</button>
+      </header>
+      <fieldset>
+        <legend>Читатель</legend>
+        <p data-l-user-fixed hidden></p>
+        <div data-l-user-pick>
+          <input type="search" data-l-user-q placeholder="Имя, № билета…" autocomplete="off">
+          <ul class="picks" data-l-user-list></ul>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Книга</legend>
+        <p data-l-book-fixed hidden></p>
+        <div data-l-book-pick>
+          <input type="search" data-l-book-q placeholder="Шифр, название, автор…" autocomplete="off">
+          <ul class="picks" data-l-book-list></ul>
+        </div>
+      </fieldset>
+      <div class="grid">
+        <label>Вернуть до<input type="date" name="due_date" required></label>
+        <label>Заметка<input name="note" maxlength="300"></label>
+      </div>
+      <p class="error" data-l-error role="alert" hidden></p>
+      <footer class="editor__foot">
+        <span class="spacer"></span>
+        <button type="button" class="ghost" data-l-cancel>Отмена</button>
+        <button type="submit" class="primary" data-l-ok disabled>Выдать</button>
       </footer>
     </form>
   </dialog>

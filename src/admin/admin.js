@@ -4,6 +4,7 @@ import '@fontsource/caveat/700.css';
 import './admin.css';
 import { api } from '../lib/api.js';
 import { initBooks } from './books.js';
+import { initUsers } from './users.js';
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
@@ -27,6 +28,7 @@ function showTab(name) {
   for (const p of $$('[data-panel]')) p.hidden = p.dataset.panel !== name;
   if (name === 'bot') loadBot();
   if (name === 'books') initBooks();
+  if (name === 'users') initUsers({ role: data.me.role });
 }
 
 function renderThreads() {
@@ -54,29 +56,6 @@ async function openThread(id, title) {
   renderThreads();
 }
 
-function renderUsers() {
-  $('[data-stats]').textContent = `Читателей: ${data.users.length} · сообщений в чате: ${data.messages} · голосов в кастинге: ${data.votes}`;
-  const owner = data.me.role === 'owner';
-  $('[data-users]').replaceChildren(...data.users.map((u) => {
-    const act = node('td');
-    if (owner && u.role !== 'owner') {
-      const next = u.role === 'admin' ? 'user' : 'admin';
-      const b = node('button', { type: 'button', textContent: next === 'admin' ? 'Сделать админом' : 'Снять админа' });
-      b.addEventListener('click', async () => {
-        await api('/api/admin/role', { method: 'POST', body: { user: u.id, role: next } });
-        await load();
-      });
-      act.append(b);
-    }
-    return node('tr', {},
-      node('td', { textContent: nameOf(u) }),
-      node('td', { textContent: u.username ? `@${u.username}` : '—' }),
-      node('td', {}, node('span', { className: `badge badge--${u.role}`, textContent: ROLE[u.role] })),
-      node('td', { textContent: fmt(u.last_login) }),
-      act);
-  }));
-}
-
 async function loadBot() {
   let hook = { configured: false };
   try { hook = await api('/api/admin/webhook'); } catch { /* shown as not connected */ }
@@ -92,7 +71,6 @@ async function loadBot() {
 async function load() {
   data = await api('/api/admin/overview');
   renderThreads();
-  renderUsers();
 }
 
 async function init() {

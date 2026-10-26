@@ -89,3 +89,33 @@ label input[type='color'] { height: 44px; width: 100%; padding: 2px; border-radi
 .cover { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
 .cover img { width: 110px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--card-2); }
 .error { margin: 0; padding: 10px 14px; border-radius: 12px; background: color-mix(in srgb, var(--terracotta) 15%, var(--card)); color: var(--terracotta); font-weight: 800; }
+
+/* ---- readers & loans ---- */
+.readers { margin: 0 0 20px; }
+.readers h3 { margin: 0 0 8px; font-size: 1rem; }
+.readers h3 small { color: var(--ink-3); font-weight: 800; }
+.readers ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.readers--card h3 { color: var(--cobalt); }
+.reader { width: 100%; display: flex; align-items: center; gap: 12px; justify-content: space-between; flex-wrap: wrap; padding: 10px 14px; text-align: left; background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; color: inherit; font: inherit; cursor: pointer; }
+.readers--card .reader { border-color: color-mix(in srgb, var(--cobalt) 45%, var(--line)); }
+.reader:hover { background: var(--card-2); }
+.reader__main { display: grid; min-width: 0; }
+.reader__main small { color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.reader__badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.badge--loan { background: var(--cobalt); color: var(--cobalt-ink); border-color: transparent; }
+.badge--overdue { background: var(--terracotta); color: #fff; border-color: transparent; }
+.badge--borrowed { background: var(--cobalt); color: var(--cobalt-ink); border-color: transparent; }
+.is-overdue { color: var(--terracotta); font-weight: 800; }
+.loans { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.loans li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 12px; background: var(--card-2); border: 1.5px solid var(--line); border-radius: 12px; }
+.loans li.is-overdue { border-color: var(--terracotta); }
+.loans__main { display: grid; flex: 1 1 200px; min-width: 0; }
+.loans__main small { color: var(--ink-3); }
+.loans input[type='date'] { height: 38px; padding: 0 10px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
+.loans--history { margin-top: 8px; }
+dialog.editor--narrow { max-width: 520px; }
+.picks { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; max-height: 190px; overflow: auto; }
+.picks button { width: 100%; text-align: left; padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--card-2); color: inherit; font: inherit; cursor: pointer; }
+.picks button:disabled { opacity: 0.5; cursor: not-allowed; }
+[data-l-dialog] input[type='search'] { width: 100%; height: 44px; padding: 0 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card-2); color: var(--ink); }
+[data-l-user-fixed], [data-l-book-fixed] { margin: 0; padding: 10px 14px; border-radius: 12px; background: var(--card-2); border: 1.5px dashed var(--line); font-weight: 800; cursor: pointer; }

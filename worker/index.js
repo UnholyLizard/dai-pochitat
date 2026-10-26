@@ -11,6 +11,7 @@ import { adminRoutes } from './admin.js';
 import { webhook } from './telegram.js';
 import { serveCover } from './covers.js';
 import { HIDDEN_STATUSES } from './books-admin.js';
+import { withDueDates } from './loans.js';
 
 const CANDIDATES = new Set(['ginger', 'cinder', 'patches', 'mila', 'nika', 'tim', 'marko', 'bookmark']);
 const VOTER = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -113,6 +114,8 @@ async function listBooks(url, env) {
   // Lost and archived books are managed from the admin console only.
   where.push(`b.status NOT IN (${HIDDEN_STATUSES.map((s) => `'${s}'`).join(', ')})`);
 
+  if (url.searchParams.get('available') === '1') where.push("b.status = 'available'");
+
   const lang = url.searchParams.get('lang');
   if (lang) {
     where.push('b.language = ?');
@@ -140,16 +143,17 @@ async function listBooks(url, env) {
     env.DB.prepare(countSql).bind(...countBinds).first(),
   ]);
 
-  const results = booksRes.results || [];
+  const results = await withDueDates(env, booksRes.results || []);
   const total = Number(countRes?.total ?? results.length);
 
-  return json({ books: results, total, limit, offset, count: results.length }, 200, { 'cache-control': 'public, max-age=60, s-maxage=3600' });
+  return json({ books: results, total, limit, offset, count: results.length }, 200, { 'cache-control': 'public, max-age=60, s-maxage=60' });
 }
 
 async function getBook(id, env) {
   const book = await env.DB.prepare('SELECT * FROM books WHERE id = ?1 OR code = ?1').bind(id).first();
   if (!book || HIDDEN_STATUSES.includes(book.status)) return json({ error: 'not found' }, 404);
-  return json({ book }, 200, { 'cache-control': 'public, max-age=300, s-maxage=86400' });
+  const [withDue] = await withDueDates(env, [book]);
+  return json({ book: withDue }, 200, { 'cache-control': 'public, max-age=60, s-maxage=60' });
 }
 
 async function listCollections(env) {

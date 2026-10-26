@@ -20,6 +20,7 @@ let state = {
   mood: '',
   collection: '',
   language: '',
+  available: '',
   limit: 24,
   offset: 0,
   total: 0,
@@ -66,20 +67,43 @@ function markCover(img) {
   img.classList.toggle('is-fit', img.naturalWidth >= img.naturalHeight);
 }
 
+// Stand-in for a missing or failed cover: name, author and publisher on the book's colour.
+// CSS hides it while an image is present, so it appears only once the image is gone.
+function bookFallback({ title, author, publisher }) {
+  return html`
+    <div class="book-fallback" aria-hidden="true">
+      <span class="book-fallback__title">${title}</span>
+      ${author ? html`<span class="book-fallback__author">${author}</span>` : ''}
+      ${publisher ? html`<span class="book-fallback__publisher">${publisher}</span>` : ''}
+    </div>
+  `;
+}
+
+/** "Back on 5 Nov" — the due date is public, the reader never is. */
+function loanText(b) {
+  if (!b.due_date) return t('catalog.onLoan');
+  const date = new Date(`${b.due_date}T00:00:00Z`).toLocaleDateString(document.documentElement.lang || undefined, { timeZone: 'UTC', day: 'numeric', month: 'long' });
+  return t('catalog.backOn', { date });
+}
+
 function renderBookCard(b) {
   const title = getLocalizedField(b, 'title');
   const author = getLocalizedField(b, 'author');
+  const publisher = b.publisher || '';
   const says = getLocalizedField(b, 'says');
   const ages = getBookAges(b);
   const coverUrl = b.cover_url || b.coverUrl;
   const color = b.dominant_color || b.color || '#3a4a58';
   const wanted = game.state.wish.includes(b.id);
   const langBadge = (b.language || 'ru').toUpperCase();
+  const out = b.status === 'borrowed';
 
   return html`
-    <article class="catalog-card" data-book-id="${b.id}" style="--dominant:${color}">
+    <article class="catalog-card${out ? ' is-out' : ''}" data-book-id="${b.id}" style="--dominant:${color}">
       <div class="catalog-card__cover">
         ${coverUrl ? html`<img class="catalog-card__cover-img" src="${coverUrl}" alt="" loading="lazy" decoding="async">` : ''}
+        ${bookFallback({ title, author, publisher })}
+        ${out ? html`<span class="catalog-card__loan" title="${loanText(b)}">${t('catalog.onLoan')}</span>` : ''}
         <span class="catalog-card__lang">${langBadge}</span>
         ${ages ? html`<span class="catalog-card__age">${ages}</span>` : ''}
         <button class="catalog-card__wish" type="button" data-wish="${b.id}" aria-pressed="${wanted}" title="${t(wanted ? 'oracle.wanted' : 'oracle.want')}">
@@ -112,6 +136,7 @@ async function fetchBooks({ reset = false } = {}) {
   if (state.mood) params.set('mood', state.mood);
   if (state.collection) params.set('collection', state.collection);
   if (state.language) params.set('lang', state.language);
+  if (state.available) params.set('available', '1');
   params.set('limit', String(state.limit));
   params.set('offset', String(state.offset));
 
@@ -211,8 +236,9 @@ function openBookDrawer(book) {
       <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
     </button>
     <div class="book-drawer__left">
-      <div class="book-drawer__cover">
+      <div class="book-drawer__cover${book.status === 'borrowed' ? ' is-out' : ''}" style="--dominant:${book.dominant_color || book.color || '#3a4a58'}">
         ${coverUrl ? html`<img src="${coverUrl}" alt="" decoding="async">` : ''}
+        ${bookFallback({ title, author, publisher: book.publisher })}
       </div>
       <div class="book-drawer__actions">
         <button class="btn btn--small btn--wide" type="button" data-wish="${book.id}" aria-pressed="${wanted}">
@@ -226,6 +252,7 @@ function openBookDrawer(book) {
         <span class="catalog-badge">${ages}</span>
         <span class="book-drawer__lang">🌐 ${langLabel}</span>
       </div>
+      ${book.status === 'borrowed' ? html`<p class="book-drawer__loan">${loanText(book)}</p>` : ''}
       <h3 style="margin: 0.5rem 0 0.2rem; font-family: var(--serif, serif); font-size: 1.4rem;">${title}</h3>
       <p style="margin: 0 0 0.85rem; opacity: 0.8; font-weight: 600;">${author}</p>
       
@@ -271,7 +298,8 @@ function closeBookDrawer() {
   syncUrl();
 }
 
-const PARAMS = { q: 'q', ageGroup: 'age_group', mood: 'mood', collection: 'collection', language: 'lang' };
+// URL names: `lang` is the page's UI language, so the language filter gets its own name.
+const PARAMS = { q: 'q', ageGroup: 'age_group', mood: 'mood', collection: 'collection', language: 'language', available: 'available' };
 let openBook = null;
 
 /** Filters + open book → query string (replaceState: browsing the shelf is not navigation). */
@@ -302,10 +330,12 @@ function syncFilterPills() {
     p.classList.toggle('is-active', p.dataset.language === state.language);
   }
 
+  for (const p of $$('[data-available]', modal)) p.classList.toggle('is-active', !!state.available);
+
   // Count of active filters stays visible on the toggle while the panel is hidden
   const countEl = $('[data-catalog-filters-count]', modal);
   if (countEl) {
-    const active = [state.ageGroup, state.mood, state.collection, state.language].filter(Boolean).length;
+    const active = [state.ageGroup, state.mood, state.collection, state.language, state.available].filter(Boolean).length;
     countEl.textContent = String(active);
     countEl.hidden = active === 0;
   }
@@ -366,6 +396,8 @@ export function initCatalog({ onAsk: ask } = {}) {
       state.mood = state.mood === pill.dataset.mood ? '' : pill.dataset.mood;
     } else if ('collection' in pill.dataset) {
       state.collection = state.collection === pill.dataset.collection ? '' : pill.dataset.collection;
+    } else if ('available' in pill.dataset) {
+      state.available = state.available ? '' : '1';
     } else if ('language' in pill.dataset) {
       state.language = state.language === pill.dataset.language ? '' : pill.dataset.language;
     }
@@ -382,6 +414,7 @@ export function initCatalog({ onAsk: ask } = {}) {
     state.mood = '';
     state.collection = '';
     state.language = '';
+    state.available = '';
     if (searchInput) searchInput.value = '';
     syncFilterPills();
     syncUrl();
@@ -400,6 +433,11 @@ export function initCatalog({ onAsk: ask } = {}) {
   }, true);
   gridEl?.addEventListener('error', (e) => {
     if (e.target.matches('.catalog-card__cover-img')) e.target.remove();
+  }, true);
+
+  // A drawer cover that fails to load is dropped, so the text stand-in shows instead
+  drawer?.addEventListener('error', (e) => {
+    if (e.target.matches('.book-drawer__cover img')) e.target.remove();
   }, true);
 
   // Mobile filter toggle: hides the pill rows, keeps the search field

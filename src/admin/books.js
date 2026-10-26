@@ -1,6 +1,8 @@
 // Admin "Книги" tab: list with status filters, add/edit editor with Google Books + Gemini lookup,
 // cover conversion (WebP + Telegram JPEG, done in the browser), status changes and confirmed delete.
 import { api } from '../lib/api.js';
+import { openLoan, initLoanDialog } from './loans.js';
+import { fmtDay, todayIso } from './dom.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 
@@ -121,7 +123,8 @@ function renderList() {
       cover,
       node('div', { className: 'books__main' },
         node('strong', { textContent: title }),
-        node('small', { textContent: `${b.code} · ${author}${b.year ? ` · ${b.year}` : ''}` })),
+        node('small', { textContent: `${b.code} · ${author}${b.year ? ` · ${b.year}` : ''}` }),
+        ...(b.loan ? [node('small', { className: b.loan.due_date < todayIso() ? 'is-overdue' : '', textContent: `У: ${b.loan.user} · до ${fmtDay(b.loan.due_date)}${b.loan.due_date < todayIso() ? ' · просрочено' : ''}` })] : [])),
       node('span', { className: `badge badge--${b.status}`, textContent: STATUS[b.status] ?? b.status }),
       select, edit);
   }));
@@ -192,7 +195,20 @@ function openEditor(book) {
   $('[data-b-delete]').hidden = !book;
   $('[data-b-file]').value = '';
   showCover(book?.cover_url ?? null);
+  renderLoanBox(book);
   $('[data-b-editor]').showModal();
+}
+
+function renderLoanBox(book) {
+  const box = $('[data-b-loan-box]');
+  box.hidden = !book;
+  if (!book) return;
+  const out = book.loan;
+  $('[data-b-loan-text]').textContent = out
+    ? `Сейчас у: ${out.user} · вернуть до ${fmtDay(out.due_date)}${out.due_date < todayIso() ? ' (просрочено)' : ''}`
+    : 'Книга на полке.';
+  $('[data-b-loan-return]').hidden = !out;
+  $('[data-b-loan-issue]').hidden = !!out || !['available', 'reserved'].includes(book.status);
 }
 
 function closeEditor() {
@@ -375,6 +391,24 @@ export async function initBooks() {
   $('[data-b-cancel]').addEventListener('click', closeEditor);
   $('[data-b-lookup]').addEventListener('click', runLookup);
   $('[data-b-delete]').addEventListener('click', askDelete);
+  initLoanDialog();
+  $('[data-b-loan-issue]').addEventListener('click', () => {
+    if (!editing) return;
+    openLoan({
+      book: { id: editing.id, code: editing.code, title: editing.title_ru || editing.title_en || editing.title_me },
+      onDone: async () => { closeEditor(); await load({ keepOffset: true }); },
+    });
+  });
+  $('[data-b-loan-return]').addEventListener('click', async () => {
+    if (!editing?.loan) return;
+    try {
+      await api(`/api/admin/loans/${editing.loan.id}/return`, { method: 'POST', body: {} });
+      closeEditor();
+      await load({ keepOffset: true });
+    } catch (err) {
+      setError(err.message);
+    }
+  });
   $('[data-b-file]').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) setPendingCover(f); });
   $('[data-b-cover-clear]').addEventListener('click', () => {
     pendingCover = null;

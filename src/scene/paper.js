@@ -117,7 +117,7 @@ function star(ctx, x, y, r) {
  * Cloth cover with gold foil. mode: 'color' | 'mask' (the same drawing rendered twice:
  * once in colour, once as a white-on-black foil mask that makes the gold glow).
  */
-export function paintCover(canvas, { side, mode, house, olive, cypress, t }) {
+export function paintCover(canvas, { side, mode, house, olive, cypress, ginger, t }) {
   // The foil mask doesn't need full resolution.
   const k = mode === 'color' ? 1 : 0.5;
   canvas.width = COVER.w * k; canvas.height = COVER.h * k;
@@ -263,28 +263,37 @@ export function paintCover(canvas, { side, mode, house, olive, cypress, t }) {
     ctx.quadraticCurveTo(cx - 40, cy + 34, cx - 90, cy + 60); ctx.closePath(); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(cx, cy - 30); ctx.lineTo(cx, cy + 66); ctx.stroke();
 
+    // Ginger, thinking, sits right above the question she is asking.
+    const gh = 260, gw = gh * (ginger ? ginger.width / ginger.height : 1), gy = 850;
+    if (color && ginger) {
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,30,0.45)'; ctx.shadowOffsetY = 8; ctx.shadowBlur = 18;
+      ctx.drawImage(ginger, cx - gw / 2, gy, gw, gh);
+      ctx.restore();
+    }
+
     shadow(true);
     ctx.font = 'italic 800 92px "Literata Variable"';
-    ctx.fillText(t('cover.back1'), cx, h * 0.73);
+    ctx.fillText(t('cover.back1'), cx, 1215);
     ctx.font = 'italic 600 64px "Literata Variable"';
-    ctx.fillText(t('cover.back2'), cx, h * 0.73 + 92);
+    ctx.fillText(t('cover.back2'), cx, 1215 + 92);
     shadow(false);
   }
   return canvas;
 }
 
-export function coverTextures({ house, olive, cypress, t }) {
+export function coverTextures({ house, olive, cypress, ginger, t }) {
   const make = (side) => ({
-    color: canvasTexture(paintCover(document.createElement('canvas'), { side, mode: 'color', house, olive, cypress, t })),
+    color: canvasTexture(paintCover(document.createElement('canvas'), { side, mode: 'color', house, olive, cypress, ginger, t })),
     mask: canvasTexture(paintCover(document.createElement('canvas'), { side, mode: 'mask', t }), false),
   });
   return { front: make('front'), back: make('back') };
 }
 
-export function repaintCovers(set, { house, olive, cypress, t }) {
+export function repaintCovers(set, { house, olive, cypress, ginger, t }) {
   for (const side of ['front', 'back']) {
     for (const mode of ['color', 'mask']) {
-      paintCover(set[side][mode].image, { side, mode, house, olive, cypress, t });
+      paintCover(set[side][mode].image, { side, mode, house, olive, cypress, ginger, t });
       set[side][mode].needsUpdate = true;
     }
   }

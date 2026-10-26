@@ -83,8 +83,8 @@ export async function createStage({ canvas, getTarget, getArea, getZoomArea, t, 
 
   // ── The book ──
   await ensureFonts();
-  const [house, olive, cypress] = await Promise.all(['house', 'olive', 'cypress'].map((id) => loadImage(artUrl(id))));
-  const plate = { house, olive, cypress };
+  const [house, olive, cypress, ginger] = await Promise.all(['house', 'olive', 'cypress', 'ginger-think'].map((id) => loadImage(artUrl(id))));
+  const plate = { house, olive, cypress, ginger };
   const covers = coverTextures({ ...plate, t });
   const book = new Book({ front: covers.front, back: covers.back, edge: edgeTexture() });
   scene.add(book.group);
