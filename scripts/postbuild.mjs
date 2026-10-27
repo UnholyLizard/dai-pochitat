@@ -1,6 +1,6 @@
 // After `vite build`: write dist/_headers (Cloudflare static assets) with a CSP that
 // whitelists the exact inline scripts in index.html by hash, plus caching rules.
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, copyFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -60,7 +60,21 @@ const headers = `/*
 /manifest.webmanifest
   Cache-Control: no-cache
   Content-Type: application/manifest+json
+
+/catalog/manifest.webmanifest
+  Cache-Control: no-cache
+  Content-Type: application/manifest+json
+
+/admin/manifest.webmanifest
+  Cache-Control: no-cache
+  Content-Type: application/manifest+json
 `;
 
 await writeFile(resolve(dist, '_headers'), headers);
-console.log(`_headers written (${hashes.length} inline script hash${hashes.length === 1 ? '' : 'es'})`);
+
+// Provide alias copies of the manifest in nested page folders to eliminate 404s from any cached/external relative requests
+await copyFile(resolve(dist, 'manifest.webmanifest'), resolve(dist, 'catalog/manifest.webmanifest'));
+await copyFile(resolve(dist, 'manifest.webmanifest'), resolve(dist, 'admin/manifest.webmanifest'));
+
+console.log(`_headers written (${hashes.length} inline script hash${hashes.length === 1 ? '' : 'es'}) and manifest mirrored`);
+
