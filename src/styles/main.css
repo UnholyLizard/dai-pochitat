@@ -84,6 +84,8 @@
 
 @layer base {
   html {
+    /* With viewport-fit=cover the phone's system bars show this colour, so it must follow the theme. */
+    background: var(--paper);
     scroll-behavior: smooth;
     scroll-padding-top: var(--header-h);
     /* No blue flash over whatever is tapped; the buttons have their own :active feedback. */
@@ -1529,7 +1531,7 @@
   .librarian-dock {
     position: fixed;
     right: clamp(14px, 2.4vw, 32px);
-    bottom: clamp(14px, 2.4vw, 30px);
+    bottom: calc(clamp(14px, 2.4vw, 30px) + env(safe-area-inset-bottom));
     z-index: 45;
     display: flex;
     align-items: flex-end;
@@ -1950,6 +1952,31 @@
     font-size: 0.85rem;
   }
   @media (max-width: 560px) { .pp-critters { grid-template-columns: repeat(4, 1fr); } }
+
+  /* Phones: the library card fills the screen; stamps run in two rows and scroll sideways */
+  @media (max-width: 640px) {
+    .passport {
+      inset: 0;
+      margin: 0;
+      width: 100vw;
+      max-width: 100vw;
+      height: 100dvh;
+      max-height: none;
+      border-radius: 0;
+    }
+    .passport__body { padding: 60px 16px 28px; grid-template-columns: minmax(0, 1fr); }
+    .pp-section { min-width: 0; }
+    .pp-stamps {
+      grid-template-columns: none;
+      grid-template-rows: repeat(2, auto);
+      grid-auto-flow: column;
+      grid-auto-columns: 92px;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 10px 6px 14px;
+      scrollbar-width: thin;
+    }
+  }
 
   .pp-critter-card {
     display: grid;

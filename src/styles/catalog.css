@@ -910,6 +910,12 @@ body.catalog-body-page {
   color: var(--ink, #282119);
 }
 
+/* Phone system bars show the root colour; the desktop window sets its own backdrop below. */
+@media not ((min-width: 900px) and (min-height: 600px)) {
+  html { background: var(--bg, #fbf7ee); }
+  html[data-theme="night"] { background: #181d2f; }
+}
+
 html[data-theme="night"] body.catalog-body-page {
   background: #181d2f;
   color: #e9ecf5;
@@ -942,6 +948,7 @@ html[data-theme="night"] .catalog-page .catalog-head {
 }
 
 .catalog-page .catalog-body {
+  pointer-events: auto; /* main.css makes every <main> click-through for the 3D home page */
   overflow: visible;
   flex: 1;
 }
@@ -999,6 +1006,8 @@ html[data-theme="night"] .catalog-lang button[aria-pressed='true'] { background:
 /* Desktop: the catalog is a window over a dimmed backdrop (as the old modal was), not edge to edge.
    The whole window scrolls under its sticky header; the inspector covers the window only. */
 @media (min-width: 900px) and (min-height: 600px) {
+  html { background: #2a241c; }
+  html[data-theme="night"] { background: #070a14; }
   body.catalog-body-page { background: #2a241c; }
   html[data-theme="night"] body.catalog-body-page { background: #070a14; }
 

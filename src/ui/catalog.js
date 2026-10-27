@@ -443,11 +443,22 @@ export function initCatalog({ onAsk: ask } = {}) {
   // Mobile filter toggle: hides the pill rows, keeps the search field
   const filtersToggle = $('[data-catalog-filters-toggle]', modal);
   const filtersPanel = $('[data-catalog-filters]', modal);
-  filtersToggle?.addEventListener('click', () => {
-    const expanded = filtersToggle.getAttribute('aria-expanded') !== 'true';
-    filtersToggle.setAttribute('aria-expanded', String(expanded));
+  const setFilters = (expanded) => {
+    filtersToggle?.setAttribute('aria-expanded', String(expanded));
     if (filtersPanel) filtersPanel.hidden = !expanded;
-  });
+  };
+  filtersToggle?.addEventListener('click', () => setFilters(filtersToggle.getAttribute('aria-expanded') !== 'true'));
+
+  // Scrolling the results down folds the filters away; scrolling back up leaves them folded —
+  // only the toggle brings them back.
+  const catalogPage = $('.catalog-page');
+  let lastY = 0;
+  const onScroll = (y) => {
+    if (y > lastY && y > 120 && filtersToggle?.getAttribute('aria-expanded') === 'true') setFilters(false);
+    lastY = y;
+  };
+  addEventListener('scroll', () => onScroll(scrollY), { passive: true });
+  catalogPage?.addEventListener('scroll', () => onScroll(catalogPage.scrollTop), { passive: true });
 
   // Card click -> open detail drawer
   gridEl?.addEventListener('click', (e) => {
