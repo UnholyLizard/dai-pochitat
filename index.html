@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Дай почитать! — детская библиотека в Баре</title>
   <meta name="description" content="Маленькая некоммерческая библиотека для детей и подростков в жёлтом доме в Баре, Черногория. Книги на русском и английском, громкие чтения, клубы и праздники.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4e8cf">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#141a30">
   <meta name="theme-color" content="#f4e8cf">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
@@ -44,7 +47,11 @@
         const theme = prefs.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day');
         document.documentElement.lang = lang;
         document.documentElement.dataset.theme = theme;
-        document.querySelector('meta[name="theme-color"]').content = theme === 'night' ? '#141a30' : '#f4e8cf';
+        document.documentElement.style.colorScheme = theme === 'night' ? 'dark' : 'light';
+        const c = theme === 'night' ? '#141a30' : '#f4e8cf';
+        document.querySelectorAll('meta[name="theme-color"]').forEach((el) => { el.content = c; });
+        const cs = document.querySelector('meta[name="color-scheme"]');
+        if (cs) cs.content = theme === 'night' ? 'dark' : 'light';
       } catch { /* storage blocked: defaults stay */ }
     })();
   </script>

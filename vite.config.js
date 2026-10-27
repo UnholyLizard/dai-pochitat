@@ -35,7 +35,7 @@ export default defineConfig({
         display: 'standalone',
         orientation: 'any',
         background_color: '#f4e8cf',
-        theme_color: '#f4e8cf',
+        theme_color: undefined,
         categories: ['books', 'education', 'kids'],
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },

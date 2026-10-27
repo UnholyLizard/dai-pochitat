@@ -2006,6 +2006,10 @@
   .pp-critter-card__close:hover { background: rgb(0 0 0 / 0.08); color: #2b1b12; }
   .pp-critter-card__close svg { width: 16px; height: 16px; }
 
+  .pp-loans { display: grid; gap: 6px; }
+  .pp-loans li { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 8px 12px; border-radius: 10px; background: rgb(255 255 255 / 0.4); font-size: 0.98rem; }
+  .pp-loans span { font: 800 0.82rem/1.2 var(--font-ui); opacity: 0.75; white-space: nowrap; }
+  .pp-loans .is-overdue span { color: #c94a30; opacity: 1; }
   .pp-wish { display: grid; gap: 6px; }
   .pp-wish li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 12px; border-radius: 10px; background: rgb(255 255 255 / 0.4); font-size: 0.98rem; }
   .pp-wish button { font: 800 0.8rem/1 var(--font-ui); opacity: 0.6; }

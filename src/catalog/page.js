@@ -14,7 +14,10 @@ initI18n();
 const root = document.documentElement;
 const syncTheme = () => {
   const night = root.dataset.theme === 'night';
-  $('meta[name="theme-color"]')?.setAttribute('content', night ? '#141a30' : '#f4e8cf');
+  root.style.colorScheme = night ? 'dark' : 'light';
+  const c = night ? '#141a30' : '#f4e8cf';
+  for (const m of $$('meta[name="theme-color"]')) m.setAttribute('content', c);
+  $('meta[name="color-scheme"]')?.setAttribute('content', night ? 'dark' : 'light');
   for (const b of $$('[data-theme-toggle]')) b.setAttribute('aria-pressed', String(night));
 };
 syncTheme();

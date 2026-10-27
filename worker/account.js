@@ -128,6 +128,17 @@ async function natasha(request, env, user) {
   return json({ id: saved.meta.last_row_id, delivered });
 }
 
+/** The signed-in reader's own books on loan, soonest due first. */
+async function myLoans(env, user) {
+  const { results } = await env.DB.prepare(
+    `SELECT b.code, b.title_ru, b.title_en, b.title_me, l.due_date
+       FROM loans l JOIN books b ON b.id = l.book_id
+      WHERE l.user_id = ? AND l.returned_at IS NULL
+      ORDER BY l.due_date, l.id`,
+  ).bind(user.id).all();
+  return json({ loans: results ?? [] }, 200, { 'cache-control': 'no-store' });
+}
+
 /** Returns a Response for account routes, or null when the path isn't one of ours. */
 export async function accountRoutes(request, env, url) {
   const path = url.pathname;
@@ -141,7 +152,7 @@ export async function accountRoutes(request, env, url) {
       botUsername: env.TG_BOT_USERNAME ?? null,
     });
   }
-  if (!path.startsWith('/api/auth/') && path !== '/api/me/game' && path !== '/api/natasha') return null;
+  if (!path.startsWith('/api/auth/') && path !== '/api/me/game' && path !== '/api/me/loans' && path !== '/api/natasha') return null;
 
   if (request.method !== 'GET' && !sameOrigin(request)) return json({ error: 'forbidden' }, 403);
 
@@ -156,6 +167,7 @@ export async function accountRoutes(request, env, url) {
   if (!user) return json({ error: 'unauthorized' }, 401);
   if (path === '/api/auth/handoff/create' && post) return createHandoff(request, env, user);
   if (path === '/api/me/game' && request.method === 'PUT') return saveGame(request, env, user);
+  if (path === '/api/me/loans' && request.method === 'GET') return myLoans(env, user);
   if (path === '/api/natasha') return natasha(request, env, user);
   return json({ error: 'not found' }, 404);
 }

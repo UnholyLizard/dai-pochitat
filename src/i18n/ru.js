@@ -122,6 +122,8 @@ export default {
   'passport.stamps': 'Штампы',
   'passport.critters': 'Книжные жители',
   'passport.wish': 'Хочу прочитать',
+  'passport.loans': 'Книги на руках',
+  'passport.loanDue': 'вернуть до {date}',
   'passport.wishEmpty': 'Пока пусто — загляни в волшебный сундук.',
   'passport.remove': 'убрать',
   'passport.secret': 'Секретное слово для библиотекаря',

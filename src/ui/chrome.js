@@ -13,7 +13,10 @@ export function setNight(on, { byUser = false } = {}) {
   if (on === isNight()) return;
   const apply = () => {
     root.dataset.theme = on ? 'night' : 'day';
-    $('meta[name="theme-color"]')?.setAttribute('content', on ? '#141a30' : '#f4e8cf');
+    root.style.colorScheme = on ? 'dark' : 'light';
+    const c = on ? '#141a30' : '#f4e8cf';
+    for (const m of $$('meta[name="theme-color"]')) m.setAttribute('content', c);
+    $('meta[name="color-scheme"]')?.setAttribute('content', on ? 'dark' : 'light');
     for (const b of $$('[data-theme-toggle]')) b.setAttribute('aria-pressed', String(on));
   };
   // Cross-fade the whole page where View Transitions exist.

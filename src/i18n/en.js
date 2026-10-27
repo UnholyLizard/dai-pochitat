@@ -220,6 +220,8 @@ export default {
   'passport.stamps': 'Stamps',
   'passport.critters': 'Book folk',
   'passport.wish': 'Want to read',
+  'passport.loans': 'Books you have',
+  'passport.loanDue': 'due back {date}',
   'passport.wishEmpty': 'Empty for now — peek into the magic chest.',
   'passport.remove': 'remove',
   'passport.secret': 'Secret word for the librarian',

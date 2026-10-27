@@ -1,10 +1,12 @@
 import { bus, $, $$, html, render, raw, artUrl } from '../lib/core.js';
-import { t, plural, L } from '../i18n/index.js';
+import { t, plural, L, getLang } from '../i18n/index.js';
 import { game, rankOf } from './state.js';
 import { STAMPS, CRITTERS, RANKS } from '../content/game.js';
 import { bookById } from '../content/books.js';
 import { LIBRARY } from '../content/library.js';
 import { sfx } from './sfx.js';
+import { auth } from '../lib/auth.js';
+import { api } from '../lib/api.js';
 import { toast, imgIcon, coinIcon } from './feedback.js';
 
 const dialog = $('#passport');
@@ -12,6 +14,16 @@ const body = $('[data-passport]');
 let seen = new Set(Object.keys(game.state.stamps));
 let activeCritterId = null;
 let confirmingReset = false;
+let loans = []; // the signed-in reader's books on loan (empty when anonymous)
+
+const day = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString(undefined, { timeZone: 'UTC', day: 'numeric', month: 'long' });
+const todayIso = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Podgorica' }).format(new Date());
+
+async function loadLoans() {
+  if (!auth.user) { loans = []; return; }
+  try { loans = (await api('/api/me/loans')).loans; } catch { loans = []; }
+  if (dialog.open) draw();
+}
 
 // Each stamp keeps the same jaunty angle on every render.
 const tilt = (id) => ((id.charCodeAt(0) * 37 + id.length * 11) % 30) - 15;
@@ -57,6 +69,14 @@ function view() {
         <b>${L(LIBRARY.secretWord)}</b>
         <span>${t('passport.secretHint')}</span>
       </section>` : ''}
+
+    ${loans.length ? html`
+    <section class="pp-section">
+      <h3>${t('passport.loans')}</h3>
+      <ul class="pp-loans">
+        ${loans.map((l) => html`<li class="${l.due_date < todayIso() ? 'is-overdue' : ''}"><b>${(getLang() === 'en' ? l.title_en : l.title_ru) || l.title_ru || l.title_en || l.title_me}</b><span>${t('passport.loanDue', { date: day(l.due_date) })}</span></li>`)}
+      </ul>
+    </section>` : ''}
 
     <section class="pp-section">
       <h3>${t('passport.stamps')}</h3>
@@ -137,6 +157,7 @@ function draw() {
 }
 
 export function openPassport() {
+  loadLoans();
   draw();
   if (!dialog.open) dialog.showModal();
   if (Object.keys(game.state.stamps).length) sfx.stamp();
@@ -223,4 +244,5 @@ export function initPassport() {
 
   bus.on('game', () => dialog.open && draw());
   bus.on('lang', () => dialog.open && draw());
+  bus.on('auth', () => { loans = []; if (dialog.open) loadLoans(); });
 }
