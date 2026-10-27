@@ -14,7 +14,9 @@ import { initPassport, openPassport } from './game/passport.js';
 import { initTheme, setNight, isNight, initScroll, getTarget, goTo, bookArea } from './ui/chrome.js';
 import { initOracle, initSections, syncCritterButtons } from './ui/sections.js';
 import { initLibrarian, send as askLibrarian, open as openLibrarian, close as closeLibrarian } from './librarian/chat.js';
-import { bookById } from './content/books.js';
+import { bookById, loadSuggestions } from './content/books.js';
+
+loadSuggestions(); // live catalogue picks for the chest and the librarian (offline list until it lands)
 import { initPWA, install } from './pwa.js';
 import { initCasting } from './ui/casting.js';
 import { initMenu } from './ui/menu.js';

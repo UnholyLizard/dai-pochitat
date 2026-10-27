@@ -2,7 +2,7 @@ import { bus, $, $$, html, render, raw, artUrl } from '../lib/core.js';
 import { t, plural, L, getLang } from '../i18n/index.js';
 import { game, rankOf } from './state.js';
 import { STAMPS, CRITTERS, RANKS } from '../content/game.js';
-import { bookById } from '../content/books.js';
+import { bookById, resolveBook } from '../content/books.js';
 import { LIBRARY } from '../content/library.js';
 import { sfx } from './sfx.js';
 import { auth } from '../lib/auth.js';
@@ -18,6 +18,14 @@ let loans = []; // the signed-in reader's books on loan (empty when anonymous)
 
 const day = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString(undefined, { timeZone: 'UTC', day: 'numeric', month: 'long' });
 const todayIso = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Podgorica' }).format(new Date());
+
+// Hearts come from the whole catalogue, so look up any title the suggestion pool doesn't know.
+async function resolveWishes() {
+  const missing = game.state.wish.filter((id) => !bookById(id));
+  if (!missing.length) return;
+  await Promise.all(missing.map(resolveBook));
+  if (dialog.open) draw();
+}
 
 async function loadLoans() {
   if (!auth.user) { loans = []; return; }
@@ -158,6 +166,7 @@ function draw() {
 
 export function openPassport() {
   loadLoans();
+  resolveWishes();
   draw();
   if (!dialog.open) dialog.showModal();
   if (Object.keys(game.state.stamps).length) sfx.stamp();
@@ -242,7 +251,7 @@ export function initPassport() {
     }
   });
 
-  bus.on('game', () => dialog.open && draw());
+  bus.on('game', () => { if (!dialog.open) return; draw(); resolveWishes(); });
   bus.on('lang', () => dialog.open && draw());
   bus.on('auth', () => { loans = []; if (dialog.open) loadLoans(); });
 }

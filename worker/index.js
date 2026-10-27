@@ -149,6 +149,20 @@ async function listBooks(url, env) {
   return json({ books: results, total, limit, offset, count: results.length }, 200, { 'cache-control': 'public, max-age=60, s-maxage=60' });
 }
 
+/** A stable, shuffled pool of lendable, described books for the magic chest and the librarian. */
+async function suggestions(env) {
+  const { results } = await env.DB.prepare(
+    `SELECT id, title_ru, title_en, title_me, author_ru, author_en, author_me, age_min, age_max, moods_json, dominant_color, says_ru, says_en, cover_url FROM (
+       SELECT *, ROW_NUMBER() OVER (
+                PARTITION BY CASE WHEN age_min <= 5 THEN 0 WHEN age_min <= 9 THEN 1 WHEN age_min <= 12 THEN 2 ELSE 3 END
+                ORDER BY (rowid * 2654435761) % 1000003) AS rn
+         FROM books
+        WHERE status = 'available' AND (says_ru != '' OR says_en != '') AND (title_ru != '' OR title_en != '') AND moods_json != '[]' AND age_min < 18)
+      WHERE rn <= 90`,
+  ).all();
+  return json({ books: results ?? [] }, 200, { 'cache-control': 'public, max-age=300, s-maxage=300' });
+}
+
 async function getBook(id, env) {
   const book = await env.DB.prepare('SELECT * FROM books WHERE id = ?1 OR code = ?1').bind(id).first();
   if (!book || HIDDEN_STATUSES.includes(book.status)) return json({ error: 'not found' }, 404);
@@ -200,6 +214,15 @@ export default {
         return await listBooks(url, env);
       } catch (err) {
         log('error', 'listBooks failed', { error: String(err?.message ?? err) });
+        return json({ error: 'unavailable' }, 503);
+      }
+    }
+
+    if (url.pathname === '/api/suggestions' && request.method === 'GET') {
+      try {
+        return await suggestions(env);
+      } catch (err) {
+        log('error', 'suggestions failed', { error: String(err?.message ?? err) });
         return json({ error: 'unavailable' }, 503);
       }
     }

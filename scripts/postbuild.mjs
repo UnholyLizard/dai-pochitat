@@ -17,12 +17,12 @@ const hashes = [...html.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*application\/ld\
 
 const csp = [
   "default-src 'self'",
-  `script-src 'self' https://telegram.org ${hashes.join(' ')}`.trim(),
+  `script-src 'self' 'unsafe-eval' https://telegram.org https://static.cloudflareinsights.com ${hashes.join(' ')}`.trim(),
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://t.me https://*.telegram.org",
   "font-src 'self'",
-  "connect-src 'self' https://api.telegram.org https://oauth.telegram.org",
-  "frame-src 'self' https://oauth.telegram.org https://web.telegram.org",
+  "connect-src 'self' https://cloudflareinsights.com https://api.telegram.org https://oauth.telegram.org",
+  "frame-src 'self' https://oauth.telegram.org https://web.telegram.org https://t.me",
   "worker-src 'self'",
   "manifest-src 'self'",
   "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org",
