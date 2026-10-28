@@ -1,8 +1,8 @@
 // "Выдать книгу" dialog, shared by the readers tab (reader known) and the books tab (book known).
 import { api } from '../lib/api.js';
-import { $, node, todayIso, addDaysIso, debounce } from './dom.js';
+import { $, node, todayIso, addMonthsIso, debounce } from './dom.js';
 
-const LOAN_DAYS = 14; // the library lends for two weeks (see LIBRARY.loan in src/content/library.js)
+const LOAN_MONTHS = 1; // books go back within one calendar month (see LIBRARY.loan in src/content/library.js)
 const LENDABLE = new Set(['available', 'reserved']);
 
 let ctx = null; // { onDone }
@@ -64,7 +64,7 @@ export function openLoan({ user: u = null, book: b = null, onDone } = {}) {
   pickList($('[data-l-user-list]'), []);
   pickList($('[data-l-book-list]'), []);
   const f = $('[data-l-form]');
-  f.elements.due_date.value = addDaysIso(todayIso(), LOAN_DAYS);
+  f.elements.due_date.value = addMonthsIso(todayIso(), LOAN_MONTHS);
   f.elements.note.value = '';
   refresh();
   $('[data-l-dialog]').showModal();

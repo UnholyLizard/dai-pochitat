@@ -125,11 +125,11 @@ npm run art:cut -- house,olive    # cut out → public/art/*.webp (+ avatars) + 
 
 ## Before going live — placeholders to replace
 
-- `src/content/library.js` — **hours, Telegram/Instagram links, e-mail are invented.**
 - `src/content/events.js` — only the 25 September birthday is real; the rest are samples.
 - `src/content/books.js` — sample shelf; swap for the real catalogue.
-- JSON-LD and the address block still need the street address.
-- Ages 3–17, "free card", "2 books for 2 weeks" are assumptions.
+- `src/content/library.js` — the book count per loan ("2 books") is kept from the draft; confirm it.
+- Ages 3–17 and "free card" are assumptions.
+- Hours, address, links, owner contacts and the one-calendar-month loan term come from the library's announcement; keep `index.html` (JSON-LD, fallback copy), `public/llms.txt` and `src/admin/loans.js` in sync when they change.
 
 ## Characters
 

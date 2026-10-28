@@ -76,5 +76,23 @@ await writeFile(resolve(dist, '_headers'), headers);
 await copyFile(resolve(dist, 'manifest.webmanifest'), resolve(dist, 'catalog/manifest.webmanifest'));
 await copyFile(resolve(dist, 'manifest.webmanifest'), resolve(dist, 'admin/manifest.webmanifest'));
 
+// Ensure exactly one canonical <link rel="manifest"> in built HTML pages
+for (const page of ['index.html', 'catalog/index.html', 'admin/index.html']) {
+  const filePath = resolve(dist, page);
+  try {
+    const raw = await readFile(filePath, 'utf8');
+    let seen = false;
+    const cleaned = raw.replace(/<link\s+rel="manifest"[^>]*>\s*/gi, (match) => {
+      if (!seen) {
+        seen = true;
+        return match;
+      }
+      return '';
+    });
+    if (cleaned !== raw) await writeFile(filePath, cleaned);
+  } catch { /* skip */ }
+}
+
 console.log(`_headers written (${hashes.length} inline script hash${hashes.length === 1 ? '' : 'es'}) and manifest mirrored`);
+
 

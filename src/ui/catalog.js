@@ -67,14 +67,29 @@ function markCover(img) {
   img.classList.toggle('is-fit', img.naturalWidth >= img.naturalHeight);
 }
 
-// Stand-in for a missing or failed cover: name, author and publisher on the book's colour.
+// Stand-in for a missing or failed cover: tactile vector book with spine, ribbon, frame and emblem on the book's colour.
 // CSS hides it while an image is present, so it appears only once the image is gone.
 function bookFallback({ title, author, publisher }) {
   return html`
     <div class="book-fallback" aria-hidden="true">
-      <span class="book-fallback__title">${title}</span>
-      ${author ? html`<span class="book-fallback__author">${author}</span>` : ''}
-      ${publisher ? html`<span class="book-fallback__publisher">${publisher}</span>` : ''}
+      <div class="book-fallback__spine"></div>
+      <div class="book-fallback__ribbon"></div>
+      <div class="book-fallback__frame">
+        <svg class="book-fallback__emblem" viewBox="0 0 32 32" aria-hidden="true" fill="none">
+          <path d="M16 7c-3-2-8-2-11 0v16c3-1.8 8-1.8 11 0 3-1.8 8-1.8 11 0V7c-3-2-8-2-11 0z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M16 7v16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M11 11.5c2-.5 4-.3 5 .5M11 15c2-.5 4-.3 5 .5M21 11.5c-2-.5-4-.3-5 .5M21 15c-2-.5-4-.3-5 .5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity="0.75"/>
+          <circle cx="16" cy="4" r="1.5" fill="currentColor"/>
+        </svg>
+        <div class="book-fallback__info">
+          <span class="book-fallback__title">${title}</span>
+          ${author ? html`<span class="book-fallback__author">${author}</span>` : ''}
+          ${publisher ? html`<span class="book-fallback__publisher">${publisher}</span>` : ''}
+        </div>
+        <div class="book-fallback__ornament">
+          <span>✦</span>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -282,6 +297,15 @@ function openBookDrawer(book) {
       </div>
     </div>
   `);
+
+  const coverImg = $('.book-drawer__cover img', drawerContent);
+  if (coverImg) {
+    if (coverImg.complete && !coverImg.naturalWidth) {
+      coverImg.remove();
+    } else {
+      coverImg.addEventListener('error', () => coverImg.remove(), { once: true });
+    }
+  }
 
   drawer.removeAttribute('hidden');
   openBook = book;

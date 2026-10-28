@@ -245,7 +245,7 @@ export function createScriptedBrain() {
           return [say(R(`Мы в школе-саду «Компас» в Баре — в жёлтом доме с синими окнами. Его видно даже с Луны. Ну, почти.`, `We’re in the Kompas school-garden in Bar — the yellow house with blue windows. You can see it from the Moon. Nearly.`)), { chips: [{ label: L(R('Показать в книге', 'Show me in the book'), lang), action: { type: 'goto', id: 'find' } }] }];
         case 'join':
         case 'price':
-          return [say(R(`Записаться просто: приходи со взрослым, получи читательский билет — это бесплатно! — и бери ${LIBRARY.loan.books} книги на ${LIBRARY.loan.weeks} недели.`, `Joining is easy: come with a grown-up, get your library card — it’s free! — and take ${LIBRARY.loan.books} books home for ${LIBRARY.loan.weeks} weeks.`)), { chips: [{ label: L(R('Когда вы открыты?', 'When are you open?'), lang) }] }];
+          return [say(R(`Записаться просто: приходи со взрослым, получи читательский билет — это бесплатно! — и бери ${LIBRARY.loan.books} книги. Вернуть их нужно в течение календарного месяца, в дни работы библиотеки.`, `Joining is easy: come with a grown-up, get your library card — it’s free! — and take ${LIBRARY.loan.books} books home. Return them within one calendar month, on our opening days.`)), { chips: [{ label: L(R('Когда вы открыты?', 'When are you open?'), lang) }] }];
         case 'events': {
           const next = EVENTS.find((e) => new Date(e.end) >= Date.now());
           if (!next) return [say(R('Скоро объявим новый праздник. Следи за нами в Telegram!', 'We’ll announce the next party soon. Follow us on Telegram!'))];

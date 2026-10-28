@@ -38,9 +38,12 @@ export default {
   'events.past': 'Было здорово!',
   'events.free': 'вход свободный',
 
+  'find.fbGroup': 'Facebook-группа',
   'find.telegram': 'Telegram',
   'find.instagram': 'Instagram',
-  'find.email': 'Написать письмо',
+  'find.ownerFacebook': 'Наташа в Facebook',
+  'find.ownerTelegram': 'Наташа в Telegram',
+  'find.viber': 'Viber',
   'find.maps': 'Открыть на карте',
 
   'end.studioEyebrow': 'Сайт спроектирован и создан в студии',

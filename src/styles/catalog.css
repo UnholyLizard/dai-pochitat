@@ -441,39 +441,121 @@ html[data-theme="night"] .catalog-card {
   pointer-events: none;
 }
 
-/* Text stand-in for a cover: name, author and publisher on the book's own colour.
-   It shows only when there is no image (none given, or it failed to load). */
+/* Tactile vector book placeholder for a missing or offline cover:
+   rich cloth/leather gradient using the book's dominant colour, spine crease,
+   bookmark ribbon, embossed gilded frame, emblem and typography. */
 .book-fallback {
   position: absolute;
   inset: 0;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background:
+    radial-gradient(ellipse at 50% 25%, rgba(255, 255, 255, 0.15) 0%, transparent 65%),
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--dominant, #3a4a58) 85%, #ffffff 15%) 0%,
+      var(--dominant, #3a4a58) 50%,
+      color-mix(in srgb, var(--dominant, #3a4a58) 75%, #000000 25%) 100%
+    );
+  box-shadow:
+    inset 0 0 35px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Subtle book spine crease along the left hinge */
+.book-fallback__spine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 16px;
+  background: linear-gradient(to right,
+    rgba(0, 0, 0, 0.38) 0%,
+    rgba(0, 0, 0, 0.08) 55%,
+    rgba(255, 255, 255, 0.22) 80%,
+    rgba(0, 0, 0, 0.25) 100%
+  );
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Golden bookmark ribbon hanging from the top */
+.book-fallback__ribbon {
+  position: absolute;
+  top: -2px;
+  right: 18px;
+  width: 13px;
+  height: 34px;
+  background: linear-gradient(180deg, #f3cf7a 0%, #d49a3d 60%, #b3781f 100%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Gilded embossed inner book frame */
+.book-fallback__frame {
+  position: absolute;
+  inset: 9px 9px 9px 20px;
+  border: 1px solid rgba(255, 242, 215, 0.32);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 0.6rem 0.55rem;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
+  z-index: 1;
+}
+
+/* Foil stamped book crest emblem */
+.book-fallback__emblem {
+  width: 28px;
+  height: 28px;
+  color: rgba(255, 240, 205, 0.92);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.book-fallback__info {
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
-  padding: 2.4rem 0.9rem 1rem;
+  gap: 0.3rem;
+  width: 100%;
   text-align: center;
-  color: #fff;
-  background: var(--dominant, #3a4a58);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-  pointer-events: none;
+  padding: 0 0.15rem;
 }
 
 .book-fallback__title {
   font-family: var(--serif, 'Literata', Georgia, serif);
-  font-size: 1rem;
+  font-size: 0.92rem;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.25;
+  color: #fff;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65), 0 0 1px rgba(0, 0, 0, 0.9);
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
 .book-fallback__author {
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   font-style: italic;
-  opacity: 0.92;
+  color: rgba(255, 245, 230, 0.92);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -481,20 +563,85 @@ html[data-theme="night"] .catalog-card {
 }
 
 .book-fallback__publisher {
-  font-size: 0.68rem;
+  font-size: 0.6rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.8;
+  color: rgba(255, 235, 195, 0.78);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
+.book-fallback__ornament {
+  font-size: 0.65rem;
+  color: rgba(255, 240, 205, 0.65);
+  letter-spacing: 0.2em;
+  line-height: 1;
+  margin-bottom: 0.1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Hide fallback while cover image is present */
 .catalog-card__cover:has(.catalog-card__cover-img) .book-fallback,
 .book-drawer__cover:has(img) .book-fallback {
   display: none;
+}
+
+/* Expanded sizing for modal drawer vector cover */
+.book-drawer__cover .book-fallback {
+  border-radius: 14px;
+}
+
+.book-drawer__cover .book-fallback__spine {
+  width: 24px;
+}
+
+.book-drawer__cover .book-fallback__ribbon {
+  right: 28px;
+  width: 20px;
+  height: 52px;
+}
+
+.book-drawer__cover .book-fallback__frame {
+  inset: 18px 18px 18px 34px;
+  border-radius: 8px;
+  padding: 2.2rem 1.4rem 1.4rem;
+  border-width: 1.5px;
+}
+
+.book-drawer__cover .book-fallback__emblem {
+  width: 48px;
+  height: 48px;
+  margin-top: 0.4rem;
+}
+
+.book-drawer__cover .book-fallback__info {
+  gap: 0.55rem;
+}
+
+.book-drawer__cover .book-fallback__title {
+  font-size: 1.35rem;
+  line-height: 1.3;
+  -webkit-line-clamp: 4;
+}
+
+.book-drawer__cover .book-fallback__author {
+  font-size: 0.95rem;
+  margin-top: 0.15rem;
+}
+
+.book-drawer__cover .book-fallback__publisher {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  margin-top: 0.2rem;
+}
+
+.book-drawer__cover .book-fallback__ornament {
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
 }
 
 .catalog-card__age {

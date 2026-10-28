@@ -75,13 +75,15 @@ export default {
 
   'find.label': 'Chapter six',
   'find.title': 'How to find us',
-  'find.address': 'Kompas school-garden, Bar, Montenegro',
+  'find.address': 'Kompas school-garden, Šćepana Malog 38, Bar, Montenegro',
   'find.look': 'Look for the yellow house with blue windows.',
   'find.hoursTitle': 'When we’re open',
   'find.joinTitle': 'How to join',
   'find.j1': 'Come along with a grown-up',
   'find.j2': 'Get your library card — it’s free',
-  'find.j3': 'Take two books home for two weeks',
+  'find.j3': 'Take two books home — return them within one calendar month',
+  'find.terms': 'For terms of use, please ask the owner.',
+  'find.ownerLine': 'Questions? Write to the library’s owner, Natasha Klyovushkina.',
   'find.donate': 'Got books your kids have outgrown? Give them a second life — we’d love to have them.',
 
   'end.title': 'The end of book one.',
@@ -131,9 +133,12 @@ export default {
   'events.past': 'What a day!',
   'events.free': 'free entry',
 
+  'find.fbGroup': 'Facebook group',
   'find.telegram': 'Telegram',
   'find.instagram': 'Instagram',
-  'find.email': 'Email us',
+  'find.ownerFacebook': 'Natasha on Facebook',
+  'find.ownerTelegram': 'Natasha on Telegram',
+  'find.viber': 'Viber',
   'find.maps': 'Open in Maps',
 
   'toast.found': 'Found a resident: <b>{name}</b>',
