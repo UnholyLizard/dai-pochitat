@@ -5,7 +5,7 @@
 // "Confirmed" = a library card number (library_no) staff have entered for the reader.
 
 import { json, log, readJson } from './util.js';
-import { today, validDate } from './loans.js';
+import { addMonth, today, validDate } from './loans.js';
 
 const MAX_BODY = 8192;
 const LIBRARY_NO = /^[\p{L}\p{N}][\p{L}\p{N} ./\-№#]{0,31}$/u;
@@ -174,7 +174,9 @@ async function issue(env, me, body) {
   const userId = Number(body.user);
   const note = typeof body.note === 'string' ? body.note.trim().slice(0, 300) : '';
   if (!bookKey || !Number.isInteger(userId)) return bad('book and user are required');
-  if (!validDate(body.due_date)) return bad('due_date must be a valid YYYY-MM-DD date');
+  // The published term is one calendar month; use it when the form sends no date.
+  const dueDate = body.due_date == null || body.due_date === '' ? addMonth(today()) : body.due_date;
+  if (!validDate(dueDate)) return bad('due_date must be a valid YYYY-MM-DD date');
 
   const [book, user] = await Promise.all([
     env.DB.prepare('SELECT id, code, status FROM books WHERE id = ?1 OR code = ?1').bind(bookKey).first(),
@@ -188,7 +190,7 @@ async function issue(env, me, body) {
     // One batch: if the unique "one open loan per book" index rejects the insert, the status is untouched.
     await env.DB.batch([
       env.DB.prepare('INSERT INTO loans (book_id, user_id, loaned_at, due_date, note, created_by) VALUES (?, ?, ?, ?, ?, ?)')
-        .bind(book.id, user.id, now, body.due_date, note, me.id),
+        .bind(book.id, user.id, now, dueDate, note, me.id),
       env.DB.prepare("UPDATE books SET status = 'borrowed', updated_at = ? WHERE id = ?").bind(now, book.id),
     ]);
   } catch (err) {

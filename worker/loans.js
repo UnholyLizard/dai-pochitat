@@ -6,6 +6,13 @@ const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', mo
 /** Today as YYYY-MM-DD in the library's time zone (loan due dates are whole days). */
 export const today = () => fmt.format(new Date());
 
+/** `iso` plus one calendar month, clamped to the month's last day (31 Jan → 28/29 Feb). */
+export function addMonth(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  const last = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+  return new Date(Date.UTC(y, m, Math.min(d, last))).toISOString().slice(0, 10);
+}
+
 /** Validate a YYYY-MM-DD date that is a real day within a year of today. */
 export function validDate(s) {
   if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
