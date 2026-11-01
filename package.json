@@ -8,6 +8,7 @@
     "build": "node scripts/make-inline-covers.mjs && vite build && node scripts/postbuild.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
+    "test": "playwright test",
     "check": "eslint . && npm run build",
     "art": "node scripts/gen-art.mjs",
     "art:cut": "node scripts/cutout.mjs",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
     "eslint": "^10.13.0",
     "globals": "^17.13.0",
     "sharp": "^0.35.5",

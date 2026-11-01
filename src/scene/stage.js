@@ -3,7 +3,7 @@ import { Book, W, CT } from './book.js';
 import { PopLayer, PinLayer } from './popup.js';
 import { SPREADS } from './spreads.js';
 import { loadArt, loadImage, setAnisotropy } from './art.js';
-import { ensureFonts, pageTexture, repaintPage, coverTextures, repaintCovers, edgeTexture, contactShadowTexture, glowTexture, thoughtTexture } from './paper.js';
+import { ensureFonts, pageTexture, repaintPage, coverSide, repaintCovers, edgeTexture, contactShadowTexture, glowTexture, thoughtTexture } from './paper.js';
 import { Dust, Burst } from './particles.js';
 import { artUrl, viewport } from '../lib/core.js';
 import { isTelegramMiniApp } from '../lib/auth.js';
@@ -85,7 +85,12 @@ export async function createStage({ canvas, getTarget, getArea, getZoomArea, t, 
   await ensureFonts();
   const [house, olive, cypress, ginger] = await Promise.all(['house', 'olive', 'cypress', 'ginger-think'].map((id) => loadImage(artUrl(id))));
   const plate = { house, olive, cypress, ginger };
-  const covers = coverTextures({ ...plate, t });
+  // Paint the front cover, then give the main thread back before the back one (shorter long tasks).
+  const yieldToMain = () => new Promise((r) => (globalThis.scheduler?.yield ? scheduler.yield().then(r) : setTimeout(r, 0)));
+  const covers = { front: coverSide('front', { ...plate, t }) };
+  await yieldToMain();
+  covers.back = coverSide('back', { ...plate, t });
+  await yieldToMain();
   const book = new Book({ front: covers.front, back: covers.back, edge: edgeTexture() });
   scene.add(book.group);
 

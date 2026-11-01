@@ -274,8 +274,15 @@ function fail() {
   stageEl.classList.add('is-failed');
 }
 
+// Data-saver mode or a low-memory device: keep the static illustration instead of starting WebGL.
+// `?3d=1` forces the book on for testing.
+function preferLite() {
+  if (new URLSearchParams(location.search).get('3d') === '1') return false;
+  return navigator.connection?.saveData === true || (navigator.deviceMemory ?? 8) <= 2;
+}
+
 async function boot3d() {
-  if (!webglOK()) { fail(); return; }
+  if (!webglOK() || preferLite()) { fail(); return; }
   const canvas = $('#stage-canvas');
   canvas?.addEventListener('webglcontextlost', (e) => {
     e.preventDefault();

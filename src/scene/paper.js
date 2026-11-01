@@ -282,12 +282,12 @@ export function paintCover(canvas, { side, mode, house, olive, cypress, ginger, 
   return canvas;
 }
 
-export function coverTextures({ house, olive, cypress, ginger, t }) {
-  const make = (side) => ({
+/** Colour + mask textures for one cover side (painted separately so callers can yield in between). */
+export function coverSide(side, { house, olive, cypress, ginger, t }) {
+  return {
     color: canvasTexture(paintCover(document.createElement('canvas'), { side, mode: 'color', house, olive, cypress, ginger, t })),
     mask: canvasTexture(paintCover(document.createElement('canvas'), { side, mode: 'mask', t }), false),
-  });
-  return { front: make('front'), back: make('back') };
+  };
 }
 
 export function repaintCovers(set, { house, olive, cypress, ginger, t }) {
