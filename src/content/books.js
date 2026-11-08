@@ -1,3 +1,5 @@
+import { getBookTitle, getBookAuthor } from '../lib/translit.js';
+
 // Suggestions for the magic chest and the librarian. The list below is only an offline fallback —
 // ids are real catalogue ids; loadSuggestions() swaps in the live catalogue (see /api/suggestions).
 // age: [min, max]; moods: funny | adventure | magic | spooky | friends | animals | real
@@ -71,11 +73,13 @@ const extra = new Map();
 export function fromRow(r) {
   let moods = [];
   try { moods = JSON.parse(r.moods_json || '[]'); } catch { /* keep [] */ }
-  // Not every row has every language: fall back so no title or pitch is ever blank (ru → en → me, and en → ru → me).
-  const ru = (f) => r[`${f}_ru`] || r[`${f}_en`] || r[`${f}_me`] || '';
-  const en = (f) => r[`${f}_en`] || r[`${f}_ru`] || r[`${f}_me`] || '';
-  return B(r.id, ru('title'), en('title'), ru('author'), en('author'), [r.age_min ?? 0, r.age_max ?? 99], moods,
-    r.dominant_color || '#2f8a84', ru('says'), en('says'), r.cover_url || null);
+  // Preserve original book title without translating it into other languages (transliterating Serbian to Latinica).
+  const title = getBookTitle(r);
+  const author = getBookAuthor(r);
+  const ruSays = r.says_ru || r.says_en || r.says_me || '';
+  const enSays = r.says_en || r.says_ru || r.says_me || '';
+  return B(r.id, title, title, author, author, [r.age_min ?? 0, r.age_max ?? 99], moods,
+    r.dominant_color || '#2f8a84', ruSays, enSays, r.cover_url || null);
 }
 
 /** Replace the offline list with live catalogue picks. Quietly keeps the fallback when offline. */

@@ -152,12 +152,12 @@ async function listBooks(url, env) {
 /** A stable, shuffled pool of lendable, described books for the magic chest and the librarian. */
 async function suggestions(env) {
   const { results } = await env.DB.prepare(
-    `SELECT id, title_ru, title_en, title_me, author_ru, author_en, author_me, age_min, age_max, moods_json, dominant_color, says_ru, says_en, cover_url FROM (
+    `SELECT id, title_ru, title_en, title_me, author_ru, author_en, author_me, language, primary_section, age_min, age_max, moods_json, dominant_color, says_ru, says_en, cover_url FROM (
        SELECT *, ROW_NUMBER() OVER (
                 PARTITION BY CASE WHEN age_min <= 5 THEN 0 WHEN age_min <= 9 THEN 1 WHEN age_min <= 12 THEN 2 ELSE 3 END
                 ORDER BY (rowid * 2654435761) % 1000003) AS rn
          FROM books
-        WHERE status = 'available' AND (says_ru != '' OR says_en != '') AND (title_ru != '' OR title_en != '') AND moods_json != '[]' AND age_min < 18)
+        WHERE status = 'available' AND (says_ru != '' OR says_en != '') AND (title_ru != '' OR title_en != '' OR title_me != '') AND moods_json != '[]' AND age_min < 18)
       WHERE rn <= 90`,
   ).all();
   return json({ books: results ?? [] }, 200, { 'cache-control': 'public, max-age=300, s-maxage=300' });
@@ -173,6 +173,11 @@ async function getBook(id, env) {
 async function listCollections(env) {
   const { results } = await env.DB.prepare('SELECT * FROM collections ORDER BY id ASC').all();
   return json({ collections: results }, 200, { 'cache-control': 'public, max-age=300, s-maxage=86400' });
+}
+
+async function listEvents(env) {
+  const { results } = await env.DB.prepare('SELECT * FROM events ORDER BY start ASC').all();
+  return json({ events: results || [] }, 200, { 'cache-control': 'public, max-age=60, s-maxage=120' });
 }
 
 export default {
@@ -234,6 +239,16 @@ export default {
         return await getBook(id, env);
       } catch (err) {
         log('error', 'getBook failed', { error: String(err?.message ?? err) });
+        return json({ error: 'unavailable' }, 503);
+      }
+    }
+
+    if (url.pathname === '/api/events') {
+      try {
+        if (request.method !== 'GET') return json({ error: 'method not allowed' }, 405, { allow: 'GET' });
+        return await listEvents(env);
+      } catch (err) {
+        log('error', 'listEvents failed', { error: String(err?.message ?? err) });
         return json({ error: 'unavailable' }, 503);
       }
     }

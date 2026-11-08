@@ -6,6 +6,7 @@ import { botReady, tg } from './telegram.js';
 import { isAdmin, saveReply, thread } from './store.js';
 import { booksAdminRoutes } from './books-admin.js';
 import { usersAdminRoutes } from './users-admin.js';
+import { eventsAdminRoutes } from './events-admin.js';
 
 const ROLES = new Set(['admin', 'user']);
 
@@ -53,6 +54,8 @@ export async function adminRoutes(request, env, url) {
   if (books) return books;
   const readers = await usersAdminRoutes(request, env, url, me);
   if (readers) return readers;
+  const events = await eventsAdminRoutes(request, env, url);
+  if (events) return events;
 
   if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
   const body = await readJson(request, 2048);

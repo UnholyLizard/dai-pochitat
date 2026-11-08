@@ -37,6 +37,8 @@ export default {
   'events.add': 'В календарь',
   'events.past': 'Было здорово!',
   'events.free': 'вход свободный',
+  'events.announce': 'Анонс в Instagram',
+  'events.recap': 'Как это было',
 
   'find.fbGroup': 'Facebook-группа',
   'find.telegram': 'Telegram',

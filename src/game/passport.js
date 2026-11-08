@@ -89,9 +89,12 @@ function view() {
     <section class="pp-section">
       <h3>${t('passport.stamps')}</h3>
       <ul class="pp-stamps">
-        ${STAMPS.map(({ id, ink }) => s.stamps[id]
-          ? html`<li class="stamp is-earned ${fresh.has(id) ? 'is-new' : ''}" style="--ink-c:${ink};--r:${tilt(id)}deg">${t(`stamp.${id}`)}</li>`
-          : html`<li class="stamp" aria-label="?">?</li>`)}
+        ${STAMPS.map(({ id, ink }) => {
+          if (!s.stamps[id]) return html`<li class="stamp" aria-label="?">?</li>`;
+          const text = t(`stamp.${id}`);
+          const isLong = text.length > 14;
+          return html`<li class="stamp is-earned ${fresh.has(id) ? 'is-new' : ''} ${isLong ? 'stamp--long' : ''}" lang="${getLang()}" style="--ink-c:${ink};--r:${tilt(id)}deg"><span class="stamp__text">${text}</span></li>`;
+        })}
       </ul>
     </section>
 

@@ -15,8 +15,10 @@ import { initTheme, setNight, isNight, initScroll, getTarget, goTo, bookArea } f
 import { initOracle, initSections, syncCritterButtons } from './ui/sections.js';
 import { initLibrarian, send as askLibrarian, open as openLibrarian, close as closeLibrarian } from './librarian/chat.js';
 import { bookById, loadSuggestions } from './content/books.js';
+import { loadEvents } from './content/events.js';
 
 loadSuggestions(); // live catalogue picks for the chest and the librarian (offline list until it lands)
+loadEvents().then((ok) => { if (ok) bus.emit('events:updated'); });
 import { initPWA, install } from './pwa.js';
 import { initCasting } from './ui/casting.js';
 import { initMenu } from './ui/menu.js';

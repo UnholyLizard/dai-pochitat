@@ -5,6 +5,7 @@ import './admin.css';
 import { api } from '../lib/api.js';
 import { initBooks } from './books.js';
 import { initUsers } from './users.js';
+import { initEvents } from './events.js';
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
@@ -29,6 +30,7 @@ function showTab(name) {
   if (name === 'bot') loadBot();
   if (name === 'books') initBooks();
   if (name === 'users') initUsers({ role: data.me.role });
+  if (name === 'events') initEvents();
 }
 
 function renderThreads() {

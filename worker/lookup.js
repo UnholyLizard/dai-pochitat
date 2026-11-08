@@ -96,7 +96,7 @@ ${JSON.stringify(candidates.map(({ cover_url: _c, ...rest }) => rest))}
 Rules:
 - Identify the edition the librarian means. Prefer the candidate matching the ISBN, then title+author. If nothing fits, rely on your knowledge${grounded ? ' and web search' : ''}; leave fields null rather than guessing.
 - Keep values the librarian already typed unless clearly wrong; fill the empty ones.
-- Titles/authors: give the Russian, English and Montenegrin (Latin script) forms when they exist; transliterate names for the language that lacks an official form. Do not invent translations of titles that have no established one: use the original.
+- Titles/authors: Never translate book titles into other languages. Always preserve the original book title across title_ru, title_en, and title_me. For Montenegrin/Serbian books (language "me" or "sr"), always use the original Serbian/Montenegrin title in Latinica (transliterating from Cyrillic to standard Latin script if needed) across title_me, title_ru, and title_en. Transliterate author names to Latin script for Serbian rather than translating.
 - annotation_*: a faithful 2-4 sentence description of the book (from the candidate description when available, otherwise from your knowledge), written in Russian, English and Montenegrin (Latin script) as natural child-friendly prose. No spoilers about endings, no marketing fluff, no prices.
 - age_min/age_max: realistic reading age in whole years (age_max 99 when open-ended).
 - tags: up to 6 lowercase English topic words (e.g. "friendship", "animals").

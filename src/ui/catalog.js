@@ -5,6 +5,7 @@ import { t, L, getLang } from '../i18n/index.js';
 import { game } from '../game/state.js';
 import { sfx } from '../game/sfx.js';
 import { BOOKS } from '../content/books.js';
+import { getBookTitle, getBookAuthor } from '../lib/translit.js';
 
 let modal = null;
 let onAsk = () => {};
@@ -32,6 +33,8 @@ let debounceTimer = null;
 
 // Fallback records (BOOKS) keep { ru, en } pairs; API rows have flat *_ru / *_en columns.
 function getLocalizedField(b, field) {
+  if (field === 'title') return getBookTitle(b);
+  if (field === 'author') return getBookAuthor(b);
   const lang = getLang();
   const value = b[`${field}_${lang}`] || b[`${field}_ru`] || b[field] || '';
   return typeof value === 'object' ? (L(value) ?? '') : value;

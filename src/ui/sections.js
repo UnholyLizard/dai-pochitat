@@ -2,6 +2,7 @@
 import { bus, $, $$, html, render } from '../lib/core.js';
 import { t, L, getLang } from '../i18n/index.js';
 import { findBooks } from '../content/books.js';
+import { getBookTitle, getBookAuthor } from '../lib/translit.js';
 import { EVENTS } from '../content/events.js';
 import { LIBRARY } from '../content/library.js';
 import { game } from '../game/state.js';
@@ -10,8 +11,8 @@ import { sfx } from '../game/sfx.js';
 /* ── A book card (oracle + chat) ───────────────────────────────────────── */
 export function bookCard(b, { compact = false } = {}) {
   const curLang = getLang();
-  const title = typeof b.title === 'object' ? L(b.title) : (b[`title_${curLang}`] || b.title_ru || b.title || '');
-  const author = typeof b.author === 'object' ? L(b.author) : (b[`author_${curLang}`] || b.author_ru || b.author || '');
+  const title = getBookTitle(b);
+  const author = getBookAuthor(b);
   const says = typeof b.says === 'object' ? L(b.says) : (b[`says_${curLang}`] || b.says_ru || b.says || '');
   const ages = b.age
     ? (b.age[1] >= 99 ? t('oracle.agesPlus', { min: b.age[0] }) : t('oracle.ages', { min: b.age[0], max: b.age[1] }))
@@ -25,12 +26,12 @@ export function bookCard(b, { compact = false } = {}) {
         ${coverUrl ? html`<img class="bookcard__cover-img" src="${coverUrl}" alt="" loading="lazy" decoding="async">` : ''}
         <span>${title}</span>
       </div>
-      <div>
+      <div class="bookcard__meta">
         <h3>${title}</h3>
         <p class="bookcard__author">${author}</p>
         <span class="bookcard__age">${ages}</span>
-        ${says ? html`<p class="bookcard__says">${says}</p>` : ''}
       </div>
+      ${says ? html`<p class="bookcard__says">${says}</p>` : ''}
       <div class="bookcard__actions">
         ${compact ? '' : html`<button class="btn btn--sun btn--small" type="button" data-oracle-next>${t('oracle.another')}</button>`}
         <button class="btn btn--small" type="button" data-wish="${b.id}" aria-pressed="${wanted}">
@@ -148,7 +149,11 @@ function drawEvents() {
           <h3>${L(ev.title)}</h3>
           <p class="ticket__meta"><time datetime="${ev.start}">${weekday.format(s)}, ${day.format(s)} ${month.format(s)} · ${time.format(s)}–${time.format(e)}</time> · ${L(ev.ages)}</p>
           <p>${L(ev.text)}</p>
-          ${isPast ? '' : html`<button class="btn btn--ghost btn--small" type="button" data-ics="${ev.id}"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-calendar"/></svg>${t('events.add')}</button>`}
+          <div class="ticket__actions">
+            ${isPast ? '' : html`<button class="btn btn--ghost btn--small" type="button" data-ics="${ev.id}"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-calendar"/></svg>${t('events.add')}</button>`}
+            ${!isPast && ev.instagram_announce ? html`<a class="btn btn--ghost btn--small" href="${ev.instagram_announce}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-instagram"/></svg>${t('events.announce')}</a>` : ''}
+            ${isPast && ev.instagram_recap ? html`<a class="btn btn--ghost btn--small" href="${ev.instagram_recap}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-instagram"/></svg>${t('events.recap')}</a>` : ''}
+          </div>
         </div>
         ${isPast ? html`<span class="ticket__stamp">${t('events.past')}</span>` : ''}
       </li>`;
@@ -173,6 +178,7 @@ export function initSections() {
     if (b) downloadIcs(EVENTS.find((x) => x.id === b.dataset.ics));
   });
   bus.on('lang', () => { drawEvents(); drawFind(); });
+  bus.on('events:updated', drawEvents);
 }
 
 /** Hide keyboard "peek" buttons and the badger once their critter is found, or show all when all are found. */

@@ -22,6 +22,7 @@
         <button type="button" role="tab" aria-selected="true" data-tab="chats">Диалоги</button>
         <button type="button" role="tab" aria-selected="false" data-tab="books">Книги</button>
         <button type="button" role="tab" aria-selected="false" data-tab="users">Читатели</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="events">События (#5)</button>
         <button type="button" role="tab" aria-selected="false" data-tab="bot">Бот</button>
       </nav>
 
@@ -64,6 +65,20 @@
         </div>
         <p class="note" data-stats></p>
         <div data-u-list></div>
+      </section>
+
+      <section data-panel="events" hidden>
+        <div class="toolbar">
+          <input type="search" data-e-q placeholder="Поиск: название, описание, возраст…" autocomplete="off">
+          <select data-e-filter aria-label="Фильтр по времени">
+            <option value="">Все события</option>
+            <option value="upcoming">Предстоящие</option>
+            <option value="past">Прошедшие</option>
+          </select>
+          <button type="button" class="primary" data-e-add>+ Добавить событие</button>
+        </div>
+        <p class="note" data-e-count></p>
+        <ul class="events-list" data-e-list></ul>
       </section>
 
       <section data-panel="bot" hidden>
@@ -264,6 +279,63 @@
         <button type="button" class="ghost" data-b-confirm-cancel>Отмена</button>
         <button type="submit" class="danger" data-b-confirm-ok disabled>Удалить</button>
       </footer>
+    </form>
+  </dialog>
+
+  <dialog class="editor" data-e-editor>
+    <form method="dialog" data-e-form autocomplete="off">
+      <header class="editor__head">
+        <h2 data-e-title>Событие</h2>
+        <button type="button" class="ghost" data-e-close aria-label="Закрыть">✕</button>
+      </header>
+
+      <p class="error" data-e-error hidden></p>
+
+      <fieldset>
+        <legend>Основное</legend>
+        <div class="grid">
+          <label>Название (RU)*<input name="title_ru" maxlength="300" required placeholder="День рождения библиотеки"></label>
+          <label>Название (EN)<input name="title_en" maxlength="300" placeholder="The library’s birthday"></label>
+        </div>
+        <div class="grid">
+          <label>Начало*<input type="datetime-local" name="start" required></label>
+          <label>Окончание*<input type="datetime-local" name="end" required></label>
+        </div>
+        <div class="grid">
+          <label>Возраст (RU)<input name="ages_ru" maxlength="100" placeholder="для всех / 7+ лет / 3–6 лет"></label>
+          <label>Возраст (EN)<input name="ages_en" maxlength="100" placeholder="everyone / ages 7+ / ages 3–6"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Описание</legend>
+        <label>Описание (RU)<textarea name="text_ru" rows="3" maxlength="2000" placeholder="Сто новых книг, литературные угощения..."></textarea></label>
+        <label>Описание (EN)<textarea name="text_en" rows="3" maxlength="2000" placeholder="A hundred new books, literary treats..."></textarea></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Instagram ссылки</legend>
+        <label>Ссылка на анонс в Instagram (видна для будущих событий)<input type="url" name="instagram_announce" maxlength="500" placeholder="https://www.instagram.com/p/..."></label>
+        <label>Ссылка «Как это было» в Instagram (видна для прошедших событий)<input type="url" name="instagram_recap" maxlength="500" placeholder="https://www.instagram.com/p/..."></label>
+      </fieldset>
+
+      <footer class="editor__foot">
+        <button type="button" class="danger" data-e-delete hidden>Удалить</button>
+        <span class="spacer"></span>
+        <button type="button" class="ghost" data-e-cancel>Отмена</button>
+        <button type="submit" class="primary" data-e-save>Сохранить</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="confirm" data-e-confirm>
+    <form method="dialog">
+      <h2>Удалить событие?</h2>
+      <p class="note" data-e-confirm-name></p>
+      <div class="editor__foot">
+        <button type="button" class="ghost" data-e-confirm-no>Отмена</button>
+        <button type="button" class="danger" data-e-confirm-yes>Удалить</button>
+      </div>
     </form>
   </dialog>
 </body>

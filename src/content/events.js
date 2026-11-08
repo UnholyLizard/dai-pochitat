@@ -45,5 +45,33 @@ export const EVENTS = [
     title: { ru: 'Книжный обмен', en: 'Book swap' },
     text: { ru: 'Принеси книгу, которую уже прочитал, — унеси новую.', en: 'Bring a book you’ve finished, take home a new one.' },
     ages: { ru: 'для всех', en: 'everyone' },
+    instagram_announce: 'https://www.instagram.com/daipochitatmne/',
+    instagram_recap: '',
   },
 ];
+
+export function fromEventRow(r) {
+  return {
+    id: r.id,
+    start: r.start,
+    end: r.end,
+    title: { ru: r.title_ru || r.title_en || '', en: r.title_en || r.title_ru || '' },
+    text: { ru: r.text_ru || r.text_en || '', en: r.text_en || r.text_ru || '' },
+    ages: { ru: r.ages_ru || r.ages_en || '', en: r.ages_en || r.ages_ru || '' },
+    instagram_announce: r.instagram_announce || '',
+    instagram_recap: r.instagram_recap || '',
+  };
+}
+
+export async function loadEvents() {
+  try {
+    const res = await fetch('/api/events');
+    if (!res.ok) return false;
+    const { events } = await res.json();
+    if (!events?.length) return false;
+    EVENTS.splice(0, EVENTS.length, ...events.map(fromEventRow));
+    return true;
+  } catch {
+    return false;
+  }
+}

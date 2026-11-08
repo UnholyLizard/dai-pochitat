@@ -132,6 +132,8 @@ export default {
   'events.add': 'Add to calendar',
   'events.past': 'What a day!',
   'events.free': 'free entry',
+  'events.announce': 'Instagram announce',
+  'events.recap': 'How it was',
 
   'find.fbGroup': 'Facebook group',
   'find.telegram': 'Telegram',
