@@ -163,7 +163,7 @@ function drawEvents() {
 /* ── Hours & contacts ──────────────────────────────────────────────────── */
 function drawFind() {
   const link = (c) => html`<a class="btn btn--small" href="${c.href}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#${c.icon}"/></svg>${t(c.label)}</a>`;
-  render($('[data-hours]'), html`${LIBRARY.hours.map((h) => html`<div><dt>${L(h.days)}</dt><dd>${L(h.time)}</dd></div>`)}`);
+  render($('[data-hours]'), html`${LIBRARY.hours.map((h) => html`<div class="hours__line"><strong>${L(h.days)}</strong> <span class="hours__sep">·</span> <time>${L(h.time)}</time></div>`)}`);
   render($('[data-contacts]'), html`
     <a class="btn btn--primary btn--small" href="${LIBRARY.mapsUrl}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-map"/></svg>${t('find.maps')}</a>
     ${LIBRARY.contacts.map(link)}`);

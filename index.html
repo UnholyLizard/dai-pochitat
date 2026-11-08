@@ -1,10 +1,12 @@
 <!doctype html>
 <html lang="ru" data-theme="day">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Дай почитать! — детская библиотека в Баре</title>
-  <meta name="description" content="Детская библиотека в Баре, Черногория: книги на русском и английском для детей и подростков. Вт и Пт, 14:00–16:30, школа-сад «Компас».">
+  <meta name="description"
+    content="Детская библиотека в Баре, Черногория: книги на русском и английском для детей и подростков. Вт и Пт, 14:00–16:30, школа-сад «Компас».">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4e8cf">
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#141a30">
@@ -157,6 +159,7 @@
   </script>
   <script type="module" src="/src/main.js"></script>
 </head>
+
 <body>
   <a class="skip-link" href="#main" data-i18n="ui.skip">Перейти к содержанию</a>
 
@@ -168,17 +171,30 @@
       <img alt="" width="1351" height="1600">
     </div>
   </div>
-  <p class="book-hint" aria-hidden="true" data-book-hint><span data-i18n="hero.hint">листай — и страницы перевернутся</span></p>
-  <button class="zoom-btn" type="button" data-zoom-open hidden data-i18n-attr="aria-label:zoom.open" aria-label="Рассмотреть книгу поближе">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-zoom"/></svg>
+  <p class="book-hint" aria-hidden="true" data-book-hint><span data-i18n="hero.hint">листай — и страницы
+      перевернутся</span></p>
+  <button class="zoom-btn" type="button" data-zoom-open hidden data-i18n-attr="aria-label:zoom.open"
+    aria-label="Рассмотреть книгу поближе">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <use href="#i-zoom" />
+    </svg>
   </button>
   <div class="zoom-ui" data-zoom-ui hidden role="dialog" aria-modal="true" aria-labelledby="zoom-hint">
-    <p class="zoom-ui__hint" id="zoom-hint" data-i18n="zoom.hint">Тяни, чтобы двигать книгу. Разводи пальцы или крути колёсико, чтобы приблизить.</p>
+    <p class="zoom-ui__hint" id="zoom-hint" data-i18n="zoom.hint">Тяни, чтобы двигать книгу. Разводи пальцы или крути
+      колёсико, чтобы приблизить.</p>
     <div class="zoom-ui__tools">
-      <button type="button" data-zoom-out data-i18n-attr="aria-label:zoom.out" aria-label="Отдалить"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-minus"/></svg></button>
-      <button type="button" data-zoom-in data-i18n-attr="aria-label:zoom.in" aria-label="Приблизить"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-plus"/></svg></button>
+      <button type="button" data-zoom-out data-i18n-attr="aria-label:zoom.out" aria-label="Отдалить"><svg
+          viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-minus" />
+        </svg></button>
+      <button type="button" data-zoom-in data-i18n-attr="aria-label:zoom.in" aria-label="Приблизить"><svg
+          viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-plus" />
+        </svg></button>
       <button type="button" class="zoom-ui__close" data-zoom-close>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg><span data-i18n="zoom.close">Вернуться к чтению</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-close" />
+        </svg><span data-i18n="zoom.close">Вернуться к чтению</span>
       </button>
     </div>
   </div>
@@ -187,27 +203,42 @@
 
   <header class="topbar">
     <a class="brand" href="#top" aria-label="Дай почитать! — в начало" data-i18n-attr="aria-label:ui.home">
-      <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><use href="#i-logo"/></svg>
+      <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true">
+        <use href="#i-logo" />
+      </svg>
       <span class="brand__name">Дай почитать!</span>
     </a>
 
     <div class="hud">
-      <a class="hud__btn hud__catalog" href="/catalog/" data-i18n-attr="aria-label:ui.catalog" aria-label="Каталог книг">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-catalog"/></svg>
+      <a class="hud__btn hud__catalog" href="/catalog/" data-i18n-attr="aria-label:ui.catalog"
+        aria-label="Каталог книг">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-catalog" />
+        </svg>
         <span class="hud__label" data-i18n="ui.catalogShort">Каталог</span>
       </a>
       <button class="hud__btn hud__coins" type="button" data-open="passport" aria-describedby="coin-label">
-        <svg class="hud__card-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ticket"/></svg>
+        <svg class="hud__card-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-ticket" />
+        </svg>
         <span aria-hidden="true">:</span>
         <span class="hud__coin-count" data-coins>0</span>
-        <svg class="hud__coin-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-coin"/></svg>
+        <svg class="hud__coin-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-coin" />
+        </svg>
         <span class="visually-hidden" id="coin-label" data-i18n="ui.coins">монеток — открыть читательский билет</span>
       </button>
-      <button class="hud__btn hud__icon hud__theme" type="button" data-theme-toggle aria-pressed="false" data-i18n-attr="aria-label:ui.night" aria-label="Вечерний режим">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lamp"/></svg>
+      <button class="hud__btn hud__icon hud__theme" type="button" data-theme-toggle aria-pressed="false"
+        data-i18n-attr="aria-label:ui.night" aria-label="Вечерний режим">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-lamp" />
+        </svg>
       </button>
-      <button class="hud__btn hud__icon hud__burger" type="button" popovertarget="menu" aria-haspopup="menu" data-i18n-attr="aria-label:ui.menu" aria-label="Меню">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-menu"/></svg>
+      <button class="hud__btn hud__icon hud__burger" type="button" popovertarget="menu" aria-haspopup="menu"
+        data-i18n-attr="aria-label:ui.menu" aria-label="Меню">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-menu" />
+        </svg>
       </button>
     </div>
   </header>
@@ -215,15 +246,20 @@
   <div id="menu" class="menu" popover aria-labelledby="menu-title">
     <div class="menu__header">
       <p class="menu__title" id="menu-title" data-i18n="ui.menu">Меню</p>
-      <button class="menu__close" type="button" data-menu-close data-i18n-attr="aria-label:ui.close" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
+      <button class="menu__close" type="button" data-menu-close data-i18n-attr="aria-label:ui.close"
+        aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-close" />
+        </svg>
       </button>
     </div>
     <div class="menu__account" data-account></div>
 
     <nav class="menu__toc" aria-label="Оглавление">
       <p class="menu__section-title">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-contents"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-contents" />
+        </svg>
         <span data-i18n="ui.toc">Оглавление</span>
       </p>
       <ol class="toc__list">
@@ -237,7 +273,9 @@
         <li><a href="/catalog/"><span data-i18n="toc.catalog">Каталог всех книг (1300+)</span><i></i><b>✦</b></a></li>
       </ol>
       <button class="toc__install" type="button" data-install hidden>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-install"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-install" />
+        </svg>
         <span data-i18n="pwa.install">Поселить книгу на телефоне — работает и без интернета</span>
       </button>
     </nav>
@@ -245,9 +283,15 @@
     <div class="menu__divider"></div>
 
     <ul class="menu__list">
-      <li><button type="button" data-theme-toggle aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lamp"/></svg><span data-i18n="ui.night">Вечерний режим</span></button></li>
-      <li><button type="button" data-sound-toggle aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sound-on"/></svg><span data-i18n="ui.sound">Звук</span></button></li>
-      <li><a href="/admin/" data-admin-link hidden><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-admin"/></svg><span data-i18n="ui.admin">Админка</span></a></li>
+      <li><button type="button" data-theme-toggle aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true">
+            <use href="#i-lamp" />
+          </svg><span data-i18n="ui.night">Вечерний режим</span></button></li>
+      <li><button type="button" data-sound-toggle aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true">
+            <use href="#i-sound-on" />
+          </svg><span data-i18n="ui.sound">Звук</span></button></li>
+      <li><a href="/admin/" data-admin-link hidden><svg viewBox="0 0 24 24" aria-hidden="true">
+            <use href="#i-admin" />
+          </svg><span data-i18n="ui.admin">Админка</span></a></li>
     </ul>
 
     <div class="lang" role="group" aria-label="Язык / Language">
@@ -256,8 +300,11 @@
     </div>
 
     <div class="menu__studio">
-      <a class="menu__studio-link" href="https://craft-tower.com/" target="_blank" rel="noopener noreferrer" aria-label="CRAFT-TOWER DOO — craft-tower.com">
-        <svg class="menu__studio-logo" viewBox="0 0 32 32" aria-hidden="true"><use href="#logo"/></svg>
+      <a class="menu__studio-link" href="https://craft-tower.com/" target="_blank" rel="noopener noreferrer"
+        aria-label="CRAFT-TOWER DOO — craft-tower.com">
+        <svg class="menu__studio-logo" viewBox="0 0 32 32" aria-hidden="true">
+          <use href="#logo" />
+        </svg>
         <span class="menu__studio-copy">
           <span class="menu__studio-label" data-i18n="menu.studioLabel">Создано в студии</span>
           <strong class="menu__studio-name">CRAFT-TOWER DOO</strong>
@@ -271,20 +318,27 @@
     <section class="chapter chapter--hero" id="top" data-spread="0" aria-labelledby="hero-title">
       <div class="hero">
         <p class="hero__eyebrow">
-          <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pin"/></svg><span data-i18n="hero.where">Бар, Черногория</span></span>
+          <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true">
+              <use href="#i-pin" />
+            </svg><span data-i18n="hero.where">Бар, Черногория</span></span>
           <span class="pill pill--soft" data-i18n="hero.kind">библиотека для детей и подростков</span>
         </p>
         <h1 class="hero__title" id="hero-title">
           <span class="hero__line">Дай</span>
           <span class="hero__line">почитать<span class="hero__bang">!</span></span>
-          <svg class="hero__squiggle" viewBox="0 0 320 24" aria-hidden="true"><path d="M4 16c30-10 52 6 82-2s50-10 80-2 54 8 78 0 44-6 72-2"/></svg>
+          <svg class="hero__squiggle" viewBox="0 0 320 24" aria-hidden="true">
+            <path d="M4 16c30-10 52 6 82-2s50-10 80-2 54 8 78 0 44-6 72-2" />
+          </svg>
         </h1>
         <p class="hero__say" data-i18n="hero.say">— так говорит каждый, кто заметил хорошую книжку.</p>
-        <p class="hero__lead" data-i18n="hero.lead">Одна комната в жёлтом доме — и тысяча миров внутри. Маленькая некоммерческая библиотека, где книги выдают с улыбкой, а библиотекарша умеет поднимать лошадь.</p>
+        <p class="hero__lead" data-i18n="hero.lead">Одна комната в жёлтом доме — и тысяча миров внутри. Маленькая
+          некоммерческая библиотека, где книги выдают с улыбкой, а библиотекарша умеет поднимать лошадь.</p>
         <div class="hero__cta">
           <a class="btn btn--primary" href="#house">
             <span data-i18n="hero.open">Открыть книгу</span>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-arrow-down"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <use href="#i-arrow-down" />
+            </svg>
           </a>
           <button class="btn btn--sun" type="button" data-open="librarian">
             <span data-i18n="hero.meet">Познакомиться с библиотекарем</span>
@@ -293,7 +347,9 @@
       </div>
       <p class="doodle doodle--book" aria-hidden="true" data-book-doodle>
         <span data-i18n="hero.doodle">тут живут истории</span>
-        <svg viewBox="0 0 80 60"><path d="M6 8c20 2 44 10 56 34m0 0-12-4m12 4 2-12"/></svg>
+        <svg viewBox="0 0 80 60">
+          <path d="M6 8c20 2 44 10 56 34m0 0-12-4m12 4 2-12" />
+        </svg>
       </p>
     </section>
 
@@ -302,8 +358,10 @@
       <article class="card">
         <p class="card__chapter"><span class="card__num">1</span><span data-i18n="house.label">Глава первая</span></p>
         <h2 id="house-title" data-i18n="house.title">Жёлтый дом у моря</h2>
-        <p data-i18n="house.p1">Нас легко найти: самый солнечный дом в Баре — школа-сад «Компас». За одним из его синих окон живёт наша библиотека.</p>
-        <p data-i18n="house.p2">Её собрали родители, друзья и сами читатели — по одной книжке, по одной полке. Мы ничего не продаём и не зарабатываем: мы просто очень любим, когда дети читают.</p>
+        <p data-i18n="house.p1">Нас легко найти: самый солнечный дом в Баре — школа-сад «Компас». За одним из его синих
+          окон живёт наша библиотека.</p>
+        <p data-i18n="house.p2">Её собрали родители, друзья и сами читатели — по одной книжке, по одной полке. Мы ничего
+          не продаём и не зарабатываем: мы просто очень любим, когда дети читают.</p>
         <ul class="stats">
           <li><b>1</b><span data-i18n="house.s1">комната, полная историй</span></li>
           <li><b>100+</b><span data-i18n="house.s2">новых книг к дню рождения</span></li>
@@ -313,7 +371,8 @@
           <img src="/art/ginger-avatar.webp" alt="" width="280" height="256" loading="lazy">
           <p data-i18n="house.note">«Я проверила — дом очень крепкий. Я его немножко потрясла». — наша библиотекарша</p>
         </aside>
-        <button class="peek" type="button" data-peek="owl" data-i18n="ui.peek">Кажется, на этой странице кто-то прячется</button>
+        <button class="peek" type="button" data-peek="owl" data-i18n="ui.peek">Кажется, на этой странице кто-то
+          прячется</button>
       </article>
     </section>
 
@@ -322,7 +381,8 @@
       <article class="card">
         <p class="card__chapter"><span class="card__num">2</span><span data-i18n="room.label">Глава вторая</span></p>
         <h2 id="room-title" data-i18n="room.title">Комната, где шуршат страницы</h2>
-        <p data-i18n="room.p1">Полки до потолка, подушки на полу, лампа с бахромой, чай с печеньем. Здесь можно читать лёжа, сидя и даже вверх ногами — мы проверяли.</p>
+        <p data-i18n="room.p1">Полки до потолка, подушки на полу, лампа с бахромой, чай с печеньем. Здесь можно читать
+          лёжа, сидя и даже вверх ногами — мы проверяли.</p>
         <ul class="ticks">
           <li data-i18n="room.l1">Книги на русском и английском — от книжек-картинок до толстых романов</li>
           <li data-i18n="room.l2">Читательский билет — бесплатно</li>
@@ -330,10 +390,13 @@
           <li data-i18n="room.l4">Можно просто прийти и посидеть с книжкой</li>
         </ul>
         <p class="tip">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lamp"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <use href="#i-lamp" />
+          </svg>
           <span data-i18n="room.tip">Нажми на лампу в книге — и наступит вечер.</span>
         </p>
-        <button class="peek" type="button" data-peek="mouse" data-i18n="ui.peek">Кажется, на этой странице кто-то прячется</button>
+        <button class="peek" type="button" data-peek="mouse" data-i18n="ui.peek">Кажется, на этой странице кто-то
+          прячется</button>
       </article>
     </section>
 
@@ -342,47 +405,64 @@
       <article class="card card--casting">
         <p class="card__chapter"><span class="card__num">3</span><span data-i18n="casting.label">Глава третья</span></p>
         <h2 id="casting-title" data-i18n="casting.title">Кастинг: ищем библиотекаря!</h2>
-        <p data-i18n="casting.p1">Наша рыжая библиотекарша справляется отлично, но мы решили устроить настоящий кастинг. Послушай каждого кандидата и отдай свой голос — кого выберешь, тот и будет отвечать тебе в чате.</p>
+        <p data-i18n="casting.p1">Наша рыжая библиотекарша справляется отлично, но мы решили устроить настоящий кастинг.
+          Послушай каждого кандидата и отдай свой голос — кого выберешь, тот и будет отвечать тебе в чате.</p>
         <div class="casting" data-casting></div>
-        <button class="peek" type="button" data-peek="parrot" data-i18n="ui.peek">Кажется, на этой странице кто-то прячется</button>
+        <button class="peek" type="button" data-peek="parrot" data-i18n="ui.peek">Кажется, на этой странице кто-то
+          прячется</button>
       </article>
     </section>
 
     <!-- Spread 4: the treasure chest — the book oracle -->
     <section class="chapter" id="chest" data-spread="4" aria-labelledby="chest-title">
       <article class="card card--oracle">
-        <p class="card__chapter"><span class="card__num">4</span><span data-i18n="chest.label">Глава четвёртая</span></p>
+        <p class="card__chapter"><span class="card__num">4</span><span data-i18n="chest.label">Глава четвёртая</span>
+        </p>
         <h2 id="chest-title" data-i18n="chest.title">Волшебный сундук</h2>
-        <p data-i18n="chest.p1">Не знаешь, что почитать? Скажи, сколько тебе лет и какое у тебя настроение, — и сундук сам выберет книгу. Честное пиратское!</p>
+        <p data-i18n="chest.p1">Не знаешь, что почитать? Скажи, сколько тебе лет и какое у тебя настроение, — и сундук
+          сам выберет книгу. Честное пиратское!</p>
         <form class="oracle" data-oracle>
           <fieldset class="chips">
             <legend data-i18n="chest.age">Мне…</legend>
             <label><input type="radio" name="age" value="little"><span data-i18n="age.little">3–6 лет</span></label>
-            <label><input type="radio" name="age" value="middle" checked><span data-i18n="age.middle">7–10 лет</span></label>
+            <label><input type="radio" name="age" value="middle" checked><span data-i18n="age.middle">7–10
+                лет</span></label>
             <label><input type="radio" name="age" value="big"><span data-i18n="age.big">11–13 лет</span></label>
             <label><input type="radio" name="age" value="teen"><span data-i18n="age.teen">14+</span></label>
           </fieldset>
           <fieldset class="chips">
             <legend data-i18n="chest.mood">Хочу что-нибудь…</legend>
-            <label style="--dot: var(--sun)"><input type="radio" name="mood" value="funny" checked><span data-i18n="mood.funny">смешное</span></label>
-            <label style="--dot: var(--terracotta)"><input type="radio" name="mood" value="adventure"><span data-i18n="mood.adventure">с приключениями</span></label>
-            <label style="--dot: var(--violet)"><input type="radio" name="mood" value="magic"><span data-i18n="mood.magic">волшебное</span></label>
-            <label style="--dot: var(--ink)"><input type="radio" name="mood" value="spooky"><span data-i18n="mood.spooky">страшноватое</span></label>
-            <label style="--dot: var(--rose)"><input type="radio" name="mood" value="friends"><span data-i18n="mood.friends">про дружбу</span></label>
-            <label style="--dot: var(--olive)"><input type="radio" name="mood" value="animals"><span data-i18n="mood.animals">про животных</span></label>
-            <label style="--dot: var(--teal)"><input type="radio" name="mood" value="real"><span data-i18n="mood.real">про настоящую жизнь</span></label>
+            <label style="--dot: var(--sun)"><input type="radio" name="mood" value="funny" checked><span
+                data-i18n="mood.funny">смешное</span></label>
+            <label style="--dot: var(--terracotta)"><input type="radio" name="mood" value="adventure"><span
+                data-i18n="mood.adventure">с приключениями</span></label>
+            <label style="--dot: var(--violet)"><input type="radio" name="mood" value="magic"><span
+                data-i18n="mood.magic">волшебное</span></label>
+            <label style="--dot: var(--ink)"><input type="radio" name="mood" value="spooky"><span
+                data-i18n="mood.spooky">страшноватое</span></label>
+            <label style="--dot: var(--rose)"><input type="radio" name="mood" value="friends"><span
+                data-i18n="mood.friends">про дружбу</span></label>
+            <label style="--dot: var(--olive)"><input type="radio" name="mood" value="animals"><span
+                data-i18n="mood.animals">про животных</span></label>
+            <label style="--dot: var(--teal)"><input type="radio" name="mood" value="real"><span
+                data-i18n="mood.real">про настоящую жизнь</span></label>
           </fieldset>
           <button class="btn btn--primary btn--wide" type="submit">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-key"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <use href="#i-key" />
+            </svg>
             <span data-i18n="chest.go">Открыть сундук!</span>
           </button>
           <a class="btn btn--ghost btn--wide" href="/catalog/" style="margin-top: 0.65rem;">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-catalog"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <use href="#i-catalog" />
+            </svg>
             <span data-i18n="chest.browseAll">Полистать весь каталог (1300+ книг)</span>
           </a>
         </form>
         <div class="oracle__result" data-oracle-result aria-live="polite"></div>
-        <button class="peek" type="button" data-peek="dragon" data-i18n="ui.peek">Кажется, на этой странице кто-то прячется</button>
+        <button class="peek" type="button" data-peek="dragon" data-i18n="ui.peek">Кажется, на этой странице кто-то
+          прячется</button>
       </article>
     </section>
 
@@ -391,9 +471,11 @@
       <article class="card">
         <p class="card__chapter"><span class="card__num">5</span><span data-i18n="events.label">Глава пятая</span></p>
         <h2 id="events-title" data-i18n="events.title">Праздники и встречи</h2>
-        <p data-i18n="events.p1">Громкие чтения, книжные клубы, обмен книгами и, конечно, дни рождения — с тортом из книг и подарками.</p>
+        <p data-i18n="events.p1">Громкие чтения, книжные клубы, обмен книгами и, конечно, дни рождения — с тортом из
+          книг и подарками.</p>
         <ol class="tickets" data-events></ol>
-        <button class="peek" type="button" data-peek="hedgehog" data-i18n="ui.peek">Кажется, на этой странице кто-то прячется</button>
+        <button class="peek" type="button" data-peek="hedgehog" data-i18n="ui.peek">Кажется, на этой странице кто-то
+          прячется</button>
       </article>
     </section>
 
@@ -403,18 +485,19 @@
         <p class="card__chapter"><span class="card__num">6</span><span data-i18n="find.label">Глава шестая</span></p>
         <h2 id="find-title" data-i18n="find.title">Как нас найти</h2>
         <address class="where">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pin"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <use href="#i-pin" />
+          </svg>
           <span>
             <b data-i18n="find.address">Школа-сад «Компас», ул. Шчепана Малога, 38, Бар, Черногория</b>
             <span data-i18n="find.look">Ищите жёлтый дом с синими окнами.</span>
           </span>
         </address>
-        <div class="find-grid">
-          <div>
+          <div class="find-section find-hours">
             <h3 data-i18n="find.hoursTitle">Когда мы открыты</h3>
-            <dl class="hours" data-hours></dl>
+            <div class="hours" data-hours></div>
           </div>
-          <div>
+          <div class="find-section find-join">
             <h3 data-i18n="find.joinTitle">Как записаться</h3>
             <ol class="steps">
               <li data-i18n="find.j1">Приходи с кем-нибудь из взрослых</li>
@@ -423,12 +506,14 @@
             </ol>
             <p class="donate" data-i18n="find.terms">Условия использования уточняйте у хозяйки.</p>
           </div>
-        </div>
-        <div class="contact-row" data-contacts></div>
-        <p class="donate" data-i18n="find.ownerLine">По всем вопросам пишите хозяйке библиотеки — Наташе Клёвушкиной.</p>
-        <div class="contact-row" data-owner-contacts></div>
-        <p class="donate" data-i18n="find.donate">Есть книги, из которых ваши дети уже выросли? Подарите им вторую жизнь — мы с радостью их примем.</p>
-        <button class="peek" type="button" data-peek="cat" data-i18n="ui.peek">Кажется, на этой странице кто-то прячется</button>
+          <div class="contact-row" data-contacts></div>
+          <p class="donate" data-i18n="find.ownerLine">По всем вопросам пишите хозяйке библиотеки — Наташе Клёвушкиной.
+          </p>
+          <div class="contact-row" data-owner-contacts></div>
+          <p class="donate" data-i18n="find.donate">Есть книги, из которых ваши дети уже выросли? Подарите им вторую
+            жизнь — мы с радостью их примем.</p>
+          <button class="peek" type="button" data-peek="cat" data-i18n="ui.peek">Кажется, на этой странице кто-то
+            прячется</button>
       </article>
     </section>
   </main>
@@ -438,27 +523,35 @@
     <div class="the-end">
       <p class="the-end__big" data-i18n="end.title">Конец первой книги.</p>
       <p class="the-end__sub" data-i18n="end.sub">Продолжение — в библиотеке.</p>
-      <p class="the-end__meta"><span data-i18n="end.meta">© 2026 «Дай почитать!» · некоммерческая библиотека · Бар, Черногория</span></p>
+      <p class="the-end__meta"><span data-i18n="end.meta">© 2026 «Дай почитать!» · некоммерческая библиотека · Бар,
+          Черногория</span></p>
 
       <div class="colophon">
-        <a class="studio-card" href="https://craft-tower.com/" target="_blank" rel="noopener noreferrer" aria-label="CRAFT-TOWER DOO Design, Web &amp; Software Engineering Studio — craft-tower.com">
+        <a class="studio-card" href="https://craft-tower.com/" target="_blank" rel="noopener noreferrer"
+          aria-label="CRAFT-TOWER DOO Design, Web &amp; Software Engineering Studio — craft-tower.com">
           <span class="studio-card__beacon" aria-hidden="true">
             <svg class="studio-card__logo" viewBox="0 0 32 32">
-              <use href="#logo"/>
+              <use href="#logo" />
             </svg>
           </span>
           <span class="studio-card__content">
             <span class="studio-card__eyebrow" data-i18n="end.studioEyebrow">Сайт спроектирован и создан в студии</span>
             <span class="studio-card__heading">
               <strong class="studio-card__name">CRAFT-TOWER DOO</strong>
-              <span class="studio-card__pill">craft-tower.com <svg class="studio-card__arrow" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 8L8 2M8 2H3.5M8 2V6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="studio-card__pill">craft-tower.com <svg class="studio-card__arrow" viewBox="0 0 10 10"
+                  aria-hidden="true">
+                  <path d="M2 8L8 2M8 2H3.5M8 2V6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg></span>
             </span>
-            <span class="studio-card__role" data-i18n="end.studioRole">Design, Web &amp; Software Engineering Studio</span>
+            <span class="studio-card__role" data-i18n="end.studioRole">Design, Web &amp; Software Engineering
+              Studio</span>
           </span>
         </a>
       </div>
 
-      <button class="badger" type="button" data-critter="badger" data-i18n-attr="aria-label:critter.badger.name" aria-label="Барсук-чаёвник">
+      <button class="badger" type="button" data-critter="badger" data-i18n-attr="aria-label:critter.badger.name"
+        aria-label="Барсук-чаёвник">
         <img src="/art/critter-badger.webp" alt="" width="372" height="384" loading="lazy">
       </button>
     </div>
@@ -468,9 +561,11 @@
   <div class="librarian-dock">
     <p class="librarian-teaser" data-librarian-teaser hidden>
       <span data-i18n="librarian.teaser">Привет! Помочь найти книжку?</span>
-      <button type="button" class="librarian-teaser__x" data-teaser-close data-i18n-attr="aria-label:ui.close" aria-label="Закрыть">×</button>
+      <button type="button" class="librarian-teaser__x" data-teaser-close data-i18n-attr="aria-label:ui.close"
+        aria-label="Закрыть">×</button>
     </p>
-    <button class="librarian-fab" data-who="ginger" type="button" data-open="librarian" aria-haspopup="dialog" aria-controls="librarian" data-i18n-attr="aria-label:librarian.open" aria-label="Спросить библиотекаря">
+    <button class="librarian-fab" data-who="ginger" type="button" data-open="librarian" aria-haspopup="dialog"
+      aria-controls="librarian" data-i18n-attr="aria-label:librarian.open" aria-label="Спросить библиотекаря">
       <img src="/art/ginger-avatar.webp" alt="" width="280" height="256" data-librarian-face>
     </button>
   </div>
@@ -482,8 +577,11 @@
         <h2 class="chat__title" id="chat-title" data-chat-name>Рыжик</h2>
         <p class="chat__status" data-chat-status><span data-chat-role>действующая библиотекарша</span></p>
       </div>
-      <button class="chat__close" type="button" data-close="librarian" data-i18n-attr="aria-label:ui.close" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
+      <button class="chat__close" type="button" data-close="librarian" data-i18n-attr="aria-label:ui.close"
+        aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-close" />
+        </svg>
       </button>
     </header>
     <div class="chat__who" role="tablist" data-i18n-attr="aria-label:chat.who" aria-label="С кем поговорить">
@@ -503,9 +601,12 @@
     <div class="chat__chips" data-chat-chips></div>
     <form class="chat__form" data-chat-form>
       <label class="visually-hidden" for="chat-input" data-i18n="librarian.label">Сообщение библиотекарю</label>
-      <input id="chat-input" name="q" autocomplete="off" maxlength="300" placeholder="Спроси меня о чём-нибудь…" data-i18n-attr="placeholder:librarian.placeholder">
+      <input id="chat-input" name="q" autocomplete="off" maxlength="300" placeholder="Спроси меня о чём-нибудь…"
+        data-i18n-attr="placeholder:librarian.placeholder">
       <button type="submit" data-i18n-attr="aria-label:librarian.send" aria-label="Отправить">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-send"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-send" />
+        </svg>
       </button>
     </form>
   </section>
@@ -514,7 +615,9 @@
   <dialog id="passport" class="passport" closedby="any" aria-labelledby="passport-title">
     <form method="dialog" class="passport__close-form">
       <button class="passport__close" data-i18n-attr="aria-label:ui.close" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <use href="#i-close" />
+        </svg>
       </button>
     </form>
     <div class="passport__body" data-passport></div>
@@ -537,44 +640,141 @@
       <rect x="8.5" y="27.3" width="15" height="2" rx=".5" fill="currentColor" />
     </symbol>
     <symbol id="i-craft-tower" viewBox="0 0 32 32">
-      <use href="#logo"/>
+      <use href="#logo" />
     </symbol>
-    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
-    <symbol id="i-admin" viewBox="0 0 24 24"><path d="M12 3 5 6v5.5c0 4.2 2.8 7.6 7 9.5 4.2-1.9 7-5.3 7-9.5V6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 12 2.2 2.2L15.5 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24">
+      <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-admin" viewBox="0 0 24 24">
+      <path d="M12 3 5 6v5.5c0 4.2 2.8 7.6 7 9.5 4.2-1.9 7-5.3 7-9.5V6z" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linejoin="round" />
+      <path d="m9 12 2.2 2.2L15.5 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round" />
+    </symbol>
     <symbol id="i-logo" viewBox="0 0 48 48">
-      <path d="M5 13c7-3 13-2 19 3 6-5 12-6 19-3v26c-7-3-13-2-19 3-6-5-12-6-19-3z" fill="#f6c343" stroke="#2b1b12" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M24 16v26" stroke="#2b1b12" stroke-width="2.5"/>
-      <path d="M10 19c3-1 6-1 9 1M10 25c3-1 6-1 9 1M29 20c3-2 6-2 9-1M29 26c3-2 6-2 9-1" stroke="#1f4dd8" stroke-width="2" stroke-linecap="round" fill="none"/>
-      <path d="M37 3v7m0 4v.5" stroke="#d2553a" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M5 13c7-3 13-2 19 3 6-5 12-6 19-3v26c-7-3-13-2-19 3-6-5-12-6-19-3z" fill="#f6c343" stroke="#2b1b12"
+        stroke-width="2.5" stroke-linejoin="round" />
+      <path d="M24 16v26" stroke="#2b1b12" stroke-width="2.5" />
+      <path d="M10 19c3-1 6-1 9 1M10 25c3-1 6-1 9 1M29 20c3-2 6-2 9-1M29 26c3-2 6-2 9-1" stroke="#1f4dd8"
+        stroke-width="2" stroke-linecap="round" fill="none" />
+      <path d="M37 3v7m0 4v.5" stroke="#d2553a" stroke-width="3.2" stroke-linecap="round" />
     </symbol>
     <symbol id="i-coin" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="10" fill="#f2b632" stroke="#7a4a12" stroke-width="1.6"/>
-      <circle cx="12" cy="12" r="6.6" fill="none" stroke="#fff3c4" stroke-width="1.2" opacity=".8"/>
-      <path d="M12 7.6l1.3 2.7 3 .4-2.2 2 .6 3-2.7-1.5-2.7 1.5.6-3-2.2-2 3-.4z" fill="#fff3c4"/>
+      <circle cx="12" cy="12" r="10" fill="#f2b632" stroke="#7a4a12" stroke-width="1.6" />
+      <circle cx="12" cy="12" r="6.6" fill="none" stroke="#fff3c4" stroke-width="1.2" opacity=".8" />
+      <path d="M12 7.6l1.3 2.7 3 .4-2.2 2 .6 3-2.7-1.5-2.7 1.5.6-3-2.2-2 3-.4z" fill="#fff3c4" />
     </symbol>
-    <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.5a2.5 2.5 0 0 0 0 5V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a2.5 2.5 0 0 0 0-5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9h6M9 12h6M9 15h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-    <symbol id="i-contents" viewBox="0 0 24 24"><path d="M4 5.5C7 4 10 4 12 6c2-2 5-2 8-.5V19c-3-1.5-6-1.5-8 .5-2-2-5-2-8-.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 6v13.5" stroke="currentColor" stroke-width="1.8"/></symbol>
-    <symbol id="i-lamp" viewBox="0 0 24 24"><path d="M8 3h8l3 7H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v11M8 21h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-    <symbol id="i-sound-on" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5M18 7.5a6.5 6.5 0 0 1 0 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-    <symbol id="i-sound-off" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15.5 9.5l5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.4" fill="currentColor"/></symbol>
-    <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 4v15m0 0-6-6m6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
-    <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-5 16-3.5-6.5z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M11.5 13.5 20 4" stroke="currentColor" stroke-width="1.9"/></symbol>
-    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 12h9m-3 0v3m-3-3v2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
-    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></symbol>
-    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 10h17M8 3v4m8-4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-    <symbol id="i-telegram" viewBox="0 0 24 24"><path d="M21 4 3 11l6 2 2 6 3-4 5 4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 13 12-9" stroke="currentColor" stroke-width="1.8"/></symbol>
-    <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor"/></symbol>
-    <symbol id="i-facebook" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M13.2 20.5v-6.4h2.1l.4-2.5h-2.5V9.9c0-.7.3-1.3 1.3-1.3h1.2V6.4c-.3 0-1.1-.1-2-.1-2 0-3.4 1.2-3.4 3.5v2.2H9.1v2.5h2.2v6.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
-    <symbol id="i-viber" viewBox="0 0 24 24"><path d="M12 3.8c-4.5 0-8 3.1-8 7.4 0 2.3 1 4.1 2.8 5.5V21l3.3-1.9c.6.2 1.3.3 1.9.3 4.5 0 8-3.1 8-7.1S16.5 3.8 12 3.8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.5 9.5c.4 1.6 1.4 2.9 3.2 3.8l1-1.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
-    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
-    <symbol id="i-install" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v7m0 0-3-3m3 3 3-3M10 18.5h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M10.5 7.8v5.4M7.8 10.5h5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
-    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
-    <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 4v14m6-12v14" stroke="currentColor" stroke-width="1.8"/></symbol>
-    <symbol id="i-catalog" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="11.5" cy="10.5" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m14 13 3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-ticket" viewBox="0 0 24 24">
+      <path
+        d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.5a2.5 2.5 0 0 0 0 5V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a2.5 2.5 0 0 0 0-5z"
+        fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+      <path d="M9 9h6M9 12h6M9 15h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-contents" viewBox="0 0 24 24">
+      <path d="M4 5.5C7 4 10 4 12 6c2-2 5-2 8-.5V19c-3-1.5-6-1.5-8 .5-2-2-5-2-8-.5z" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linejoin="round" />
+      <path d="M12 6v13.5" stroke="currentColor" stroke-width="1.8" />
+    </symbol>
+    <symbol id="i-lamp" viewBox="0 0 24 24">
+      <path d="M8 3h8l3 7H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+      <path d="M12 10v11M8 21h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-sound-on" viewBox="0 0 24 24">
+      <path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linejoin="round" />
+      <path d="M15.5 9.5a3.5 3.5 0 0 1 0 5M18 7.5a6.5 6.5 0 0 1 0 9" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-sound-off" viewBox="0 0 24 24">
+      <path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linejoin="round" />
+      <path d="M15.5 9.5l5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24">
+      <path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linejoin="round" />
+      <circle cx="12" cy="10" r="2.4" fill="currentColor" />
+    </symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24">
+      <path d="M12 4v15m0 0-6-6m6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24">
+      <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-send" viewBox="0 0 24 24">
+      <path d="M4 12 20 4l-5 16-3.5-6.5z" fill="none" stroke="currentColor" stroke-width="1.9"
+        stroke-linejoin="round" />
+      <path d="M11.5 13.5 20 4" stroke="currentColor" stroke-width="1.9" />
+    </symbol>
+    <symbol id="i-key" viewBox="0 0 24 24">
+      <circle cx="8" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.9" />
+      <path d="M12 12h9m-3 0v3m-3-3v2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24">
+      <path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z" fill="none"
+        stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24">
+      <rect x="3.5" y="5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+      <path d="M3.5 10h17M8 3v4m8-4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-telegram" viewBox="0 0 24 24">
+      <path d="M21 4 3 11l6 2 2 6 3-4 5 4z" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linejoin="round" />
+      <path d="m9 13 12-9" stroke="currentColor" stroke-width="1.8" />
+    </symbol>
+    <symbol id="i-instagram" viewBox="0 0 24 24">
+      <rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.8" />
+      <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8" />
+      <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" />
+    </symbol>
+    <symbol id="i-facebook" viewBox="0 0 24 24">
+      <rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.8" />
+      <path
+        d="M13.2 20.5v-6.4h2.1l.4-2.5h-2.5V9.9c0-.7.3-1.3 1.3-1.3h1.2V6.4c-.3 0-1.1-.1-2-.1-2 0-3.4 1.2-3.4 3.5v2.2H9.1v2.5h2.2v6.4"
+        fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-viber" viewBox="0 0 24 24">
+      <path
+        d="M12 3.8c-4.5 0-8 3.1-8 7.4 0 2.3 1 4.1 2.8 5.5V21l3.3-1.9c.6.2 1.3.3 1.9.3 4.5 0 8-3.1 8-7.1S16.5 3.8 12 3.8Z"
+        fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+      <path d="M9.5 9.5c.4 1.6 1.4 2.9 3.2 3.8l1-1.1" fill="none" stroke="currentColor" stroke-width="1.6"
+        stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24">
+      <rect x="3" y="5.5" width="18" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+      <path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-install" viewBox="0 0 24 24">
+      <rect x="6" y="2.5" width="12" height="19" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+      <path d="M12 7v7m0 0-3-3m3 3 3-3M10 18.5h4" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-zoom" viewBox="0 0 24 24">
+      <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2" />
+      <path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+      <path d="M10.5 7.8v5.4M7.8 10.5h5.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24">
+      <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24">
+      <path d="M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-map" viewBox="0 0 24 24">
+      <path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6z" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linejoin="round" />
+      <path d="M9 4v14m6-12v14" stroke="currentColor" stroke-width="1.8" />
+    </symbol>
+    <symbol id="i-catalog" viewBox="0 0 24 24">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" fill="none" stroke="currentColor"
+        stroke-width="1.8" stroke-linejoin="round" />
+      <circle cx="11.5" cy="10.5" r="3" fill="none" stroke="currentColor" stroke-width="1.6" />
+      <path d="m14 13 3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    </symbol>
   </svg>
 </body>
+
 </html>

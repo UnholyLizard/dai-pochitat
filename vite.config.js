@@ -9,7 +9,7 @@ const icon = (id) => `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#${
 // Static (Russian) markup for the hours and contacts, so crawlers that do not run JS see them.
 // src/ui/sections.js replaces it with the same content in the visitor's language.
 function libraryFallback() {
-  const hours = LIBRARY.hours.map((h) => `<div><dt>${esc(h.days.ru)}</dt><dd>${esc(h.time.ru)}</dd></div>`).join('');
+  const hours = LIBRARY.hours.map((h) => `<div class="hours__line"><strong>${esc(h.days.ru)}</strong> <span class="hours__sep">·</span> <time>${esc(h.time.ru)}</time></div>`).join('');
   const link = (cls, href, svg, label, ext) =>
     `<a class="btn ${cls}" href="${esc(href)}"${ext ? ' target="_blank" rel="noopener"' : ''}>${svg}${esc(label)}</a>`;
   const contacts = [
@@ -19,7 +19,7 @@ function libraryFallback() {
   return {
     name: 'library-fallback-markup',
     transformIndexHtml: (page) => page
-      .replace('<dl class="hours" data-hours></dl>', `<dl class="hours" data-hours>${hours}</dl>`)
+      .replace('<div class="hours" data-hours></div>', `<div class="hours" data-hours>${hours}</div>`)
       .replace('<div class="contact-row" data-contacts></div>', `<div class="contact-row" data-contacts>${contacts}</div>`),
   };
 }
