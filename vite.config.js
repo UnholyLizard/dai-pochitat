@@ -1,5 +1,28 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { LIBRARY } from './src/content/library.js';
+import ru from './src/i18n/ru.js';
+
+const esc = (v) => String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+const icon = (id) => `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#${id}"/></svg>`;
+
+// Static (Russian) markup for the hours and contacts, so crawlers that do not run JS see them.
+// src/ui/sections.js replaces it with the same content in the visitor's language.
+function libraryFallback() {
+  const hours = LIBRARY.hours.map((h) => `<div><dt>${esc(h.days.ru)}</dt><dd>${esc(h.time.ru)}</dd></div>`).join('');
+  const link = (cls, href, svg, label, ext) =>
+    `<a class="btn ${cls}" href="${esc(href)}"${ext ? ' target="_blank" rel="noopener"' : ''}>${svg}${esc(label)}</a>`;
+  const contacts = [
+    link('btn--primary btn--small', LIBRARY.mapsUrl, icon('i-map'), ru['find.maps'], true),
+    ...LIBRARY.contacts.map((c) => link('btn--small', c.href, icon(c.icon), ru[`find.${c.kind}`], true)),
+  ].join('');
+  return {
+    name: 'library-fallback-markup',
+    transformIndexHtml: (page) => page
+      .replace('<dl class="hours" data-hours></dl>', `<dl class="hours" data-hours>${hours}</dl>`)
+      .replace('<div class="contact-row" data-contacts></div>', `<div class="contact-row" data-contacts>${contacts}</div>`),
+  };
+}
 
 export default defineConfig({
   // Relative URLs: the build runs from any folder or sub-path.
@@ -16,6 +39,7 @@ export default defineConfig({
     rollupOptions: { input: { main: 'index.html', admin: 'admin/index.html', catalog: 'catalog/index.html' } },
   },
   plugins: [
+    libraryFallback(),
     VitePWA({
       // A new version waits until the reader agrees (see src/pwa.js), so an open book
       // never loses the lazily loaded 3D chunk it was built with.
