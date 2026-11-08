@@ -199,4 +199,5 @@ export default {
   'account.saved': 'Твой прогресс сохранён на сервере.',
   'account.role.owner': 'владелец',
   'account.role.admin': 'админ',
+  'catalog.editBook': 'Редактировать книгу',
 };

@@ -6,6 +6,7 @@ import { game } from '../game/state.js';
 import { sfx } from '../game/sfx.js';
 import { BOOKS } from '../content/books.js';
 import { getBookTitle, getBookAuthor } from '../lib/translit.js';
+import { isAdmin } from '../lib/auth.js';
 
 let modal = null;
 let onAsk = () => { };
@@ -263,6 +264,12 @@ function updateUI() {
           <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-heart"/></svg>
           <span>${t(wanted ? 'oracle.wanted' : 'oracle.want')}</span>
         </button>
+        ${isAdmin() ? html`
+          <a class="btn btn--ghost btn--small btn--wide" href="/admin/?tab=books&book=${encodeURIComponent(book.code || book.id)}" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-admin"/></svg>
+            <span>${t('catalog.editBook')}</span>
+          </a>
+        ` : ''}
       </div>
     </div>
     <div class="book-drawer__right">
@@ -582,5 +589,10 @@ function updateUI() {
         bus.on('lang', () => {
           syncFilterPills();
           updateUI();
+        });
+
+        // Re-render drawer if auth state changes (e.g. admin login)
+        bus.on('auth', () => {
+          if (openBook) openBookDrawer(openBook, { push: false });
         });
       }

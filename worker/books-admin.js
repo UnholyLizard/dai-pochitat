@@ -5,6 +5,7 @@
 import { json, readJson, log, limited, tooMany } from './util.js';
 import { lookup, normalizeIsbn } from './lookup.js';
 import { withLoans } from './loans.js';
+import { translateBook } from './ai-translate.js';
 
 /** Statuses a reader never sees in the public catalog, Telegram inline search or deep links. */
 export const HIDDEN_STATUSES = ['lost', 'archived'];
@@ -135,6 +136,19 @@ async function create(env, body) {
   const { values, error } = clean(body, { partial: false });
   if (error) return bad(error);
 
+  if (body.ai_translate || (!values.title_en && !values.title_me && body.ai_translate !== false)) {
+    const tr = await translateBook({
+      title_ru: values.title_ru,
+      author_ru: values.author_ru,
+      annotation_ru: values.annotation_ru,
+      says_ru: values.says_ru,
+      language: values.language,
+    }, env);
+    for (const k of ['title_en', 'title_me', 'author_en', 'author_me', 'annotation_en', 'annotation_me', 'says_en', 'says_me']) {
+      if (tr[k] && !values[k]) values[k] = tr[k];
+    }
+  }
+
   let code = typeof body.code === 'string' && body.code.trim() ? body.code.trim() : null;
   if (code && !CODE.test(code)) return bad('code is not valid');
   if (code && (await env.DB.prepare('SELECT 1 FROM books WHERE code = ?1 OR id = ?2').bind(code, code.toLowerCase()).first())) {
@@ -168,6 +182,22 @@ async function update(env, id, body) {
   if (!current) return json({ error: 'not found' }, 404);
   const { values, error } = clean(body, { partial: true });
   if (error) return bad(error);
+
+  if (body.ai_translate) {
+    const tr = await translateBook({
+      title_ru: values.title_ru || current.title_ru,
+      author_ru: values.author_ru ?? current.author_ru,
+      annotation_ru: values.annotation_ru ?? current.annotation_ru,
+      says_ru: values.says_ru ?? current.says_ru,
+      language: values.language || current.language,
+    }, env);
+    for (const k of ['title_en', 'title_me', 'author_en', 'author_me', 'annotation_en', 'annotation_me', 'says_en', 'says_me']) {
+      if (tr[k] && (!values[k] || body.ai_translate)) {
+        values[k] = tr[k];
+      }
+    }
+  }
+
   const cols = Object.keys(values).filter((c) => values[c] !== undefined);
   if (!cols.length) return bad('nothing to update');
 
@@ -203,7 +233,7 @@ async function remove(env, id, url) {
     env.DB.prepare('DELETE FROM books WHERE id = ?').bind(book.id),
   ]);
   if (env.COVERS_BUCKET) {
-    await env.COVERS_BUCKET.delete([`covers/${book.code}.webp`, `covers-jpg/${book.code}.jpg`]).catch(() => {});
+    await env.COVERS_BUCKET.delete([`covers/${book.code}.webp`, `covers-jpg/${book.code}.jpg`]).catch(() => { });
   }
   log('log', 'book deleted', { code: book.code });
   return json({ ok: true });
@@ -252,7 +282,7 @@ async function removeCover(env, id) {
   const book = await findBook(env, id);
   if (!book) return json({ error: 'not found' }, 404);
   await env.DB.prepare('UPDATE books SET cover_url = NULL, updated_at = ? WHERE id = ?').bind(Date.now(), book.id).run();
-  if (env.COVERS_BUCKET) await env.COVERS_BUCKET.delete([`covers/${book.code}.webp`, `covers-jpg/${book.code}.jpg`]).catch(() => {});
+  if (env.COVERS_BUCKET) await env.COVERS_BUCKET.delete([`covers/${book.code}.webp`, `covers-jpg/${book.code}.jpg`]).catch(() => { });
   return json({ ok: true });
 }
 
@@ -273,11 +303,20 @@ async function fetchImage(env, body) {
 /** Returns a Response for /api/admin/books*, /api/admin/lookup and /api/admin/fetch-image, else null. */
 export async function booksAdminRoutes(request, env, url) {
   const path = url.pathname;
-  const m = path.match(/^\/api\/admin\/books(?:\/([^/]+)(\/cover)?)?$/);
   const isLookup = path === '/api/admin/lookup';
   const isFetch = path === '/api/admin/fetch-image';
-  if (!m && !isLookup && !isFetch) return null;
+  const isTranslate = path === '/api/admin/books/translate';
+  const m = isTranslate ? null : path.match(/^\/api\/admin\/books(?:\/([^/]+)(\/cover)?)?$/);
+  if (!m && !isLookup && !isFetch && !isTranslate) return null;
   const method = request.method;
+
+  if (isTranslate) {
+    if (method !== 'POST') return json({ error: 'method not allowed' }, 405);
+    const body = await readJson(request, 16384);
+    if (!body) return bad('bad request');
+    const tr = await translateBook(body, env);
+    return json({ translation: tr });
+  }
 
   if (isLookup || isFetch) {
     if (method !== 'POST') return json({ error: 'method not allowed' }, 405);

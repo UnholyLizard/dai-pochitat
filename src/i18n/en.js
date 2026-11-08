@@ -276,6 +276,7 @@ export default {
   'age.adult': '16+',
   'catalog.origLang': 'Original language',
   'catalog.close': 'Close',
+  'catalog.editBook': 'Edit book',
   'chest.browseAll': 'Browse full library catalog (1,300+ books)',
   'ui.catalogShort': 'Catalog',
   'ui.menu': 'Menu',

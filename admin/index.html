@@ -94,7 +94,8 @@
             <li>Создайте бота у <b>@BotFather</b> (<code>/newbot</code>), скопируйте токен.</li>
             <li>Выполните <code>npx wrangler secret put</code> для трёх имён: <code>TG_BOT_TOKEN</code> (токен),
               <code>TG_BOT_USERNAME</code> (имя бота без @) и <code>TG_WEBHOOK_SECRET</code> (любая случайная строка из
-              латиницы и цифр).</li>
+              латиницы и цифр).
+            </li>
             <li>Задеплойте, войдите на сайте через Telegram <b>первым</b> — вы станете владельцем.</li>
             <li>У @BotFather выполните <code>/setinline</code> (включает поиск книг через <code>@бот запрос</code>;
               подсказка: «название, автор или тема») и один раз нажмите Start у бота — иначе он не сможет писать вам.
@@ -114,6 +115,15 @@
         <h2 data-b-title>Книга</h2>
         <button type="button" class="ghost" data-b-close aria-label="Закрыть">✕</button>
       </header>
+
+      <div class="switch-row">
+        <label>
+          <input type="checkbox" name="ai_translate" checked data-b-ai-toggle>
+          <span>Использовать автоперевод (AI / Cloudflare Gemma-4)</span>
+        </label>
+        <span class="note" style="margin-left: auto; font-size: 0.82rem;">Переводит на английский и черногорский при
+          сохранении</span>
+      </div>
 
       <fieldset class="find">
         <legend>Найти данные</legend>
@@ -144,11 +154,11 @@
         <legend>Название и авторы</legend>
         <div class="grid">
           <label>Название (RU) *<input name="title_ru" required maxlength="300"></label>
-          <label>Название (EN)<input name="title_en" maxlength="300"></label>
-          <label>Название (ME)<input name="title_me" maxlength="300"></label>
+          <label data-b-trans-field hidden>Название (EN)<input name="title_en" maxlength="300"></label>
+          <label data-b-trans-field hidden>Название (ME)<input name="title_me" maxlength="300"></label>
           <label>Автор (RU)<input name="author_ru" maxlength="200"></label>
-          <label>Автор (EN)<input name="author_en" maxlength="200"></label>
-          <label>Автор (ME)<input name="author_me" maxlength="200"></label>
+          <label data-b-trans-field hidden>Автор (EN)<input name="author_en" maxlength="200"></label>
+          <label data-b-trans-field hidden>Автор (ME)<input name="author_me" maxlength="200"></label>
           <label>Иллюстратор<input name="illustrator" maxlength="200"></label>
           <label>Год<input name="year" type="number" min="1000" max="2100"></label>
         </div>
@@ -157,12 +167,14 @@
       <fieldset>
         <legend>Описание</legend>
         <label>Аннотация (RU)<textarea name="annotation_ru" rows="4" maxlength="4000"></textarea></label>
-        <label>Аннотация (EN)<textarea name="annotation_en" rows="4" maxlength="4000"></textarea></label>
-        <label>Аннотация (ME)<textarea name="annotation_me" rows="4" maxlength="4000"></textarea></label>
+        <label data-b-trans-field hidden>Аннотация (EN)<textarea name="annotation_en" rows="4"
+            maxlength="4000"></textarea></label>
+        <label data-b-trans-field hidden>Аннотация (ME)<textarea name="annotation_me" rows="4"
+            maxlength="4000"></textarea></label>
         <div class="grid">
           <label>Наташа говорит (RU)<input name="says_ru" maxlength="500"></label>
-          <label>Наташа говорит (EN)<input name="says_en" maxlength="500"></label>
-          <label>Наташа говорит (ME)<input name="says_me" maxlength="500"></label>
+          <label data-b-trans-field hidden>Наташа говорит (EN)<input name="says_en" maxlength="500"></label>
+          <label data-b-trans-field hidden>Наташа говорит (ME)<input name="says_me" maxlength="500"></label>
         </div>
       </fieldset>
 

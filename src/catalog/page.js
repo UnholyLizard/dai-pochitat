@@ -6,9 +6,11 @@ import '../styles/main.css';
 import '../styles/catalog.css';
 import { $, $$, prefs } from '../lib/core.js';
 import { initI18n } from '../i18n/index.js';
+import { initAuth } from '../lib/auth.js';
 import { initCatalog } from '../ui/catalog.js';
 
 initI18n();
+initAuth();
 
 // Day / evening toggle (the home page's chrome.js drags the scroll-driven book along, so this is its own).
 const root = document.documentElement;

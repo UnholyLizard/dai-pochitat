@@ -828,9 +828,9 @@ html[data-theme="night"] .catalog-card__quote {
 
 /* ── Book Detail Drawer / Inspector ─────────────────────────────────── */
 .book-drawer {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1134,8 +1134,7 @@ html[data-theme="night"] .catalog-lang button[aria-pressed='true'] { background:
 .catalog-theme svg { width: 20px; height: 20px; }
 .catalog-theme[aria-pressed='true'] { background: var(--sun, #f4c242); color: #282119; border-color: transparent; }
 
-/* The inspector is a full-screen overlay on the page (inside the old modal it filled the dialog). */
-.catalog-page .book-drawer { position: fixed; }
+/* The inspector is a full-screen overlay on the page. */
 
 @media (max-width: 640px) {
   .catalog-head { flex-wrap: wrap; row-gap: 0.4rem; }

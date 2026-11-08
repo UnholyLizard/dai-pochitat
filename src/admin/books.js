@@ -183,6 +183,14 @@ function setError(text) {
   el.textContent = text ?? '';
 }
 
+function updateTransFields(f) {
+  const isAi = f.elements.ai_translate?.checked ?? false;
+  const transFields = f.querySelectorAll('[data-b-trans-field]');
+  transFields.forEach((el) => {
+    el.hidden = isAi;
+  });
+}
+
 function openEditor(book) {
   editing = book ?? null;
   pendingCover = null;
@@ -196,6 +204,13 @@ function openEditor(book) {
   $('[data-b-file]').value = '';
   showCover(book?.cover_url ?? null);
   renderLoanBox(book);
+
+  const f = form();
+  if (f.elements.ai_translate) {
+    f.elements.ai_translate.checked = true;
+    updateTransFields(f);
+  }
+
   $('[data-b-editor]').showModal();
 }
 
@@ -223,6 +238,18 @@ function payload() {
     if (!el.name || el.type === 'file' || el.disabled) continue;
     body[el.name] = el.value;
   }
+  const isAi = f.elements.ai_translate?.checked ?? false;
+  body.ai_translate = isAi;
+  if (isAi) {
+    body.title_en = '';
+    body.title_me = '';
+    body.author_en = '';
+    body.author_me = '';
+    body.annotation_en = '';
+    body.annotation_me = '';
+    body.says_en = '';
+    body.says_me = '';
+  }
   body.tags = body.tags.split(',').map((t) => t.trim()).filter(Boolean);
   if (!body.code) delete body.code;
   for (const k of ['year', 'age_min', 'age_max']) if (body[k] === '') delete body[k];
@@ -234,7 +261,8 @@ async function save(e) {
   setError(null);
   const btn = $('[data-b-save]');
   btn.disabled = true;
-  btn.textContent = 'Сохраняю…';
+  const isAi = form().elements.ai_translate?.checked ?? false;
+  btn.textContent = isAi ? 'Перевод и сохранение…' : 'Сохраняю…';
   try {
     const body = payload();
     let book;
@@ -370,64 +398,91 @@ async function doDelete(e) {
 
 /* ---------------------------------------------------------------- init */
 
-export async function initBooks() {
-  if (ready) return;
-  ready = true;
-  field('primary_section')?.replaceChildren(...options(SECTIONS));
-  field('language')?.replaceChildren(...options(LANGS));
-  field('status')?.replaceChildren(...options(STATUS));
-
-  let timer;
-  $('[data-b-q]').addEventListener('input', (e) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => { state.q = e.target.value.trim(); load().catch(() => {}); }, 300);
-  });
-  $('[data-b-status]').addEventListener('change', (e) => { state.status = e.target.value; load().catch(() => {}); });
-  $('[data-b-add]').addEventListener('click', () => openEditor(null));
-  $('[data-b-more]').addEventListener('click', () => load({ more: true }).catch(() => {}));
-
-  form().addEventListener('submit', save);
-  $('[data-b-close]').addEventListener('click', closeEditor);
-  $('[data-b-cancel]').addEventListener('click', closeEditor);
-  $('[data-b-lookup]').addEventListener('click', runLookup);
-  $('[data-b-delete]').addEventListener('click', askDelete);
-  initLoanDialog();
-  $('[data-b-loan-issue]').addEventListener('click', () => {
-    if (!editing) return;
-    openLoan({
-      book: { id: editing.id, code: editing.code, title: editing.title_ru || editing.title_en || editing.title_me },
-      onDone: async () => { closeEditor(); await load({ keepOffset: true }); },
-    });
-  });
-  $('[data-b-loan-return]').addEventListener('click', async () => {
-    if (!editing?.loan) return;
-    try {
-      await api(`/api/admin/loans/${editing.loan.id}/return`, { method: 'POST', body: {} });
-      closeEditor();
-      await load({ keepOffset: true });
-    } catch (err) {
-      setError(err.message);
+  async function openByCode(code) {
+    if (!code) return;
+    const existing = state.books.find((b) => b.code?.toLowerCase() === code.toLowerCase() || b.id === code.toLowerCase());
+    if (existing) {
+      openEditor(existing);
+      return;
     }
-  });
-  $('[data-b-file]').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) setPendingCover(f); });
-  $('[data-b-cover-clear]').addEventListener('click', () => {
-    pendingCover = null;
-    removeCover = !!editing?.cover_url;
-    $('[data-b-file]').value = '';
-    showCover(null);
-  });
-  form().addEventListener('input', (e) => e.target.classList?.remove('is-suggested'));
-
-  const dlg = $('[data-b-confirm]');
-  $('[name="typed"]', dlg).addEventListener('input', (e) => {
-    $('[data-b-confirm-ok]').disabled = e.target.value.trim() !== editing?.code;
-  });
-  $('[data-b-confirm-cancel]').addEventListener('click', () => dlg.close());
-  $('[data-b-confirm-form]').addEventListener('submit', doDelete);
-
-  try {
-    await load();
-  } catch (err) {
-    $('[data-b-count]').textContent = `Не удалось загрузить книги: ${err.message}`;
+    try {
+      const data = await api(`/api/admin/books/${encodeURIComponent(code)}`);
+      if (data?.book) openEditor(data.book);
+    } catch (err) {
+      console.warn('Could not open book by code:', err);
+    }
   }
-}
+
+  export async function initBooks(opts = {}) {
+    const targetCode = opts?.editCode || new URLSearchParams(location.search).get('book');
+    if (ready) {
+      if (targetCode) openByCode(targetCode);
+      return;
+    }
+    ready = true;
+    field('primary_section')?.replaceChildren(...options(SECTIONS));
+    field('language')?.replaceChildren(...options(LANGS));
+    field('status')?.replaceChildren(...options(STATUS));
+
+    let timer;
+    $('[data-b-q]').addEventListener('input', (e) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { state.q = e.target.value.trim(); load().catch(() => { }); }, 300);
+    });
+    $('[data-b-status]').addEventListener('change', (e) => { state.status = e.target.value; load().catch(() => { }); });
+    $('[data-b-add]').addEventListener('click', () => openEditor(null));
+    $('[data-b-more]').addEventListener('click', () => load({ more: true }).catch(() => { }));
+
+    const aiToggle = $('[data-b-ai-toggle]');
+    if (aiToggle) {
+      aiToggle.addEventListener('change', () => {
+        updateTransFields(form());
+      });
+    }
+
+    form().addEventListener('submit', save);
+    $('[data-b-close]').addEventListener('click', closeEditor);
+    $('[data-b-cancel]').addEventListener('click', closeEditor);
+    $('[data-b-lookup]').addEventListener('click', runLookup);
+    $('[data-b-delete]').addEventListener('click', askDelete);
+    initLoanDialog();
+    $('[data-b-loan-issue]').addEventListener('click', () => {
+      if (!editing) return;
+      openLoan({
+        book: { id: editing.id, code: editing.code, title: editing.title_ru || editing.title_en || editing.title_me },
+        onDone: async () => { closeEditor(); await load({ keepOffset: true }); },
+      });
+    });
+    $('[data-b-loan-return]').addEventListener('click', async () => {
+      if (!editing?.loan) return;
+      try {
+        await api(`/api/admin/loans/${editing.loan.id}/return`, { method: 'POST', body: {} });
+        closeEditor();
+        await load({ keepOffset: true });
+      } catch (err) {
+        setError(err.message);
+      }
+    });
+    $('[data-b-file]').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) setPendingCover(f); });
+    $('[data-b-cover-clear]').addEventListener('click', () => {
+      pendingCover = null;
+      removeCover = !!editing?.cover_url;
+      $('[data-b-file]').value = '';
+      showCover(null);
+    });
+    form().addEventListener('input', (e) => e.target.classList?.remove('is-suggested'));
+
+    const dlg = $('[data-b-confirm]');
+    $('[name="typed"]', dlg).addEventListener('input', (e) => {
+      $('[data-b-confirm-ok]').disabled = e.target.value.trim() !== editing?.code;
+    });
+    $('[data-b-confirm-cancel]').addEventListener('click', () => dlg.close());
+    $('[data-b-confirm-form]').addEventListener('submit', doDelete);
+
+    try {
+      await load();
+      if (targetCode) openByCode(targetCode);
+    } catch (err) {
+      $('[data-b-count]').textContent = `Не удалось загрузить книги: ${err.message}`;
+    }
+  }

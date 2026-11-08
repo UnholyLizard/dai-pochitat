@@ -28,7 +28,7 @@ function showTab(name) {
   for (const b of $$('[data-tab]')) b.setAttribute('aria-selected', String(b.dataset.tab === name));
   for (const p of $$('[data-panel]')) p.hidden = p.dataset.panel !== name;
   if (name === 'bot') loadBot();
-  if (name === 'books') initBooks();
+  if (name === 'books') initBooks({ editCode: new URLSearchParams(location.search).get('book') });
   if (name === 'users') initUsers({ role: data.me.role });
   if (name === 'events') initEvents();
 }
@@ -90,6 +90,15 @@ async function init() {
   $('[data-app]').hidden = false;
 
   for (const b of $$('[data-tab]')) b.addEventListener('click', () => showTab(b.dataset.tab));
+
+  const params = new URLSearchParams(location.search);
+  const targetTab = params.get('tab');
+  const targetBook = params.get('book');
+  if (targetTab && ['threads', 'books', 'users', 'events', 'bot'].includes(targetTab)) {
+    showTab(targetTab);
+  } else if (targetBook) {
+    showTab('books');
+  }
   $('[data-reply]').addEventListener('submit', async (e) => {
     e.preventDefault();
     const input = e.target.elements.text;
