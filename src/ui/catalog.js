@@ -8,7 +8,7 @@ import { BOOKS } from '../content/books.js';
 import { getBookTitle, getBookAuthor } from '../lib/translit.js';
 
 let modal = null;
-let onAsk = () => {};
+let onAsk = () => { };
 let drawer = null;
 let searchInput = null;
 let gridEl = null;
@@ -228,28 +228,28 @@ function updateUI() {
   }
 }
 
-function openBookDrawer(book) {
-  if (!drawer) return;
-  const title = getLocalizedField(book, 'title');
-  const author = getLocalizedField(book, 'author');
-  const annotation = getLocalizedField(book, 'annotation');
-  const says = getLocalizedField(book, 'says');
-  const ages = getBookAges(book);
-  const coverUrl = book.cover_url || book.coverUrl;
-  const wanted = game.state.wish.includes(book.id);
-  const langLabel = getLanguageLabel(book.language || 'ru');
+  function openBookDrawer(book, { push = true } = {}) {
+    if (!drawer) return;
+    const title = getLocalizedField(book, 'title');
+    const author = getLocalizedField(book, 'author');
+    const annotation = getLocalizedField(book, 'annotation');
+    const says = getLocalizedField(book, 'says');
+    const ages = getBookAges(book);
+    const coverUrl = book.cover_url || book.coverUrl;
+    const wanted = game.state.wish.includes(book.id);
+    const langLabel = getLanguageLabel(book.language || 'ru');
 
-  let tags;
-  try {
-    tags = typeof book.tags_json === 'string' ? JSON.parse(book.tags_json) : (book.tags || []);
-  } catch {
-    tags = [];
-  }
+    let tags;
+    try {
+      tags = typeof book.tags_json === 'string' ? JSON.parse(book.tags_json) : (book.tags || []);
+    } catch {
+      tags = [];
+    }
 
-  const drawerContent = $('.book-drawer__content', drawer);
-  if (!drawerContent) return;
+    const drawerContent = $('.book-drawer__content', drawer);
+    if (!drawerContent) return;
 
-  render(drawerContent, html`
+    render(drawerContent, html`
     <button class="book-drawer__close" type="button" data-drawer-close aria-label="${t('catalog.close')}">
       <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
     </button>
@@ -301,243 +301,286 @@ function openBookDrawer(book) {
     </div>
   `);
 
-  const coverImg = $('.book-drawer__cover img', drawerContent);
-  if (coverImg) {
-    if (coverImg.complete && !coverImg.naturalWidth) {
-      coverImg.remove();
+    const coverImg = $('.book-drawer__cover img', drawerContent);
+    if (coverImg) {
+      if (coverImg.complete && !coverImg.naturalWidth) {
+        coverImg.remove();
+      } else {
+        coverImg.addEventListener('error', () => coverImg.remove(), { once: true });
+      }
+    }
+
+    drawer.removeAttribute('hidden');
+    openBook = book;
+    document.documentElement.classList.add('is-modal-open');
+    if (push) {
+      history.pushState({ book: book.code || book.id }, '', buildUrl(book));
+      bookHistoryPushed = true;
     } else {
-      coverImg.addEventListener('error', () => coverImg.remove(), { once: true });
-    }
-  }
-
-  drawer.removeAttribute('hidden');
-  openBook = book;
-  document.documentElement.classList.add('is-modal-open');
-  syncUrl();
-  $('[data-drawer-close]', drawer)?.focus({ preventScroll: true });
-}
-
-function closeBookDrawer() {
-  if (!drawer || drawer.hidden) return;
-  drawer.setAttribute('hidden', '');
-  openBook = null;
-  document.documentElement.classList.remove('is-modal-open');
-  syncUrl();
-}
-
-// URL names: `lang` is the page's UI language, so the language filter gets its own name.
-const PARAMS = { q: 'q', ageGroup: 'age_group', mood: 'mood', collection: 'collection', language: 'language', available: 'available' };
-let openBook = null;
-
-/** Filters + open book → query string (replaceState: browsing the shelf is not navigation). */
-function syncUrl() {
-  const params = new URLSearchParams();
-  for (const [key, name] of Object.entries(PARAMS)) if (state[key]) params.set(name, state[key]);
-  if (openBook) params.set('book', openBook.code || openBook.id);
-  const qs = params.toString();
-  history.replaceState(null, '', `${location.pathname}${qs ? `?${qs}` : ''}${location.hash}`);
-}
-
-function readUrl() {
-  const params = new URLSearchParams(location.search);
-  for (const [key, name] of Object.entries(PARAMS)) state[key] = params.get(name) ?? '';
-}
-
-function syncFilterPills() {
-  for (const p of $$('[data-age-group]', modal)) {
-    p.classList.toggle('is-active', p.dataset.ageGroup === state.ageGroup);
-  }
-  for (const p of $$('[data-mood]', modal)) {
-    p.classList.toggle('is-active', p.dataset.mood === state.mood);
-  }
-  for (const p of $$('[data-collection]', modal)) {
-    p.classList.toggle('is-active', p.dataset.collection === state.collection);
-  }
-  for (const p of $$('[data-language]', modal)) {
-    p.classList.toggle('is-active', p.dataset.language === state.language);
-  }
-
-  for (const p of $$('[data-available]', modal)) p.classList.toggle('is-active', !!state.available);
-
-  // Count of active filters stays visible on the toggle while the panel is hidden
-  const countEl = $('[data-catalog-filters-count]', modal);
-  if (countEl) {
-    const active = [state.ageGroup, state.mood, state.collection, state.language, state.available].filter(Boolean).length;
-    countEl.textContent = String(active);
-    countEl.hidden = active === 0;
-  }
-}
-
-export function initCatalog({ onAsk: ask } = {}) {
-  modal = $('#catalog');
-  if (!modal) return;
-  if (ask) onAsk = ask;
-  readUrl();
-
-  drawer = $('#book-drawer');
-  searchInput = $('[data-catalog-search]', modal);
-  gridEl = $('[data-catalog-grid]', modal);
-  statusEl = $('[data-catalog-status]', modal);
-  loadMoreBtn = $('[data-catalog-loadmore]', modal);
-
-  // Drawer closer
-  drawer?.addEventListener('click', (e) => {
-    if (e.target === drawer || e.target.closest('[data-drawer-close]')) closeBookDrawer();
-  });
-
-  // Keyboard shortcut: '/' opens catalog search
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeBookDrawer();
-    if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
-      e.preventDefault();
-      searchInput?.focus();
-    }
-  });
-
-  // Search input debounced
-  searchInput?.addEventListener('input', () => {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      state.q = searchInput.value.trim();
       syncUrl();
-      fetchBooks({ reset: true });
-    }, 280);
-  });
-
-  // Clear search button
-  $('[data-catalog-clear]', modal)?.addEventListener('click', () => {
-    if (searchInput) searchInput.value = '';
-    state.q = '';
-    syncUrl();
-    fetchBooks({ reset: true });
-  });
-
-  // Filter clicks
-  modal.addEventListener('click', (e) => {
-    const pill = e.target.closest('.catalog-pill');
-    if (!pill) return;
-
-    if ('ageGroup' in pill.dataset) {
-      state.ageGroup = state.ageGroup === pill.dataset.ageGroup ? '' : pill.dataset.ageGroup;
-    } else if ('mood' in pill.dataset) {
-      state.mood = state.mood === pill.dataset.mood ? '' : pill.dataset.mood;
-    } else if ('collection' in pill.dataset) {
-      state.collection = state.collection === pill.dataset.collection ? '' : pill.dataset.collection;
-    } else if ('available' in pill.dataset) {
-      state.available = state.available ? '' : '1';
-    } else if ('language' in pill.dataset) {
-      state.language = state.language === pill.dataset.language ? '' : pill.dataset.language;
     }
-    syncFilterPills();
-    syncUrl();
-    fetchBooks({ reset: true });
-  });
-
-  // Reset all filters button
-  modal.addEventListener('click', (e) => {
-    if (!e.target.closest('[data-catalog-reset]')) return;
-    state.q = '';
-    state.ageGroup = '';
-    state.mood = '';
-    state.collection = '';
-    state.language = '';
-    state.available = '';
-    if (searchInput) searchInput.value = '';
-    syncFilterPills();
-    syncUrl();
-    fetchBooks({ reset: true });
-  });
-
-  // Load more button
-  loadMoreBtn?.addEventListener('click', () => {
-    fetchBooks({ reset: false });
-  });
-
-  // Cover images: fit mode is decided on load; broken covers are dropped.
-  // Capture phase, because load/error do not bubble.
-  gridEl?.addEventListener('load', (e) => {
-    if (e.target.matches('.catalog-card__cover-img')) markCover(e.target);
-  }, true);
-  gridEl?.addEventListener('error', (e) => {
-    if (e.target.matches('.catalog-card__cover-img')) e.target.remove();
-  }, true);
-
-  // A drawer cover that fails to load is dropped, so the text stand-in shows instead
-  drawer?.addEventListener('error', (e) => {
-    if (e.target.matches('.book-drawer__cover img')) e.target.remove();
-  }, true);
-
-  // Mobile filter toggle: hides the pill rows, keeps the search field
-  const filtersToggle = $('[data-catalog-filters-toggle]', modal);
-  const filtersPanel = $('[data-catalog-filters]', modal);
-  const setFilters = (expanded) => {
-    filtersToggle?.setAttribute('aria-expanded', String(expanded));
-    if (filtersPanel) filtersPanel.hidden = !expanded;
-  };
-  filtersToggle?.addEventListener('click', () => setFilters(filtersToggle.getAttribute('aria-expanded') !== 'true'));
-
-  // Scrolling the results down folds the filters away; scrolling back up leaves them folded —
-  // only the toggle brings them back.
-  const catalogPage = $('.catalog-page');
-  let lastY = 0;
-  const onScroll = (y) => {
-    if (y > lastY && y > 120 && filtersToggle?.getAttribute('aria-expanded') === 'true') setFilters(false);
-    lastY = y;
-  };
-  addEventListener('scroll', () => onScroll(scrollY), { passive: true });
-  catalogPage?.addEventListener('scroll', () => onScroll(catalogPage.scrollTop), { passive: true });
-
-  // Card click -> open detail drawer
-  gridEl?.addEventListener('click', (e) => {
-    if (e.target.closest('[data-wish]')) return; // let wish handler do its thing
-    const card = e.target.closest('[data-book-id]');
-    if (!card) return;
-    const bookId = card.dataset.bookId;
-    const book = state.books.find((b) => b.id === bookId);
-    if (book) {
-      sfx.rustle?.();
-      openBookDrawer(book);
-    }
-  });
-
-  // Wish-list hearts (cards and drawer)
-  modal.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-wish]');
-    if (!btn) return;
-    const on = game.toggleWish(btn.dataset.wish);
-    btn.setAttribute('aria-pressed', String(on));
-    const label = btn.querySelector('span');
-    if (label) label.textContent = t(on ? 'oracle.wanted' : 'oracle.want');
-    if (on) sfx.pop();
-  });
-
-  // Ask about book in drawer -> chat with the librarian on the home page
-  drawer?.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-ask-about]');
-    if (!btn) return;
-    const book = openBook ?? state.books.find((b) => b.id === btn.dataset.askAbout);
-    if (book) onAsk(t('oracle.askText', { title: getLocalizedField(book, 'title') }));
-  });
-
-  // Deep link: /catalog/?book=DP-0001 opens that book's card over the shelf.
-  const wanted = new URLSearchParams(location.search).get('book');
-  if (wanted) {
-    fetch(`/api/books/${encodeURIComponent(wanted)}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (data?.book) openBookDrawer(data.book);
-        else syncUrl();
-      })
-      .catch(() => {});
+    $('[data-drawer-close]', drawer)?.focus({ preventScroll: true });
   }
 
-  syncFilterPills();
-  if (searchInput) searchInput.value = state.q;
-  fetchBooks({ reset: true });
+    function closeBookDrawer({ fromPopstate = false } = {}) {
+      if (!drawer || drawer.hidden) return;
+      drawer.setAttribute('hidden', '');
+      openBook = null;
+      document.documentElement.classList.remove('is-modal-open');
+      if (!fromPopstate && bookHistoryPushed) {
+        bookHistoryPushed = false;
+        history.back();
+        return;
+      }
+      bookHistoryPushed = false;
+      syncUrl();
+    }
 
-  // Update on language change
-  bus.on('lang', () => {
-    syncFilterPills();
-    updateUI();
-  });
-}
+    // URL names: `lang` is the page's UI language, so the language filter gets its own name.
+    const PARAMS = { q: 'q', ageGroup: 'age_group', mood: 'mood', collection: 'collection', language: 'language', available: 'available' };
+    let openBook = null;
+    let bookHistoryPushed = false;
+
+      function buildUrl(book = openBook) {
+        const params = new URLSearchParams();
+        for (const [key, name] of Object.entries(PARAMS)) if (state[key]) params.set(name, state[key]);
+        if (book) params.set('book', book.code || book.id);
+        const qs = params.toString();
+        return `${location.pathname}${qs ? `?${qs}` : ''}${location.hash}`;
+      }
+
+      /** Filters + open book → query string (replaceState: browsing the shelf is not navigation). */
+      function syncUrl() {
+        history.replaceState(null, '', buildUrl());
+      }
+
+      function readUrl() {
+        const params = new URLSearchParams(location.search);
+        for (const [key, name] of Object.entries(PARAMS)) state[key] = params.get(name) ?? '';
+      }
+
+      function syncFilterPills() {
+        for (const p of $$('[data-age-group]', modal)) {
+          p.classList.toggle('is-active', p.dataset.ageGroup === state.ageGroup);
+        }
+        for (const p of $$('[data-mood]', modal)) {
+          p.classList.toggle('is-active', p.dataset.mood === state.mood);
+        }
+        for (const p of $$('[data-collection]', modal)) {
+          p.classList.toggle('is-active', p.dataset.collection === state.collection);
+        }
+        for (const p of $$('[data-language]', modal)) {
+          p.classList.toggle('is-active', p.dataset.language === state.language);
+        }
+
+        for (const p of $$('[data-available]', modal)) p.classList.toggle('is-active', !!state.available);
+
+        // Count of active filters stays visible on the toggle while the panel is hidden
+        const countEl = $('[data-catalog-filters-count]', modal);
+        if (countEl) {
+          const active = [state.ageGroup, state.mood, state.collection, state.language, state.available].filter(Boolean).length;
+          countEl.textContent = String(active);
+          countEl.hidden = active === 0;
+        }
+      }
+
+      export function initCatalog({ onAsk: ask } = {}) {
+        modal = $('#catalog');
+        if (!modal) return;
+        if (ask) onAsk = ask;
+        readUrl();
+
+        drawer = $('#book-drawer');
+        searchInput = $('[data-catalog-search]', modal);
+        gridEl = $('[data-catalog-grid]', modal);
+        statusEl = $('[data-catalog-status]', modal);
+        loadMoreBtn = $('[data-catalog-loadmore]', modal);
+
+        // Drawer closer
+        drawer?.addEventListener('click', (e) => {
+          if (e.target === drawer || e.target.closest('[data-drawer-close]')) closeBookDrawer();
+        });
+
+        // Handle browser / mobile back button navigation: closing book drawer instead of exiting catalog
+        window.addEventListener('popstate', () => {
+          const params = new URLSearchParams(location.search);
+          const bookParam = params.get('book');
+
+          if (!bookParam) {
+            if (openBook) closeBookDrawer({ fromPopstate: true });
+          } else if (!openBook || (openBook.id !== bookParam && openBook.code !== bookParam)) {
+            const found = state.books.find((b) => b.id === bookParam || b.code === bookParam);
+            if (found) {
+              openBookDrawer(found, { push: false });
+            } else {
+              fetch(`/api/books/${encodeURIComponent(bookParam)}`)
+                .then((r) => (r.ok ? r.json() : null))
+                .then((data) => {
+                  if (data?.book) openBookDrawer(data.book, { push: false });
+                  else closeBookDrawer({ fromPopstate: true });
+                })
+                .catch(() => closeBookDrawer({ fromPopstate: true }));
+            }
+          }
+
+          readUrl();
+          syncFilterPills();
+          if (searchInput && searchInput.value !== state.q) searchInput.value = state.q;
+        });
+
+        // Keyboard shortcut: '/' opens catalog search
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') closeBookDrawer();
+          if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+            e.preventDefault();
+            searchInput?.focus();
+          }
+        });
+
+        // Search input debounced
+        searchInput?.addEventListener('input', () => {
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => {
+            state.q = searchInput.value.trim();
+            syncUrl();
+            fetchBooks({ reset: true });
+          }, 280);
+        });
+
+        // Clear search button
+        $('[data-catalog-clear]', modal)?.addEventListener('click', () => {
+          if (searchInput) searchInput.value = '';
+          state.q = '';
+          syncUrl();
+          fetchBooks({ reset: true });
+        });
+
+        // Filter clicks
+        modal.addEventListener('click', (e) => {
+          const pill = e.target.closest('.catalog-pill');
+          if (!pill) return;
+
+          if ('ageGroup' in pill.dataset) {
+            state.ageGroup = state.ageGroup === pill.dataset.ageGroup ? '' : pill.dataset.ageGroup;
+          } else if ('mood' in pill.dataset) {
+            state.mood = state.mood === pill.dataset.mood ? '' : pill.dataset.mood;
+          } else if ('collection' in pill.dataset) {
+            state.collection = state.collection === pill.dataset.collection ? '' : pill.dataset.collection;
+          } else if ('available' in pill.dataset) {
+            state.available = state.available ? '' : '1';
+          } else if ('language' in pill.dataset) {
+            state.language = state.language === pill.dataset.language ? '' : pill.dataset.language;
+          }
+          syncFilterPills();
+          syncUrl();
+          fetchBooks({ reset: true });
+        });
+
+        // Reset all filters button
+        modal.addEventListener('click', (e) => {
+          if (!e.target.closest('[data-catalog-reset]')) return;
+          state.q = '';
+          state.ageGroup = '';
+          state.mood = '';
+          state.collection = '';
+          state.language = '';
+          state.available = '';
+          if (searchInput) searchInput.value = '';
+          syncFilterPills();
+          syncUrl();
+          fetchBooks({ reset: true });
+        });
+
+        // Load more button
+        loadMoreBtn?.addEventListener('click', () => {
+          fetchBooks({ reset: false });
+        });
+
+        // Cover images: fit mode is decided on load; broken covers are dropped.
+        // Capture phase, because load/error do not bubble.
+        gridEl?.addEventListener('load', (e) => {
+          if (e.target.matches('.catalog-card__cover-img')) markCover(e.target);
+        }, true);
+        gridEl?.addEventListener('error', (e) => {
+          if (e.target.matches('.catalog-card__cover-img')) e.target.remove();
+        }, true);
+
+        // A drawer cover that fails to load is dropped, so the text stand-in shows instead
+        drawer?.addEventListener('error', (e) => {
+          if (e.target.matches('.book-drawer__cover img')) e.target.remove();
+        }, true);
+
+        // Mobile filter toggle: hides the pill rows, keeps the search field
+        const filtersToggle = $('[data-catalog-filters-toggle]', modal);
+        const filtersPanel = $('[data-catalog-filters]', modal);
+        const setFilters = (expanded) => {
+          filtersToggle?.setAttribute('aria-expanded', String(expanded));
+          if (filtersPanel) filtersPanel.hidden = !expanded;
+        };
+        filtersToggle?.addEventListener('click', () => setFilters(filtersToggle.getAttribute('aria-expanded') !== 'true'));
+
+        // Scrolling the results down folds the filters away; scrolling back up leaves them folded —
+        // only the toggle brings them back.
+        const catalogPage = $('.catalog-page');
+        let lastY = 0;
+        const onScroll = (y) => {
+          if (y > lastY && y > 120 && filtersToggle?.getAttribute('aria-expanded') === 'true') setFilters(false);
+          lastY = y;
+        };
+        addEventListener('scroll', () => onScroll(scrollY), { passive: true });
+        catalogPage?.addEventListener('scroll', () => onScroll(catalogPage.scrollTop), { passive: true });
+
+        // Card click -> open detail drawer
+        gridEl?.addEventListener('click', (e) => {
+          if (e.target.closest('[data-wish]')) return; // let wish handler do its thing
+          const card = e.target.closest('[data-book-id]');
+          if (!card) return;
+          const bookId = card.dataset.bookId;
+          const book = state.books.find((b) => b.id === bookId);
+          if (book) {
+            sfx.rustle?.();
+            openBookDrawer(book);
+          }
+        });
+
+        // Wish-list hearts (cards and drawer)
+        modal.addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-wish]');
+          if (!btn) return;
+          const on = game.toggleWish(btn.dataset.wish);
+          btn.setAttribute('aria-pressed', String(on));
+          const label = btn.querySelector('span');
+          if (label) label.textContent = t(on ? 'oracle.wanted' : 'oracle.want');
+          if (on) sfx.pop();
+        });
+
+        // Ask about book in drawer -> chat with the librarian on the home page
+        drawer?.addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-ask-about]');
+          if (!btn) return;
+          const book = openBook ?? state.books.find((b) => b.id === btn.dataset.askAbout);
+          if (book) onAsk(t('oracle.askText', { title: getLocalizedField(book, 'title') }));
+        });
+
+        // Deep link: /catalog/?book=DP-0001 opens that book's card over the shelf.
+        const wanted = new URLSearchParams(location.search).get('book');
+        if (wanted) {
+          fetch(`/api/books/${encodeURIComponent(wanted)}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((data) => {
+              if (data?.book) openBookDrawer(data.book, { push: false });
+              else syncUrl();
+            })
+            .catch(() => { });
+        }
+
+        syncFilterPills();
+        if (searchInput) searchInput.value = state.q;
+        fetchBooks({ reset: true });
+
+        // Update on language change
+        bus.on('lang', () => {
+          syncFilterPills();
+          updateUI();
+        });
+      }
