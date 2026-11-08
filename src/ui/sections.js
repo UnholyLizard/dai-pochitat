@@ -105,15 +105,39 @@ const icsDate = (iso) => {
   return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
 };
 
+function getEventDate(str, isEnd = false) {
+  if (!str) return null;
+  if (!str.includes('T')) {
+    const [y, m, d] = str.split('-').map(Number);
+    return isEnd ? new Date(y, m - 1, d, 23, 59, 59, 999) : new Date(y, m - 1, d, 0, 0, 0);
+  }
+  return new Date(str);
+}
+
 function downloadIcs(ev) {
-  const esc = (s) => s.replace(/([,;\\])/g, '\\$1');
+  const esc = (s) => String(s || '').replace(/([,;\\])/g, '\\$1');
+  const sHasTime = ev.start.includes('T');
+  const eHasTime = ev.end && ev.end.includes('T');
+  const s = getEventDate(ev.start, false);
+  const e = ev.end ? getEventDate(ev.end, true) : (sHasTime ? new Date(s.getTime() + 2 * 3600 * 1000) : s);
+
+  const dtStartLine = sHasTime
+    ? `DTSTART;TZID=Europe/Podgorica:${icsDate(ev.start)}`
+    : `DTSTART;VALUE=DATE:${s.getFullYear()}${pad(s.getMonth() + 1)}${pad(s.getDate())}`;
+
+  const dtEndLine = sHasTime && eHasTime
+    ? `DTEND;TZID=Europe/Podgorica:${icsDate(ev.end)}`
+    : (sHasTime
+      ? `DTEND;TZID=Europe/Podgorica:${icsDate(e.toISOString())}`
+      : `DTEND;VALUE=DATE:${e.getFullYear()}${pad(e.getMonth() + 1)}${pad(e.getDate())}`);
+
   const ics = [
     'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Dai pochitat//Library//RU',
     'BEGIN:VEVENT',
     `UID:${ev.id}@dai-pochitat`,
     `DTSTAMP:${icsDate(new Date().toISOString())}`,
-    `DTSTART;TZID=Europe/Podgorica:${icsDate(ev.start)}`,
-    `DTEND;TZID=Europe/Podgorica:${icsDate(ev.end)}`,
+    dtStartLine,
+    dtEndLine,
     `SUMMARY:${esc(L(ev.title))}`,
     `DESCRIPTION:${esc(L(ev.text))}`,
     `LOCATION:${esc(L(LIBRARY.address))}`,
@@ -133,12 +157,31 @@ function drawEvents() {
   const weekday = new Intl.DateTimeFormat(locale, { weekday: 'long' });
   const time = new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit' });
   const now = Date.now();
+
+  const getEndMs = (ev) => {
+    const d = getEventDate(ev.end, true) || getEventDate(ev.start, true);
+    return d ? d.getTime() : 0;
+  };
+
   // Most recent past event first (as a thank-you), then what's coming.
-  const past = EVENTS.filter((e) => new Date(e.end) < now).slice(-1);
-  const next = EVENTS.filter((e) => new Date(e.end) >= now).slice(0, 2);
+  const past = EVENTS.filter((e) => getEndMs(e) < now).slice(-1);
+  const next = EVENTS.filter((e) => getEndMs(e) >= now).slice(0, 2);
   render(list, html`${[...past, ...next].map((ev) => {
-    const s = new Date(ev.start), e = new Date(ev.end);
-    const isPast = e < now;
+    const s = getEventDate(ev.start, false);
+    const e = getEventDate(ev.end, true);
+    const isPast = getEndMs(ev) < now;
+    const sHasTime = ev.start.includes('T');
+    const eHasTime = ev.end && ev.end.includes('T');
+
+    let timeStr = '';
+    if (sHasTime && eHasTime) {
+      timeStr = ` · ${time.format(s)}–${time.format(e)}`;
+    } else if (sHasTime) {
+      timeStr = ` · ${time.format(s)}`;
+    }
+
+    const agesLabel = ev.ages ? L(ev.ages) : (ev.ages_ru || ev.ages_en ? L({ ru: ev.ages_ru, en: ev.ages_en }) : '');
+
     return html`
       <li class="ticket ${isPast ? 'ticket--past' : ''}">
         <div class="ticket__date" aria-hidden="true">
@@ -147,7 +190,7 @@ function drawEvents() {
         </div>
         <div class="ticket__body">
           <h3>${L(ev.title)}</h3>
-          <p class="ticket__meta"><time datetime="${ev.start}">${weekday.format(s)}, ${day.format(s)} ${month.format(s)} · ${time.format(s)}–${time.format(e)}</time> · ${L(ev.ages)}</p>
+          <p class="ticket__meta"><time datetime="${ev.start}">${weekday.format(s)}, ${day.format(s)} ${month.format(s)}${timeStr}</time>${agesLabel ? html` · ${agesLabel}` : ''}</p>
           <p>${L(ev.text)}</p>
           <div class="ticket__actions">
             ${isPast ? '' : html`<button class="btn btn--ghost btn--small" type="button" data-ics="${ev.id}"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-calendar"/></svg>${t('events.add')}</button>`}

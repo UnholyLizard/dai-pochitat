@@ -11,22 +11,49 @@ let state = {
 let editing = null;
 let initialized = false;
 
-function fmtDt(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return iso;
-  return d.toLocaleString([], {
-    day: 'numeric',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+function getEventEndTime(ev) {
+  const target = ev.end || ev.start;
+  if (!target) return 0;
+  if (!target.includes('T')) {
+    const [y, m, d] = target.split('-').map(Number);
+    return new Date(y, m - 1, d, 23, 59, 59, 999).getTime();
+  }
+  return new Date(target).getTime();
 }
 
 function fmtRange(start, end) {
-  const s = fmtDt(start);
-  const e = fmtDt(end);
-  return `${s} – ${e}`;
+  if (!start) return '';
+  const sHasTime = start.includes('T');
+  const eHasTime = end && end.includes('T');
+  const s = new Date(start);
+  if (isNaN(s.getTime())) return start;
+
+  const dOpts = { day: 'numeric', month: 'short' };
+  const tOpts = { hour: '2-digit', minute: '2-digit' };
+
+  const sDateStr = s.toLocaleDateString([], dOpts);
+  const sTimeStr = sHasTime ? s.toLocaleTimeString([], tOpts) : '';
+
+  if (!end) {
+    return sTimeStr ? `${sDateStr}, ${sTimeStr}` : sDateStr;
+  }
+
+  const e = new Date(end);
+  if (isNaN(e.getTime())) return `${sDateStr}${sTimeStr ? ' ' + sTimeStr : ''} – ${end}`;
+
+  const eDateStr = e.toLocaleDateString([], dOpts);
+  const eTimeStr = eHasTime ? e.toLocaleTimeString([], tOpts) : '';
+
+  if (sDateStr === eDateStr) {
+    if (sTimeStr && eTimeStr) {
+      return `${sDateStr}, ${sTimeStr}–${eTimeStr}`;
+    }
+    if (sTimeStr) {
+      return `${sDateStr}, ${sTimeStr}`;
+    }
+    return sDateStr;
+  }
+  return `${sDateStr}${sTimeStr ? ' ' + sTimeStr : ''} – ${eDateStr}${eTimeStr ? ' ' + eTimeStr : ''}`;
 }
 
 function renderList() {
@@ -38,7 +65,7 @@ function renderList() {
   const q = state.q.toLowerCase().trim();
 
   const filtered = state.events.filter((ev) => {
-    const isPast = new Date(ev.end).getTime() < now;
+    const isPast = getEventEndTime(ev) < now;
     if (state.filter === 'upcoming' && isPast) return false;
     if (state.filter === 'past' && !isPast) return false;
     if (q) {
@@ -51,7 +78,7 @@ function renderList() {
   count.textContent = `Показано событий: ${filtered.length} из ${state.events.length}`;
 
   list.replaceChildren(...filtered.map((ev) => {
-    const isPast = new Date(ev.end).getTime() < now;
+    const isPast = getEventEndTime(ev) < now;
     const badgeText = isPast ? 'Прошло' : 'Предстоит';
     const badgeClass = isPast ? 'badge' : 'badge badge--owner';
 
@@ -99,6 +126,14 @@ async function load() {
   }
 }
 
+function updateEnFields(form) {
+  const isAi = form.elements.ai_translate.checked;
+  const enFields = form.querySelectorAll('[data-e-en-field]');
+  enFields.forEach((el) => {
+    el.hidden = isAi;
+  });
+}
+
 function openEditor(event = null) {
   editing = event;
   const dialog = $('[data-e-editor]');
@@ -113,14 +148,24 @@ function openEditor(event = null) {
 
   form.elements.title_ru.value = event?.title_ru || '';
   form.elements.title_en.value = event?.title_en || '';
-  form.elements.start.value = event?.start || '';
-  form.elements.end.value = event?.end || '';
+
+  const [sDate, sTime = ''] = (event?.start || '').split('T');
+  form.elements.start_date.value = sDate;
+  form.elements.start_time.value = sTime ? sTime.slice(0, 5) : '';
+
+  const [eDate, eTime = ''] = (event?.end || '').split('T');
+  form.elements.end_date.value = eDate;
+  form.elements.end_time.value = eTime ? eTime.slice(0, 5) : '';
+
   form.elements.ages_ru.value = event?.ages_ru || '';
   form.elements.ages_en.value = event?.ages_en || '';
   form.elements.text_ru.value = event?.text_ru || '';
   form.elements.text_en.value = event?.text_en || '';
   form.elements.instagram_announce.value = event?.instagram_announce || '';
   form.elements.instagram_recap.value = event?.instagram_recap || '';
+
+  form.elements.ai_translate.checked = true;
+  updateEnFields(form);
 
   dialog.showModal();
 }
@@ -206,6 +251,14 @@ export function initEvents() {
     });
   }
 
+  const aiToggle = $('[data-e-ai-toggle]');
+  if (aiToggle) {
+    aiToggle.addEventListener('change', () => {
+      const form = $('[data-e-form]');
+      if (form) updateEnFields(form);
+    });
+  }
+
   const form = $('[data-e-form]');
   if (form) {
     form.addEventListener('submit', async (e) => {
@@ -215,18 +268,39 @@ export function initEvents() {
       err.hidden = true;
       saveBtn.disabled = true;
 
+      const startDate = form.elements.start_date.value.trim();
+      const startTime = form.elements.start_time.value.trim();
+      const endDate = form.elements.end_date.value.trim();
+      const endTime = form.elements.end_time.value.trim();
+
+      const start = startTime ? `${startDate}T${startTime}` : startDate;
+      let end = '';
+      if (endDate) {
+        end = endTime ? `${endDate}T${endTime}` : endDate;
+      } else if (endTime) {
+        end = `${startDate}T${endTime}`;
+      }
+
+      const isAi = form.elements.ai_translate.checked;
       const body = {
         title_ru: form.elements.title_ru.value.trim(),
-        title_en: form.elements.title_en.value.trim(),
-        start: form.elements.start.value.trim(),
-        end: form.elements.end.value.trim(),
+        title_en: isAi ? '' : form.elements.title_en.value.trim(),
+        start,
+        end,
         ages_ru: form.elements.ages_ru.value.trim(),
-        ages_en: form.elements.ages_en.value.trim(),
+        ages_en: isAi ? '' : form.elements.ages_en.value.trim(),
         text_ru: form.elements.text_ru.value.trim(),
-        text_en: form.elements.text_en.value.trim(),
+        text_en: isAi ? '' : form.elements.text_en.value.trim(),
         instagram_announce: form.elements.instagram_announce.value.trim(),
         instagram_recap: form.elements.instagram_recap.value.trim(),
+        ai_translate: isAi,
       };
+
+      if (isAi) {
+        saveBtn.textContent = 'Перевод и сохранение…';
+      } else {
+        saveBtn.textContent = 'Сохранение…';
+      }
 
       try {
         if (editing) {
@@ -241,6 +315,7 @@ export function initEvents() {
         err.hidden = false;
       } finally {
         saveBtn.disabled = false;
+        saveBtn.textContent = 'Сохранить';
       }
     });
   }

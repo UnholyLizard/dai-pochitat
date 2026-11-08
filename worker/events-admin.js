@@ -1,5 +1,6 @@
 // /api/admin/events* — Manage block #5 parties & gatherings.
 import { json, readJson } from './util.js';
+import { translateEvent } from './ai-translate.js';
 
 const TEXT = {
   title_ru: 300, title_en: 300,
@@ -33,7 +34,7 @@ function clean(body, { partial = false } = {}) {
     if (!v.start) return { error: 'start is required' };
   }
   if (!partial || 'end' in body) {
-    if (!v.end) v.end = v.start || '';
+    v.end = v.end || '';
   }
   return { values: v };
 }
@@ -51,6 +52,14 @@ export async function eventsAdminRoutes(request, env, url) {
     return json({ events: results || [] });
   }
 
+  // POST /api/admin/events/translate
+  if (request.method === 'POST' && path === '/api/admin/events/translate') {
+    const body = await readJson(request, 16384);
+    if (!body) return json({ error: 'bad request' }, 400);
+    const tr = await translateEvent(body, env);
+    return json({ translation: tr });
+  }
+
   // POST /api/admin/events
   if (request.method === 'POST' && path === '/api/admin/events') {
     const body = await readJson(request, 16384);
@@ -58,6 +67,17 @@ export async function eventsAdminRoutes(request, env, url) {
 
     const { values, error } = clean(body, { partial: false });
     if (error) return json({ error }, 400);
+
+    if (body.ai_translate || (!values.title_en && body.ai_translate !== false)) {
+      const tr = await translateEvent({
+        title_ru: values.title_ru,
+        ages_ru: values.ages_ru,
+        text_ru: values.text_ru,
+      }, env);
+      if (tr.title_en && !values.title_en) values.title_en = tr.title_en;
+      if (tr.ages_en && !values.ages_en) values.ages_en = tr.ages_en;
+      if (tr.text_en && !values.text_en) values.text_en = tr.text_en;
+    }
 
     const id = body.id?.trim() || `${slugify(values.title_ru || values.title_en)}-${Date.now().toString(36)}`;
     const now = Date.now();
@@ -85,6 +105,17 @@ export async function eventsAdminRoutes(request, env, url) {
 
     const { values, error } = clean(body, { partial: true });
     if (error) return json({ error }, 400);
+
+    if (body.ai_translate || (values.title_ru && !values.title_en && body.ai_translate !== false)) {
+      const tr = await translateEvent({
+        title_ru: values.title_ru || existing.title_ru,
+        ages_ru: values.ages_ru || existing.ages_ru,
+        text_ru: values.text_ru || existing.text_ru,
+      }, env);
+      if (tr.title_en && !values.title_en) values.title_en = tr.title_en;
+      if (tr.ages_en && !values.ages_en) values.ages_en = tr.ages_en;
+      if (tr.text_en && !values.text_en) values.text_en = tr.text_en;
+    }
 
     const merged = { ...existing, ...values, updated_at: Date.now() };
 

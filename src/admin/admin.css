@@ -144,3 +144,8 @@ dialog.editor--narrow { max-width: 520px; }
 .picks button:disabled { opacity: 0.5; cursor: not-allowed; }
 [data-l-dialog] input[type='search'] { width: 100%; height: 44px; padding: 0 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card-2); color: var(--ink); }
 [data-l-user-fixed], [data-l-book-fixed] { margin: 0; padding: 10px 14px; border-radius: 12px; background: var(--card-2); border: 1.5px dashed var(--line); font-weight: 800; cursor: pointer; }
+
+.switch-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--card-2); border-radius: 12px; border: 1px solid var(--line); margin-bottom: 12px; }
+.switch-row label { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer; user-select: none; }
+.switch-row input[type='checkbox'] { width: 18px; height: 18px; accent-color: var(--cobalt); cursor: pointer; margin: 0; }
+input[type='date'], input[type='time'] { height: 46px; padding: 0 12px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card-2); color: var(--ink); }

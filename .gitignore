@@ -18,3 +18,4 @@ graphify-out/
 scratch/
 playwright-report/
 test-results/
+worker-configuration.d.ts

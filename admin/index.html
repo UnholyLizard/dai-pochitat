@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ru" data-theme="day">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -9,6 +10,7 @@
   <link rel="manifest" href="/manifest.webmanifest">
   <script type="module" src="/src/admin/admin.js"></script>
 </head>
+
 <body>
   <header class="bar">
     <a class="bar__home" href="/">← <span>Дай почитать!</span></a>
@@ -33,7 +35,8 @@
             <h2 data-thread-title></h2>
             <ol class="msgs" data-msgs></ol>
             <form data-reply>
-              <input name="text" maxlength="500" autocomplete="off" placeholder="Ответ читателю (появится в его чате на сайте)…" required>
+              <input name="text" maxlength="500" autocomplete="off"
+                placeholder="Ответ читателю (появится в его чате на сайте)…" required>
               <button type="submit">Отправить</button>
             </form>
           </div>
@@ -89,10 +92,15 @@
           <summary>Как настроить бота</summary>
           <ol>
             <li>Создайте бота у <b>@BotFather</b> (<code>/newbot</code>), скопируйте токен.</li>
-            <li>Выполните <code>npx wrangler secret put</code> для трёх имён: <code>TG_BOT_TOKEN</code> (токен), <code>TG_BOT_USERNAME</code> (имя бота без @) и <code>TG_WEBHOOK_SECRET</code> (любая случайная строка из латиницы и цифр).</li>
+            <li>Выполните <code>npx wrangler secret put</code> для трёх имён: <code>TG_BOT_TOKEN</code> (токен),
+              <code>TG_BOT_USERNAME</code> (имя бота без @) и <code>TG_WEBHOOK_SECRET</code> (любая случайная строка из
+              латиницы и цифр).</li>
             <li>Задеплойте, войдите на сайте через Telegram <b>первым</b> — вы станете владельцем.</li>
-            <li>У @BotFather выполните <code>/setinline</code> (включает поиск книг через <code>@бот запрос</code>; подсказка: «название, автор или тема») и один раз нажмите Start у бота — иначе он не сможет писать вам.</li>
-            <li>Нажмите «Подключить webhook» выше: он же задаёт кнопку меню бота, которая открывает сайт как Telegram Mini App с автоматическим входом (<code>/?tgapp=1</code>).</li>
+            <li>У @BotFather выполните <code>/setinline</code> (включает поиск книг через <code>@бот запрос</code>;
+              подсказка: «название, автор или тема») и один раз нажмите Start у бота — иначе он не сможет писать вам.
+            </li>
+            <li>Нажмите «Подключить webhook» выше: он же задаёт кнопку меню бота, которая открывает сайт как Telegram
+              Mini App с автоматическим входом (<code>/?tgapp=1</code>).</li>
             <li> Готово: сообщения читателей приходят в бот, а ответом (reply) на них вы пишете в чат на сайте.</li>
           </ol>
         </details>
@@ -109,7 +117,8 @@
 
       <fieldset class="find">
         <legend>Найти данные</legend>
-        <p class="note">Заполните то, что известно (можно частично) — Google Books и Gemini дополнят остальное и переведут описание. Заполняются только пустые поля.</p>
+        <p class="note">Заполните то, что известно (можно частично) — Google Books и Gemini дополнят остальное и
+          переведут описание. Заполняются только пустые поля.</p>
         <div class="grid">
           <label>ISBN<input name="isbn" inputmode="text" maxlength="24"></label>
           <label>Издательство<input name="publisher" maxlength="200"></label>
@@ -160,7 +169,8 @@
       <fieldset>
         <legend>Полка</legend>
         <div class="grid">
-          <label>Шифр<input name="code" maxlength="32" placeholder="авто: DP-…" pattern="[A-Za-z0-9][A-Za-z0-9._\-]*"></label>
+          <label>Шифр<input name="code" maxlength="32" placeholder="авто: DP-…"
+              pattern="[A-Za-z0-9][A-Za-z0-9._\-]*"></label>
           <label>Раздел<select name="primary_section"></select></label>
           <label>Язык книги<select name="language"></select></label>
           <label>Статус<select name="status"></select></label>
@@ -202,10 +212,12 @@
         <div class="grid">
           <label>Имя *<input name="first_name" maxlength="64"></label>
           <label>Фамилия<input name="last_name" maxlength="64"></label>
-          <label>№ читательского билета<input name="library_no" maxlength="32" placeholder="пусто — билет не подтверждён"></label>
+          <label>№ читательского билета<input name="library_no" maxlength="32"
+              placeholder="пусто — билет не подтверждён"></label>
           <label>Контакты (телефон, родитель…)<input name="contact" maxlength="200"></label>
         </div>
-        <label>Заметки для персонала<textarea name="notes" rows="4" maxlength="2000" placeholder="Видны только владельцу и админам"></textarea></label>
+        <label>Заметки для персонала<textarea name="notes" rows="4" maxlength="2000"
+            placeholder="Видны только владельцу и админам"></textarea></label>
       </fieldset>
 
       <fieldset data-u-loans-box hidden>
@@ -273,8 +285,10 @@
     <form method="dialog" data-b-confirm-form>
       <h2>Удалить книгу безвозвратно?</h2>
       <p data-b-confirm-text></p>
-      <p class="note">Будут удалены запись, обложки и привязки к подборкам. Если книга лишь потерялась или списана — поставьте ей статус «Потеряна» или «В архиве»: она исчезнет с сайта, но останется в базе.</p>
-      <label>Для подтверждения введите шифр <b data-b-confirm-code></b><input name="typed" autocomplete="off" required></label>
+      <p class="note">Будут удалены запись, обложки и привязки к подборкам. Если книга лишь потерялась или списана —
+        поставьте ей статус «Потеряна» или «В архиве»: она исчезнет с сайта, но останется в базе.</p>
+      <label>Для подтверждения введите шифр <b data-b-confirm-code></b><input name="typed" autocomplete="off"
+          required></label>
       <footer class="editor__foot">
         <button type="button" class="ghost" data-b-confirm-cancel>Отмена</button>
         <button type="submit" class="danger" data-b-confirm-ok disabled>Удалить</button>
@@ -291,32 +305,52 @@
 
       <p class="error" data-e-error hidden></p>
 
+      <div class="switch-row">
+        <label>
+          <input type="checkbox" name="ai_translate" checked data-e-ai-toggle>
+          <span>Использовать автоперевод на английский (AI)</span>
+        </label>
+        <span class="note" style="margin-left: auto; font-size: 0.82rem;">Английские поля переводятся автоматически при
+          сохранении</span>
+      </div>
+
       <fieldset>
         <legend>Основное</legend>
         <div class="grid">
-          <label>Название (RU)*<input name="title_ru" maxlength="300" required placeholder="День рождения библиотеки"></label>
-          <label>Название (EN)<input name="title_en" maxlength="300" placeholder="The library’s birthday"></label>
+          <label>Название (RU)*<input name="title_ru" maxlength="300" required
+              placeholder="День рождения библиотеки"></label>
+          <label data-e-en-field hidden>Название (EN)<input name="title_en" maxlength="300"
+              placeholder="The library’s birthday"></label>
         </div>
         <div class="grid">
-          <label>Начало*<input type="datetime-local" name="start" required></label>
-          <label>Окончание*<input type="datetime-local" name="end" required></label>
+          <label>Дата начала*<input type="date" name="start_date" required></label>
+          <label>Время начала<input type="time" name="start_time"></label>
+        </div>
+        <div class="grid">
+          <label>Дата окончания<input type="date" name="end_date"></label>
+          <label>Время окончания<input type="time" name="end_time"></label>
         </div>
         <div class="grid">
           <label>Возраст (RU)<input name="ages_ru" maxlength="100" placeholder="для всех / 7+ лет / 3–6 лет"></label>
-          <label>Возраст (EN)<input name="ages_en" maxlength="100" placeholder="everyone / ages 7+ / ages 3–6"></label>
+          <label data-e-en-field hidden>Возраст (EN)<input name="ages_en" maxlength="100"
+              placeholder="everyone / ages 7+ / ages 3–6"></label>
         </div>
       </fieldset>
 
       <fieldset>
         <legend>Описание</legend>
-        <label>Описание (RU)<textarea name="text_ru" rows="3" maxlength="2000" placeholder="Сто новых книг, литературные угощения..."></textarea></label>
-        <label>Описание (EN)<textarea name="text_en" rows="3" maxlength="2000" placeholder="A hundred new books, literary treats..."></textarea></label>
+        <label>Описание (RU)<textarea name="text_ru" rows="3" maxlength="2000"
+            placeholder="Сто новых книг, литературные угощения..."></textarea></label>
+        <label data-e-en-field hidden>Описание (EN)<textarea name="text_en" rows="3" maxlength="2000"
+            placeholder="A hundred new books, literary treats..."></textarea></label>
       </fieldset>
 
       <fieldset>
         <legend>Instagram ссылки</legend>
-        <label>Ссылка на анонс в Instagram (видна для будущих событий)<input type="url" name="instagram_announce" maxlength="500" placeholder="https://www.instagram.com/p/..."></label>
-        <label>Ссылка «Как это было» в Instagram (видна для прошедших событий)<input type="url" name="instagram_recap" maxlength="500" placeholder="https://www.instagram.com/p/..."></label>
+        <label>Ссылка на анонс в Instagram (видна для будущих событий)<input type="url" name="instagram_announce"
+            maxlength="500" placeholder="https://www.instagram.com/p/..."></label>
+        <label>Ссылка «Как это было» в Instagram (видна для прошедших событий)<input type="url" name="instagram_recap"
+            maxlength="500" placeholder="https://www.instagram.com/p/..."></label>
       </fieldset>
 
       <footer class="editor__foot">
@@ -339,4 +373,5 @@
     </form>
   </dialog>
 </body>
+
 </html>

@@ -15,6 +15,9 @@
       "/covers-jpg/*"
     ]
   },
+  "ai": {
+    "binding": "AI"
+  },
   "r2_buckets": [
     {
       "binding": "COVERS_BUCKET",
