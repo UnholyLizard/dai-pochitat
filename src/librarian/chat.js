@@ -56,8 +56,16 @@ function chips(list = []) {
     b.type = 'button';
     b.textContent = c.label;
     b.addEventListener('click', () => {
-      if (c.action) runAction(c.action);
-      else send(c.send ?? c.label);
+      if (c.action) {
+        runAction(c.action);
+        if (c.action.type === 'wish') {
+          b.disabled = true;
+          b.classList.add('is-done');
+          b.textContent = `✓ ${getLang() === 'en' ? 'On your card' : 'В билете'}`;
+        }
+      } else {
+        send(c.send ?? c.label);
+      }
     });
     return b;
   }));

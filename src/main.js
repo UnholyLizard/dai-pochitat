@@ -87,7 +87,25 @@ function librarianAction(a) {
     case 'theme': setNight(!isNight(), { byUser: true }); break;
     case 'passport': openPassport(); break;
     case 'lang': setLang(a.lang); break;
-    case 'solve': game.solve(a.id); break;
+    case 'solve':
+      game.solve(a.id);
+      sfx.party();
+      if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+        try { navigator.vibrate([30, 40, 60]); } catch { /* ignore */ }
+      }
+      break;
+    case 'wish': {
+      if (a.id) {
+        const on = game.toggleWish(a.id);
+        if (on) sfx.pop();
+        for (const btn of $$(`[data-wish="${a.id}"]`)) {
+          btn.setAttribute('aria-pressed', String(on));
+          const span = btn.querySelector('span');
+          if (span) span.textContent = t(on ? 'oracle.wanted' : 'oracle.want');
+        }
+      }
+      break;
+    }
     case 'install': install(); break;
     case 'upside': {
       const root = document.documentElement;
@@ -119,7 +137,9 @@ initOracle({
     stage?.celebrate('oracle');
   },
   onAsk(id) {
-    askLibrarian(t('oracle.askText', { title: L(bookById(id).title) }));
+    const book = bookById(id);
+    const title = book ? L(book.title) : '';
+    askLibrarian(t('oracle.askText', { title }));
   },
 });
 

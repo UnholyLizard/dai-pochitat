@@ -67,31 +67,112 @@ const INTENTS = [
 ];
 
 const RIDDLES = [
-  { id: 'karlsson', book: 'karlsson', a: ['карлсон', 'karlsson', 'karlson', 'carlson'],
+  {
+    id: 'karlsson', book: null,
+    title: R('Малыш и Карлсон, который живёт на крыше', 'Karlsson-on-the-Roof'),
+    a: ['карлсон', 'karlsson', 'karlson', 'carlson'],
     q: R('Кто живёт на крыше, обожает варенье и летает с пропеллером на спине?', 'Who lives on a roof, adores jam and flies with a propeller on his back?'),
-    hint: R('Он — мужчина в самом расцвете сил.', 'He’s a man in his prime.') },
-  { id: 'prince', book: 'little-prince', a: ['принц', 'prince'],
+    hint: R('Он — мужчина в самом расцвете сил.', 'He’s a man in his prime.'),
+  },
+  {
+    id: 'prince', book: 'маленький-принц-447',
+    title: R('Маленький принц', 'The Little Prince'),
+    a: ['принц', 'prince'],
     q: R('Какой мальчик прилетел с крошечной планеты и очень любил свою розу?', 'Which boy came from a tiny planet and loved his rose very much?'),
-    hint: R('Он маленький, но очень важный. Почти король.', 'He is little but very important. Almost a king.') },
-  { id: 'pooh', book: 'pooh', a: ['пух', 'винни', 'pooh', 'winnie'],
+    hint: R('Он маленький, но очень важный. Почти король.', 'He is little but very important. Almost a king.'),
+  },
+  {
+    id: 'pooh', book: null,
+    title: R('Винни-Пух и все-все-все', 'Winnie-the-Pooh'),
+    a: ['пух', 'винни', 'pooh', 'winnie'],
     q: R('Какой медведь сочиняет пыхтелки и обожает мёд?', 'Which bear makes up hums and adores honey?'),
-    hint: R('«В голове моей опилки, да-да-да!»', '“A bear of very little brain.”') },
-  { id: 'oz', book: 'oz', a: ['изумруд', 'emerald', 'oz'],
+    hint: R('«В голове моей опилки, да-да-да!»', '“A bear of very little brain.”'),
+  },
+  {
+    id: 'oz', book: 'волшебник-изумрудного-города-153',
+    title: R('Волшебник Изумрудного города', 'The Wizard of the Emerald City'),
+    a: ['изумруд', 'emerald', 'oz'],
     q: R('В каком городе все жители носят зелёные очки?', 'In which city does everyone wear green spectacles?'),
-    hint: R('Город назван в честь зелёного драгоценного камня.', 'It’s named after a green gem.') },
-  { id: 'narnia', book: 'narnia', a: ['шкаф', 'гардероб', 'wardrobe'],
+    hint: R('Город назван в честь зелёного драгоценного камня.', 'It’s named after a green gem.'),
+  },
+  {
+    id: 'narnia', book: 'лев-колдунья-и-платяной-шкаф-1186',
+    title: R('Лев, колдунья и платяной шкаф', 'The Lion, the Witch and the Wardrobe'),
+    a: ['шкаф', 'гардероб', 'wardrobe'],
     q: R('Через что Люси попала в Нарнию?', 'What did Lucy walk through to reach Narnia?'),
-    hint: R('Там обычно висят шубы.', 'Fur coats usually hang in it.') },
-  { id: 'harry', book: 'hp1', a: ['гарри', 'поттер', 'harry', 'potter'],
+    hint: R('Там обычно висят шубы.', 'Fur coats usually hang in it.'),
+  },
+  {
+    id: 'harry', book: 'гарри-поттер-и-философский-кам-159',
+    title: R('Гарри Поттер и философский камень', 'Harry Potter and the Philosopher’s Stone'),
+    a: ['гарри', 'поттер', 'harry', 'potter'],
     q: R('Как зовут мальчика со шрамом в виде молнии?', 'What’s the name of the boy with a lightning-bolt scar?'),
-    hint: R('Он жил в чулане под лестницей.', 'He lived in a cupboard under the stairs.') },
-  { id: 'alice', book: 'alice', a: ['алис', 'alice'],
+    hint: R('Он жил в чулане под лестницей.', 'He lived in a cupboard under the stairs.'),
+  },
+  {
+    id: 'alice', book: 'алиса-в-стране-чудес-344',
+    title: R('Алиса в Стране чудес', 'Alice’s Adventures in Wonderland'),
+    a: ['алис', 'alice'],
     q: R('Кто прыгнул в кроличью нору вслед за Белым Кроликом?', 'Who followed the White Rabbit down the rabbit hole?'),
-    hint: R('Её имя начинается на «А».', 'Her name starts with an A.') },
-  { id: 'treasure', book: 'treasure', a: ['сокровищ', 'treasure'],
+    hint: R('Её имя начинается на «А».', 'Her name starts with an A.'),
+  },
+  {
+    id: 'treasure', book: 'остров-сокровищ-375',
+    title: R('Остров сокровищ', 'Treasure Island'),
+    a: ['сокровищ', 'treasure'],
     q: R('В какой книге юнга Джим находит карту с крестиком и попадает к пиратам?', 'In which book does cabin boy Jim find a map with an X and end up among pirates?'),
-    hint: R('Там есть остров, попугай и одноногий кок.', 'It has an island, a parrot and a one-legged cook.') },
+    hint: R('Там есть остров, попугай и одноногий кок.', 'It has an island, a parrot and a one-legged cook.'),
+  },
+  {
+    id: 'hobbit', book: 'хоббит-365',
+    title: R('Хоббит, или Туда и обратно', 'The Hobbit'),
+    a: ['хоббит', 'hobbit', 'бильбо', 'bilbo'],
+    q: R('Кто нашёл золотое кольцо в тёмной пещере и отправился в поход к Одинокой горе?', 'Who found a golden ring in a dark cave and set off on a quest to the Lonely Mountain?'),
+    hint: R('Он полурослик, который любит уют и второй завтрак.', 'He’s a halfling who loves comfort and second breakfast.'),
+  },
+  {
+    id: 'gruffalo', book: 'груффало-875',
+    title: R('Груффало', 'The Gruffalo'),
+    a: ['груффало', 'gruffalo'],
+    q: R('У кого страшные клыки и когти, бородавка на носу, но он до смерти испугался маленького мышонка?', 'Who has terrible tusks and terrible claws, but got terrified of a little brown mouse?'),
+    hint: R('Его придумала Джулия Дональдсон.', 'Julia Donaldson created him.'),
+  },
 ];
+
+const getTitlePair = (book, fallback = null) => {
+  if (book?.title && typeof book.title === 'object') {
+    return {
+      ru: book.title.ru || book.title.en || '',
+      en: book.title.en || book.title.ru || '',
+    };
+  }
+  if (typeof book?.title === 'string' && book.title) {
+    return { ru: book.title, en: book.title };
+  }
+  if (fallback?.title && typeof fallback.title === 'object') {
+    return {
+      ru: fallback.title.ru || fallback.title.en || '',
+      en: fallback.title.en || fallback.title.ru || '',
+    };
+  }
+  if (typeof fallback?.title === 'string' && fallback.title) {
+    return { ru: fallback.title, en: fallback.title };
+  }
+  return { ru: '', en: '' };
+};
+
+const getSaysPair = (book) => {
+  if (book?.says && typeof book.says === 'object') {
+    return {
+      ru: book.says.ru || book.says.en || '',
+      en: book.says.en || book.says.ru || '',
+    };
+  }
+  if (typeof book?.says === 'string' && book.says) {
+    return { ru: book.says, en: book.says };
+  }
+  return { ru: '', en: '' };
+};
 
 const ageFromText = (text) => {
   const m = text.match(/(\d{1,2})/);
@@ -109,7 +190,8 @@ const moodFromText = (text) => Object.entries(MOODS).find(([, stems]) => has(tex
 function bookFromText(text) {
   let best = null, score = 0;
   for (const b of BOOKS) {
-    for (const title of [b.title.ru, b.title.en]) {
+    const titles = [b.title?.ru, b.title?.en, typeof b.title === 'string' ? b.title : null].filter(Boolean);
+    for (const title of titles) {
       const words = norm(title).split(' ').filter((w) => w.length >= 4);
       const hits = words.filter((w) => text.includes(w.slice(0, Math.max(5, w.length - 2)))).length;
       const s = words.length ? hits / words.length : 0;
@@ -122,7 +204,7 @@ function bookFromText(text) {
 export function createScriptedBrain() {
   const mem = { riddle: null, wrong: 0, mood: null, age: null, last: null };
 
-  const L = (pair, lang) => pair[lang] ?? pair.ru;
+  const L = (pair, lang) => (pair && typeof pair === 'object' ? (pair[lang] ?? pair.ru ?? pair.en ?? '') : (pair ?? ''));
   const chipsDefault = (lang) => [
     { label: L(R('Что почитать?', 'What should I read?'), lang) },
     { label: L(R('Загадку!', 'A riddle!'), lang) },
@@ -137,22 +219,33 @@ export function createScriptedBrain() {
     }[m], lang),
   }));
 
-  function recommend(lang, voice, mood, age) {
+  function recommend(lang, voice, mood, age, state = {}) {
     mem.last = 'book';
     mem.mood = mood ?? mem.mood;
     mem.age = age ?? mem.age;
     const pool = findBooks({ age: mem.age ?? 'middle', mood: mem.mood });
     const book = pick(pool.length ? pool : findBooks({ age: mem.age ?? 'middle' }));
     if (!book) return [{ say: L(R('Хм, в сундуке пусто. Приходи в библиотеку — там книг больше!', 'Hmm, the chest is empty. Come to the library — there are many more!'), lang) }];
+    const chips = [
+      { label: L(R('Ещё!', 'Another!'), lang) },
+      { label: L(R('Другое настроение', 'Different mood'), lang), send: L(R('Что почитать?', 'What should I read?'), lang) },
+    ];
+    if (book && !state?.wish?.includes(book.id)) {
+      chips.unshift({
+        label: L(R('В читательский билет', 'Add to my card'), lang),
+        action: { type: 'wish', id: book.id },
+      });
+    }
     return [
       { say: L(line(voice, 'found'), lang) },
       { book: book.id },
-      { chips: [{ label: L(R('Ещё!', 'Another!'), lang) }, { label: L(R('Другое настроение', 'Different mood'), lang), send: L(R('Что почитать?', 'What should I read?'), lang) }] },
+      { chips },
     ];
   }
 
-  function askRiddle(lang, solved) {
-    const open = RIDDLES.filter((r) => !solved.includes(r.id) && r.id !== mem.riddle?.id);
+  function askRiddle(lang, solved = []) {
+    const solvedList = Array.isArray(solved) ? solved : [];
+    const open = RIDDLES.filter((r) => !solvedList.includes(r.id) && r.id !== mem.riddle?.id);
     mem.riddle = pick(open.length ? open : RIDDLES);
     mem.wrong = 0;
     mem.last = 'riddle';
@@ -168,7 +261,11 @@ export function createScriptedBrain() {
       const out = [];
       const fill = (s) => s.replace('{hello}', hello).replace('{name}', state.name);
       out.push({ say: fill(L(state.name ? voice.welcome : voice.greet, lang)) });
-      out.push({ say: L(R(`Кстати, книга недели — «${week.title.ru}». ${week.says.ru}`, `By the way, this week’s book is “${week.title.en}”. ${week.says.en}`), lang) });
+      if (week) {
+        const titles = getTitlePair(week);
+        const says = getSaysPair(week);
+        out.push({ say: L(R(`Кстати, книга недели — «${titles.ru}». ${says.ru}`, `By the way, this week’s book is “${titles.en}”. ${says.en}`), lang) });
+      }
       const chips = chipsDefault(lang);
       if (app?.canInstall && state.visits >= 2) chips.unshift({ label: L(R('Поселить книгу на телефоне', 'Keep the book on my phone'), lang), send: L(R('Как установить на телефон?', 'How do I install it?'), lang) });
       out.push({ chips });
@@ -192,22 +289,58 @@ export function createScriptedBrain() {
         const right = r.a.some((a) => (a.length <= 3 ? words.includes(a) : words.some((w) => w.startsWith(a))));
         if (right) {
           mem.riddle = null;
-          return [say(line(voice, 'correct')), { book: r.book }, { action: { type: 'solve', id: r.id } }, { chips: [{ label: L(R('Ещё загадку!', 'Another riddle!'), lang) }, ...chipsDefault(lang).slice(0, 1)] }];
+          const book = r.book ? bookById(r.book) : null;
+          const chips = [{ label: L(R('Ещё загадку!', 'Another riddle!'), lang) }, ...chipsDefault(lang).slice(0, 1)];
+          if (book && !state?.wish?.includes(book.id)) {
+            chips.unshift({
+              label: L(R('В читательский билет', 'Add to my card'), lang),
+              action: { type: 'wish', id: book.id },
+            });
+          }
+          return [
+            say(line(voice, 'correct')),
+            ...(book ? [{ book: book.id }] : []),
+            { action: { type: 'solve', id: r.id } },
+            { chips },
+          ];
         }
         if (has(text, INTENTS[0][1]) || mem.wrong >= 2) {
           mem.riddle = null;
-          return [say(R(`Это «${bookById(r.book).title.ru}»! Почитай — сразу запомнишь.`, `It’s “${bookById(r.book).title.en}”! Read it and you’ll never forget.`)), { book: r.book }, { chips: [{ label: L(R('Ещё загадку!', 'Another riddle!'), lang) }] }];
+          const book = r.book ? bookById(r.book) : null;
+          const titles = getTitlePair(book, r);
+          const chips = [{ label: L(R('Ещё загадку!', 'Another riddle!'), lang) }];
+          if (book && !state?.wish?.includes(book.id)) {
+            chips.unshift({
+              label: L(R('В читательский билет', 'Add to my card'), lang),
+              action: { type: 'wish', id: book.id },
+            });
+          }
+          return [
+            say(R(`Это «${titles.ru}»! Почитай — сразу запомнишь.`, `It’s “${titles.en}”! Read it and you’ll never forget.`)),
+            ...(book ? [{ book: book.id }] : []),
+            { chips },
+          ];
         }
         if (!moodFromText(text) && !INTENTS.slice(1).some(([, s]) => has(text, s))) {
           mem.wrong += 1;
-          return [say(R(`Не-а! Подсказка: ${r.hint.ru}`, `Nope! Hint: ${r.hint.en}`)), { chips: [{ label: L(R('Не знаю', 'I don’t know'), lang) }] }];
+          const hint = typeof r.hint === 'object' ? r.hint : { ru: r.hint, en: r.hint };
+          return [say(R(`Не-а! Подсказка: ${hint.ru}`, `Nope! Hint: ${hint.en}`)), { chips: [{ label: L(R('Не знаю', 'I don’t know'), lang) }] }];
         }
         mem.riddle = null; // they changed the subject
       }
 
       const book = bookFromText(text);
       if (book) {
-        return [say(R(`О, «${book.title.ru}»! ${book.says.ru}`, `Oh, “${book.title.en}”! ${book.says.en}`)), { book: book.id }, { chips: chipsDefault(lang).slice(0, 2) }];
+        const titles = getTitlePair(book);
+        const says = getSaysPair(book);
+        const chips = chipsDefault(lang).slice(0, 2);
+        if (!state?.wish?.includes(book.id)) {
+          chips.unshift({
+            label: L(R('В читательский билет', 'Add to my card'), lang),
+            action: { type: 'wish', id: book.id },
+          });
+        }
+        return [say(R(`О, «${titles.ru}»! ${says.ru}`, `Oh, “${titles.en}”! ${says.en}`)), { book: book.id }, { chips }];
       }
 
       const age = ageFromText(text);
@@ -215,8 +348,8 @@ export function createScriptedBrain() {
       const intent = INTENTS.find(([, stems]) => has(text, stems))?.[0];
 
       // Moods only steer when nothing more specific was asked («подсказку про зверят» is a hint, not a book).
-      if (mood && (!intent || ['recommend', 'more', 'greet', 'dontknow'].includes(intent))) return recommend(lang, voice, mood, age);
-      if (age && (intent === 'recommend' || !intent)) return recommend(lang, voice, null, age);
+      if (mood && (!intent || ['recommend', 'more', 'greet', 'dontknow'].includes(intent))) return recommend(lang, voice, mood, age, state);
+      if (age && (intent === 'recommend' || !intent)) return recommend(lang, voice, null, age, state);
 
       switch (intent) {
         case 'greet':
@@ -232,7 +365,7 @@ export function createScriptedBrain() {
           return [say(R('Сейчас найдём! Какое у тебя настроение?', 'Let’s find one! What’s your mood?')), { chips: moodChips(lang) }];
         case 'more':
           if (mem.last === 'riddle') return askRiddle(lang, state.solved);
-          return mem.last === 'book' ? recommend(lang, voice) : [say(R('Ещё чего? Книжку или загадку?', 'More of what? A book or a riddle?')), { chips: chipsDefault(lang).slice(0, 2) }];
+          return mem.last === 'book' ? recommend(lang, voice, null, null, state) : [say(R('Ещё чего? Книжку или загадку?', 'More of what? A book or a riddle?')), { chips: chipsDefault(lang).slice(0, 2) }];
         case 'riddle':
           return askRiddle(lang, state.solved);
         case 'dontknow':
@@ -250,7 +383,9 @@ export function createScriptedBrain() {
           const next = EVENTS.find((e) => new Date(e.end) >= Date.now());
           if (!next) return [say(R('Скоро объявим новый праздник. Следи за нами в Telegram!', 'We’ll announce the next party soon. Follow us on Telegram!'))];
           const d = new Date(next.start).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-GB', { day: 'numeric', month: 'long' });
-          return [say(R(`Ближайшее — «${next.title.ru}», ${d}. Пойдёшь? Я приду с фонариком!`, `Next up: “${next.title.en}”, ${d}. Coming? I’ll bring a torch!`)), { chips: [{ label: L(R('Все праздники', 'All events'), lang), action: { type: 'goto', id: 'events' } }] }];
+          const ruTitle = (typeof next.title === 'object' ? next.title.ru : next.title) || next.title_ru || '';
+          const enTitle = (typeof next.title === 'object' ? next.title.en : next.title) || next.title_en || ruTitle;
+          return [say(R(`Ближайшее — «${ruTitle}», ${d}. Пойдёшь? Я приду с фонариком!`, `Next up: “${enTitle}”, ${d}. Coming? I’ll bring a torch!`)), { chips: [{ label: L(R('Все праздники', 'All events'), lang), action: { type: 'goto', id: 'events' } }] }];
         }
         case 'donate':
           return [say(R('Книги в подарок? Ура! Приносите в часы работы — мы найдём им новых читателей. Особенно ждём книги на русском и английском.', 'Books to give? Hooray! Bring them during opening hours — we’ll find them new readers. Russian and English books are especially welcome.'))];
