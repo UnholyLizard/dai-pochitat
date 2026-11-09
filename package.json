@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "npx playwright test",
-    "test:unit": "node --test tests/librarian.test.js",
+    "test:unit": "node --test tests/librarian.test.js tests/cache.test.js tests/catalog.test.js",
     "check": "eslint . && npm run test:unit && npm run build",
     "art": "node scripts/gen-art.mjs",
     "art:cut": "node scripts/cutout.mjs",

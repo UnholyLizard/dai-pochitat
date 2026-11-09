@@ -1,6 +1,6 @@
 // After `vite build`: write dist/_headers (Cloudflare static assets) with a CSP that
 // whitelists the exact inline scripts in index.html by hash, plus caching rules.
-import { readFile, writeFile, copyFile } from 'node:fs/promises';
+import { readFile, writeFile, copyFile, readdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -31,13 +31,17 @@ const csp = [
   'upgrade-insecure-requests',
 ].join('; ');
 
+const assetFiles = await readdir(resolve(dist, 'assets')).catch(() => []);
+const lcpFont = assetFiles.find((f) => f.startsWith('literata-cyrillic-wght-normal') && f.endsWith('.woff2'));
+const linkPreload = lcpFont ? `\n  Link: </assets/${lcpFont}>; rel=preload; as=font; type=font/woff2; crossorigin` : '';
+
 const headers = `/*
   Content-Security-Policy: ${csp}
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
   Cross-Origin-Opener-Policy: same-origin-allow-popups
-  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Strict-Transport-Security: max-age=31536000; includeSubDomains${linkPreload}
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable

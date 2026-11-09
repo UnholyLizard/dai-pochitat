@@ -51,12 +51,21 @@ function bubble(from, text) {
 }
 
 function chips(list = []) {
-  chipsEl.replaceChildren(...list.map((c) => {
+  chipsEl.replaceChildren(...list.map((c, i) => {
     const b = document.createElement('button');
     b.type = 'button';
+    b.style.setProperty('--chip-i', i);
     b.textContent = c.label;
+    if (c.action?.type === 'starter_chips') {
+      b.classList.add('chat__chip--more');
+    }
     b.addEventListener('click', () => {
       if (c.action) {
+        if (c.action.type === 'starter_chips') {
+          const starter = brain.starterChips ? brain.starterChips(getLang()) : [];
+          chips(starter);
+          return;
+        }
         runAction(c.action);
         if (c.action.type === 'wish') {
           b.disabled = true;

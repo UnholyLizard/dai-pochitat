@@ -1,6 +1,6 @@
 # «Дай почитать!» — website concept
 
-**Live:** https://dai-pochitat-mne.craft-tower.com · installable PWA, works offline
+**Live:** https://dai-pochitat.app · installable PWA, works offline
 
 A cozy, game-like site for a small non-profit kids & teens library in the yellow
 Kompas school-garden house in Bar, Montenegro. Russian and English.

@@ -29,7 +29,7 @@ export async function serveCover(request, env, ctx) {
 
   // Security check against directory traversal
   if (!key || key.includes('..') || key.startsWith('/')) {
-    return new Response('Not Found', { status: 404 });
+    return new Response('Not Found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
   }
 
   // Check Cloudflare Edge Cache
@@ -41,15 +41,28 @@ export async function serveCover(request, env, ctx) {
 
   // If R2 is not configured, fall back to static assets
   if (!env.COVERS_BUCKET) {
-    return env.ASSETS ? env.ASSETS.fetch(request) : new Response('Not Found', { status: 404 });
+    if (env.ASSETS) {
+      const assetRes = await env.ASSETS.fetch(request);
+      if (assetRes.status === 404) {
+        return new Response('Not Found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
+      }
+      return assetRes;
+    }
+    return new Response('Not Found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
   }
 
   const object = await env.COVERS_BUCKET.get(key).catch(() => null);
 
   // If not found in R2, fall back to ASSETS (graceful fallback)
   if (!object) {
-    if (env.ASSETS) return env.ASSETS.fetch(request);
-    return new Response('Not Found', { status: 404 });
+    if (env.ASSETS) {
+      const assetRes = await env.ASSETS.fetch(request);
+      if (assetRes.status === 404) {
+        return new Response('Not Found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
+      }
+      return assetRes;
+    }
+    return new Response('Not Found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
   }
 
   const ext = key.slice(key.lastIndexOf('.')).toLowerCase();

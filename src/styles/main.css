@@ -3175,6 +3175,17 @@
     display: none;
   }
 
+  @keyframes chip-pop {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
   .chat__chips button {
     flex: 0 1 auto;
     min-height: 36px;
@@ -3186,7 +3197,28 @@
     background: var(--card);
     font: 800 0.86rem/1 var(--font-ui);
     box-shadow: 0 2px 0 #2b1b12;
-    transition: translate 0.15s, box-shadow 0.15s;
+    transition: translate 0.15s, box-shadow 0.15s, background 0.15s;
+    animation: chip-pop 0.22s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: calc(var(--chip-i, 0) * 35ms);
+  }
+
+  .chat__chips button.chat__chip--more {
+    border-style: dashed;
+    border-color: color-mix(in oklab, var(--line) 70%, var(--ink));
+    color: var(--ink-2);
+    background: var(--paper-2);
+  }
+
+  [data-theme='night'] .chat__chips button.chat__chip--more {
+    border-color: var(--line);
+    background: var(--card-2);
+    color: var(--ink-2);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chat__chips button {
+      animation: none;
+    }
   }
 
   [data-theme='night'] .chat__chips button {

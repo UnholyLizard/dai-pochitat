@@ -27,6 +27,7 @@ import { createScriptedBrain } from './brain-scripted.js';
 
 function createRemoteBrain(endpoint, fallback) {
   return {
+    starterChips: fallback.starterChips,
     greet: fallback.greet,
     takeOver: fallback.takeOver,
     async reply(message, context) {

@@ -12,6 +12,7 @@ import { webhook } from './telegram.js';
 import { serveCover } from './covers.js';
 import { HIDDEN_STATUSES } from './books-admin.js';
 import { withDueDates } from './loans.js';
+import { cachedGet } from './cache.js';
 
 const CANDIDATES = new Set(['ginger', 'cinder', 'patches', 'mila', 'nika', 'tim', 'marko', 'bookmark']);
 const VOTER = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -184,6 +185,19 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
+    // Canonical hostname redirect: redirect www and old subdomain to apex
+    const host = request.headers.get('host') || url.host;
+    if (
+      (host === 'www.dai-pochitat.app' || host === 'dai-pochitat-mne.craft-tower.com') &&
+      url.pathname !== '/api/tg/webhook'
+    ) {
+      const target = new URL(request.url);
+      target.hostname = 'dai-pochitat.app';
+      target.protocol = 'https:';
+      target.port = '';
+      return Response.redirect(target.toString(), 301);
+    }
+
     // Book covers served from R2
     if (url.pathname.startsWith('/covers/') || url.pathname.startsWith('/covers-jpg/')) {
       return await serveCover(request, env, ctx);
@@ -216,7 +230,7 @@ export default {
     if (url.pathname === '/api/books') {
       try {
         if (request.method !== 'GET') return json({ error: 'method not allowed' }, 405, { allow: 'GET' });
-        return await listBooks(url, env);
+        return await cachedGet(request, ctx, () => listBooks(url, env));
       } catch (err) {
         log('error', 'listBooks failed', { error: String(err?.message ?? err) });
         return json({ error: 'unavailable' }, 503);
@@ -225,7 +239,7 @@ export default {
 
     if (url.pathname === '/api/suggestions' && request.method === 'GET') {
       try {
-        return await suggestions(env);
+        return await cachedGet(request, ctx, () => suggestions(env));
       } catch (err) {
         log('error', 'suggestions failed', { error: String(err?.message ?? err) });
         return json({ error: 'unavailable' }, 503);
@@ -236,7 +250,7 @@ export default {
       try {
         if (request.method !== 'GET') return json({ error: 'method not allowed' }, 405, { allow: 'GET' });
         const id = decodeURIComponent(url.pathname.replace('/api/books/', ''));
-        return await getBook(id, env);
+        return await cachedGet(request, ctx, () => getBook(id, env));
       } catch (err) {
         log('error', 'getBook failed', { error: String(err?.message ?? err) });
         return json({ error: 'unavailable' }, 503);
@@ -246,7 +260,7 @@ export default {
     if (url.pathname === '/api/events') {
       try {
         if (request.method !== 'GET') return json({ error: 'method not allowed' }, 405, { allow: 'GET' });
-        return await listEvents(env);
+        return await cachedGet(request, ctx, () => listEvents(env));
       } catch (err) {
         log('error', 'listEvents failed', { error: String(err?.message ?? err) });
         return json({ error: 'unavailable' }, 503);
@@ -256,7 +270,7 @@ export default {
     if (url.pathname === '/api/collections') {
       try {
         if (request.method !== 'GET') return json({ error: 'method not allowed' }, 405, { allow: 'GET' });
-        return await listCollections(env);
+        return await cachedGet(request, ctx, () => listCollections(env));
       } catch (err) {
         log('error', 'listCollections failed', { error: String(err?.message ?? err) });
         return json({ error: 'unavailable' }, 503);

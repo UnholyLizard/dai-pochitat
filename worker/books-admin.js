@@ -6,6 +6,7 @@ import { json, readJson, log, limited, tooMany } from './util.js';
 import { lookup, normalizeIsbn } from './lookup.js';
 import { withLoans } from './loans.js';
 import { translateBook } from './ai-translate.js';
+import { invalidateCache } from './cache.js';
 
 /** Statuses a reader never sees in the public catalog, Telegram inline search or deep links. */
 export const HIDDEN_STATUSES = ['lost', 'archived'];
@@ -339,14 +340,25 @@ export async function booksAdminRoutes(request, env, url) {
     if (method === 'GET') return list(env, url);
     if (method === 'POST') {
       const body = await readJson(request, MAX_BODY);
-      return body ? create(env, body) : bad('bad request');
+      if (!body) return bad('bad request');
+      const res = await create(env, body);
+      if (res.status === 201) await invalidateCache(request.url);
+      return res;
     }
     return json({ error: 'method not allowed' }, 405);
   }
 
   if (m[2]) {
-    if (method === 'POST') return uploadCover(request, env, id);
-    if (method === 'DELETE') return removeCover(env, id);
+    if (method === 'POST') {
+      const res = await uploadCover(request, env, id);
+      if (res.status === 200) await invalidateCache(request.url, ['/api/books/' + encodeURIComponent(id)]);
+      return res;
+    }
+    if (method === 'DELETE') {
+      const res = await removeCover(env, id);
+      if (res.status === 200) await invalidateCache(request.url, ['/api/books/' + encodeURIComponent(id)]);
+      return res;
+    }
     return json({ error: 'method not allowed' }, 405);
   }
 
@@ -356,8 +368,15 @@ export async function booksAdminRoutes(request, env, url) {
   }
   if (method === 'PUT' || method === 'PATCH') {
     const body = await readJson(request, MAX_BODY);
-    return body ? update(env, id, body) : bad('bad request');
+    if (!body) return bad('bad request');
+    const res = await update(env, id, body);
+    if (res.status === 200) await invalidateCache(request.url, ['/api/books/' + encodeURIComponent(id)]);
+    return res;
   }
-  if (method === 'DELETE') return remove(env, id, url);
+  if (method === 'DELETE') {
+    const res = await remove(env, id, url);
+    if (res.status === 200) await invalidateCache(request.url, ['/api/books/' + encodeURIComponent(id)]);
+    return res;
+  }
   return json({ error: 'method not allowed' }, 405);
 }

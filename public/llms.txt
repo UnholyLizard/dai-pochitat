@@ -2,8 +2,8 @@
 
 > Маленькая некоммерческая библиотека для детей и подростков в жёлтом доме в Баре, Черногория. Книги на русском и английском, громкие чтения, клубы и праздники.
 
-- Web: https://dai-pochitat-mne.craft-tower.com/
-- Catalog: https://dai-pochitat-mne.craft-tower.com/catalog/ — over 1,300 curated children's and young adult books
+- Web: https://dai-pochitat.app/
+- Catalog: https://dai-pochitat.app/catalog/ — over 1,300 curated children's and young adult books
 - Address: Школа-сад «Компас», Šćepana Malog 38, Bar 85000, Montenegro
 - Map: https://maps.app.goo.gl/hJyy1JqJqxksjpZc6
 - Opening hours: Tuesday and Friday, 14:00–16:30 (books are borrowed, returned and browsed then)

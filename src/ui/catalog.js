@@ -41,6 +41,18 @@ function getLocalizedField(b, field) {
   return typeof value === 'object' ? (L(value) ?? '') : value;
 }
 
+function matchesAgeGroup(b, group) {
+  if (!group) return true;
+  if (b.age_group === group || b.ageGroup === group) return true;
+  const min = b.age ? b.age[0] : (b.age_min ?? 0);
+  const max = b.age ? b.age[1] : (b.age_max ?? 99);
+  if (group === 'little') return min <= 6;
+  if (group === 'middle') return min <= 10 && max >= 7;
+  if (group === 'big' || group === 'teen') return min <= 15 && max >= 11;
+  if (group === 'adult') return min >= 16 || (max >= 16 && min >= 12);
+  return false;
+}
+
 function getLanguageLabel(code) {
   const lang = getLang();
   const map = {
@@ -173,18 +185,23 @@ async function fetchBooks({ reset = false } = {}) {
     const filtered = BOOKS.filter((b) => {
       if (state.q) {
         const ql = state.q.toLowerCase();
-        const tr = (b.title?.ru || b.title || '').toLowerCase();
-        const te = (b.title?.en || '').toLowerCase();
-        const ar = (b.author?.ru || b.author || '').toLowerCase();
-        if (!tr.includes(ql) && !te.includes(ql) && !ar.includes(ql)) return false;
+        const titleObj = typeof b.title === 'object' && b.title !== null ? b.title : null;
+        const authorObj = typeof b.author === 'object' && b.author !== null ? b.author : null;
+        const tr = (titleObj ? (titleObj.ru || '') : (b.title_ru || b.title || '')).toLowerCase();
+        const te = (titleObj ? (titleObj.en || '') : (b.title_en || '')).toLowerCase();
+        const ar = (authorObj ? (authorObj.ru || '') : (b.author_ru || b.author || '')).toLowerCase();
+        const ae = (authorObj ? (authorObj.en || '') : (b.author_en || '')).toLowerCase();
+        if (!tr.includes(ql) && !te.includes(ql) && !ar.includes(ql) && !ae.includes(ql)) return false;
       }
-      if (state.ageGroup && b.ageGroup !== state.ageGroup) return false;
+      if (state.ageGroup && !matchesAgeGroup(b, state.ageGroup)) return false;
       if (state.mood && !b.moods?.includes(state.mood)) return false;
       if (state.language && (b.language || 'ru') !== state.language) return false;
       return true;
     });
     state.total = filtered.length;
-    state.books = filtered.slice(0, state.limit);
+    const start = reset ? 0 : state.offset;
+    const nextBatch = filtered.slice(start, start + state.limit);
+    state.books = reset ? nextBatch : [...state.books, ...nextBatch];
     state.offset = state.books.length;
   } finally {
     state.loading = false;
