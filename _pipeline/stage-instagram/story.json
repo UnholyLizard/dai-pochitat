@@ -1,0 +1,346 @@
+{
+  "format": "stage-sequence/1",
+  "name": "Дай почитать! — Instagram story",
+  "canvas": {
+    "w": 1080,
+    "h": 1920
+  },
+  "fps": 60,
+  "duration": 21.6,
+  "crossfade": 0.3,
+  "audio": {
+    "src": "stage-instagram/film-story/audio/mix.wav",
+    "t0": 0,
+    "volume": 1
+  },
+  "render": {
+    "frames": "frames_story",
+    "video": "../showcase/dai-pochitat-site/instagram",
+    "name": "dai-pochitat_story",
+    "poster": 174
+  },
+  "anchors": {
+    "lampClick": {
+      "seg": "book2",
+      "at": 12
+    },
+    "fabClick": {
+      "seg": "chat",
+      "at": 0.6
+    },
+    "chipClick": {
+      "seg": "chat",
+      "at": 3.6
+    },
+    "coinTap": {
+      "seg": "phone",
+      "at": 2.4
+    }
+  },
+  "segments": [
+    {
+      "id": "book",
+      "shot": "book",
+      "t0": 0,
+      "lead": 0,
+      "start": 0,
+      "cursor": [
+        16.9,
+        17
+      ]
+    },
+    {
+      "id": "book2",
+      "shot": "book",
+      "t0": 3.6,
+      "lead": 0,
+      "start": 576,
+      "xf": 0.2
+    },
+    {
+      "id": "chat",
+      "shot": "chat",
+      "t0": 8.4,
+      "lead": 0,
+      "start": 0,
+      "xf": 0
+    }
+  ],
+  "browser": {
+    "url": "dai-pochitat.app",
+    "halo": {
+      "base": 0,
+      "night": 0.95
+    },
+    "camera": [
+      {
+        "t": 0,
+        "px": 700,
+        "py": 400,
+        "cx": 540,
+        "cy": 1170,
+        "s": 0.66,
+        "rx": 16,
+        "ry": -9,
+        "rz": 2,
+        "o": 1
+      },
+      {
+        "t": 1.2,
+        "px": 690,
+        "py": 360,
+        "cx": 540,
+        "cy": 1100,
+        "s": 0.8,
+        "rx": 3,
+        "ry": -2,
+        "rz": 0,
+        "e": "outExpo"
+      },
+      {
+        "t": 3.3,
+        "px": 690,
+        "py": 360,
+        "cx": 540,
+        "cy": 1095,
+        "s": 0.83,
+        "rx": 1,
+        "ry": 0,
+        "e": "inOutSine"
+      },
+      {
+        "t": 3.95,
+        "px": 1000,
+        "py": 420,
+        "cx": 540,
+        "cy": 1130,
+        "s": 1.5,
+        "rx": 0,
+        "ry": 0,
+        "e": "inOutQuart"
+      },
+      {
+        "t": 5.8,
+        "s": 1.55,
+        "e": "inOutSine"
+      },
+      {
+        "t": 8.2,
+        "s": 1.7,
+        "e": "inOutSine"
+      },
+      {
+        "t": 8.65,
+        "px": 1290,
+        "py": 700,
+        "cx": 540,
+        "cy": 1150,
+        "s": 1.6,
+        "e": "inOutQuart"
+      },
+      {
+        "t": 9.8,
+        "px": 1290,
+        "py": 700,
+        "cx": 540,
+        "cy": 1150,
+        "s": 1.62,
+        "e": "inOutSine"
+      },
+      {
+        "t": 10.5,
+        "px": 1250,
+        "py": 600,
+        "cx": 540,
+        "cy": 1150,
+        "s": 1.9,
+        "e": "inOutQuart"
+      },
+      {
+        "t": 12.3,
+        "px": 1250,
+        "py": 610,
+        "cx": 540,
+        "cy": 1150,
+        "s": 1.92,
+        "e": "inOutSine"
+      },
+      {
+        "t": 12.9,
+        "px": 1250,
+        "py": 610,
+        "cx": 540,
+        "cy": 1000,
+        "s": 1.6,
+        "rx": 8,
+        "o": 0,
+        "e": "inCubic"
+      }
+    ]
+  },
+  "phone": {
+    "id": "phone",
+    "shot": "mobile",
+    "t0": 12.6,
+    "lead": 0,
+    "start": 24,
+    "time": "16:30",
+    "camera": [
+      {
+        "t": 12.45,
+        "px": 207,
+        "py": 456,
+        "cx": 560,
+        "cy": 2600,
+        "s": 1.15,
+        "rx": -12,
+        "ry": 18,
+        "rz": -6,
+        "o": 1
+      },
+      {
+        "t": 13.3,
+        "cx": 540,
+        "cy": 1230,
+        "s": 1.2,
+        "rx": 0,
+        "ry": 6,
+        "rz": 0,
+        "e": "outExpo"
+      },
+      {
+        "t": 17.2,
+        "cx": 540,
+        "cy": 1215,
+        "s": 1.23,
+        "ry": 2,
+        "e": "inOutSine"
+      },
+      {
+        "t": 17.9,
+        "cx": 540,
+        "cy": 1150,
+        "s": 1.1,
+        "rx": 6,
+        "ry": -8,
+        "o": 0,
+        "e": "inCubic"
+      }
+    ]
+  },
+  "glow": [
+    {
+      "in": "@lampClick",
+      "fadeIn": 0.55,
+      "out": 8.26,
+      "fadeOut": 0.14
+    }
+  ],
+  "bug": {
+    "in": 0.1,
+    "fadeIn": 0.6,
+    "out": 7.9,
+    "fadeOut": 0.4,
+    "word": "Дай *почитать*{bang:!}",
+    "tag": "kids’ library"
+  },
+  "scrim": {
+    "height": 900,
+    "bridge": 1.2
+  },
+  "captions": [
+    {
+      "id": "c0",
+      "layout": "v",
+      "in": 0.3,
+      "out": 3.4,
+      "x": 72,
+      "y": 340,
+      "w": 936,
+      "size": 88,
+      "squiggle": 0,
+      "num": "",
+      "kicker": "A library website for kids & teens",
+      "title": [
+        "A library that",
+        "*opens like a book.*"
+      ]
+    },
+    {
+      "id": "c2",
+      "layout": "v",
+      "in": 3.9,
+      "out": 8,
+      "x": 72,
+      "y": 340,
+      "w": 936,
+      "size": 92,
+      "squiggle": 0,
+      "num": "1",
+      "kicker": "Evening mode",
+      "title": [
+        "Tap the lamp.",
+        "*It’s evening.*"
+      ]
+    },
+    {
+      "id": "c5",
+      "layout": "v",
+      "in": 8.55,
+      "out": 12.35,
+      "x": 72,
+      "y": 340,
+      "w": 936,
+      "size": 92,
+      "squiggle": 0,
+      "num": "2",
+      "kicker": "Cast the librarian",
+      "title": [
+        "Your pick",
+        "*answers back.*"
+      ]
+    },
+    {
+      "id": "c6",
+      "layout": "v",
+      "in": 12.75,
+      "out": 16.45,
+      "x": 72,
+      "y": 340,
+      "w": 936,
+      "size": 92,
+      "squiggle": 0,
+      "num": "3",
+      "kicker": "In your pocket",
+      "title": [
+        "Installable.",
+        "*Works offline.*"
+      ]
+    }
+  ],
+  "chips": [],
+  "ambient": {
+    "motes": 1
+  },
+  "fx": {
+    "grain": 0.06,
+    "flashes": [
+      {
+        "at": "@lampClick",
+        "dur": 1,
+        "x": 50,
+        "y": 58,
+        "amount": 0.3
+      }
+    ]
+  },
+  "outro": {
+    "block": "craft-tower-outro",
+    "in": 16.8,
+    "credit": "Dai pochitat! — a concept by",
+    "bg": [
+      "#1d2443",
+      "#141a30"
+    ]
+  }
+}

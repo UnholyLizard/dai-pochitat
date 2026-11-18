@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Stage Editor</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23151a21'/%3E%3Cpath d='M8 22V13a8 8 0 0 1 16 0v9' fill='none' stroke='%23ede7dc' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='19' cy='12.5' r='2' fill='%23ec9a68'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/editor/editor.css">
+<script type="module" src="/editor/js/app.js"></script>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand"><svg viewBox="0 0 40 40" aria-hidden="true"><path class="arch" d="M10 33V18.5a10 10 0 0 1 20 0V33"/><path class="wave" d="M13 27.5c2.3 0 2.3-1.8 4.6-1.8s2.3 1.8 4.6 1.8 2.3-1.8 4.6-1.8"/><circle class="lamp" cx="23.5" cy="17" r="2.2"/><path class="arch" d="M6 33h28"/></svg><span>Stage <em>Editor</em></span></div>
+    <div class="file">
+      <label class="sr" for="seqPick">Sequence</label>
+      <select id="seqPick" title="Sequences in _pipeline/stage/"></select>
+      <span id="fileState" class="fstate"></span>
+    </div>
+    <nav class="acts" aria-label="File">
+      <button id="btnOpen" class="ghost" title="Import a sequence JSON from disk (Ctrl+O)">Open…</button>
+      <button id="btnSaveAs" class="ghost" title="Save as a new file in stage/ (Ctrl+Shift+S)">Save as…</button>
+      <button id="btnExport" class="ghost" title="Download the sequence as JSON">Export</button>
+      <button id="btnHistory" class="ghost" title="Backups kept on every save (stage/.history)">History</button>
+      <button id="btnRevert" class="ghost" title="Reload the saved file">Revert</button>
+    </nav>
+    <div class="grow"></div>
+    <div class="acts">
+      <button id="btnUndo" class="icon ghost" title="Undo (Ctrl+Z)" aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 7 4 12l5 5M4.5 12H15a5 5 0 0 1 0 10h-3"/></svg></button>
+      <button id="btnRedo" class="icon ghost" title="Redo (Ctrl+Shift+Z)" aria-label="Redo"><svg viewBox="0 0 24 24"><path d="m15 7 5 5-5 5M19.5 12H9a5 5 0 0 0 0 10h3"/></svg></button>
+      <button id="btnHelp" class="icon ghost" title="Shortcuts (?)" aria-label="Shortcuts"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M6 10h1M10 10h1M14 10h1M18 10h0M7 14h10"/></svg></button>
+      <button id="btnSave" class="primary" title="Save (Ctrl+S)">Save</button>
+    </div>
+  </header>
+
+  <main class="work">
+    <section class="preview" aria-label="Preview">
+      <div id="viewport" data-view="live">
+        <div id="stageBox">
+          <div id="stageInner">
+            <iframe id="stageFrame" title="Stage preview" tabindex="-1"></iframe>
+            <img id="rendered" alt="Rendered frame" hidden>
+            <div id="renderedMiss" hidden><b>Frame not rendered yet</b><span>Render frames in the Render tab, or switch back to Live.</span></div>
+            <div id="overlay"></div>
+          </div>
+        </div>
+        <div id="stageErr" role="alert" hidden></div>
+      </div>
+      <div class="transport">
+        <div class="tgroup">
+          <button id="btnStart" class="icon ghost" title="Start (Home)" aria-label="Go to start"><svg viewBox="0 0 24 24"><path d="M6 5v14M18 6l-9 6 9 6z"/></svg></button>
+          <button id="btnPrev" class="icon ghost" title="Previous frame (←)" aria-label="Previous frame"><svg viewBox="0 0 24 24"><path d="m14 7-5 5 5 5"/></svg></button>
+          <button id="btnPlay" class="icon play" title="Play / pause (Space)" aria-label="Play"><svg class="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></svg><svg class="i-pause" viewBox="0 0 24 24"><path d="M8 5.5v13M16 5.5v13"/></svg></button>
+          <button id="btnNext" class="icon ghost" title="Next frame (→)" aria-label="Next frame"><svg viewBox="0 0 24 24"><path d="m10 7 5 5-5 5"/></svg></button>
+          <button id="btnEnd" class="icon ghost" title="End (End)" aria-label="Go to end"><svg viewBox="0 0 24 24"><path d="M18 5v14M6 6l9 6-9 6z"/></svg></button>
+        </div>
+        <div class="tc">
+          <label class="sr" for="tcTime">Playhead</label>
+          <input id="tcTime" value="0:00.00" title="Type a time (12.5, 1:02.25) or a frame (f750)" spellcheck="false">
+          <span id="tcFrame">f0</span>
+        </div>
+        <div class="tgroup">
+          <button id="btnIn" class="ghost sm" title="Loop in at playhead (I)">In</button>
+          <button id="btnLoop" class="icon ghost" aria-pressed="false" title="Loop playback (L loops the selected bar)" aria-label="Loop"><svg viewBox="0 0 24 24"><path d="M17 3l3 3-3 3M4 11V9a3 3 0 0 1 3-3h13M7 21l-3-3 3-3M20 13v2a3 3 0 0 1-3 3H4"/></svg></button>
+          <button id="btnOut" class="ghost sm" title="Loop out at playhead (O)">Out</button>
+          <span id="loopInfo" class="muted"></span>
+        </div>
+        <div class="grow"></div>
+        <button id="btnAudio" class="icon ghost" title="Mute/unmute audio (M)" aria-label="Audio"><svg class="i-audio-on" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.08"/></svg><svg class="i-audio-off" viewBox="0 0 24 24" hidden><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg></button>
+        <div class="seg" id="viewSeg" role="group" aria-label="Preview source">
+          <button data-view="live" aria-pressed="true" title="The stage, live (V)">Live</button>
+          <button data-view="rendered" aria-pressed="false" title="Frames already rendered to the frames folder (V)">Rendered</button>
+        </div>
+        <button id="btnGuides" class="ghost sm" aria-pressed="false" title="Safe-area guides (G)">Guides</button>
+        <span id="zoomPct" class="muted" title="Preview scale"></span>
+      </div>
+    </section>
+
+    <aside class="side" aria-label="Properties">
+      <div class="tabs" role="tablist">
+        <button role="tab" data-tab="inspect" aria-selected="true">Inspect</button>
+        <button role="tab" data-tab="render" aria-selected="false">Render</button>
+        <button role="tab" data-tab="issues" aria-selected="false">Issues <span id="issuesBadge" class="badge"></span></button>
+      </div>
+      <div class="tabpane" data-tab="inspect"><div id="inspect"></div></div>
+
+      <div class="tabpane" data-tab="render" hidden>
+        <section class="rsec">
+          <h3>Stills <small>preview moments with render.cjs</small></h3>
+          <div class="frow"><label for="rTimes">Times</label><input id="rTimes" placeholder="12.5, 24.6" spellcheck="false"></div>
+          <div class="frow btns"><button id="rStillsAddT" class="mini">+ playhead</button><button id="rStillsCaps" class="mini">Each caption</button></div>
+          <div class="frow grid3">
+            <label>Scale<select id="rStillDpr"><option value="1">1× canvas</option><option value="2">2× (4K / 9:16 supersampled)</option></select></label>
+            <label>Format<select id="rFmt"><option>jpg</option><option>png</option></select></label>
+            <label class="chk"><input type="checkbox" id="rClean"> Clean</label>
+          </div>
+          <div class="frow"><label for="rStillsOut">Folder</label><input id="rStillsOut" value="preview/editor" spellcheck="false"></div>
+          <button id="rStillsGo" class="primary wide">Render stills</button>
+          <div id="rGallery" class="gallery"></div>
+        </section>
+        <section class="rsec">
+          <h3>Frames <small id="rFramesInfo"></small></h3>
+          <div class="frow"><label for="rFramesDir">Folder</label><input id="rFramesDir" value="frames4k" spellcheck="false"></div>
+          <div class="frow grid3">
+            <label>Scale<select id="rDpr"><option value="2">2× (4K / 9:16 supersampled)</option><option value="1">1× canvas</option></select></label>
+            <label>Workers<input id="rWorkers" type="number" min="1" max="16" value="5"></label>
+            <label>Range<select id="rRange"><option value="full">Full</option><option value="loop">Loop range</option></select></label>
+          </div>
+          <p class="muted small" id="rRangeInfo"></p>
+          <label class="chk"><input type="checkbox" id="rForce" checked> Overwrite existing frames <span class="muted">(off: resume an interrupted render)</span></label>
+          <label class="chk"><input type="checkbox" id="rPrune" checked> Remove frames outside the range</label>
+          <button id="rFramesGo" class="primary wide">Render frames</button>
+        </section>
+        <section class="rsec">
+          <h3>Encode <small>16:9 → 4K, 1080p, web · 9:16 → Instagram reel/story set · + poster</small></h3>
+          <div class="frow"><label for="rVideoOut">Folder</label><input id="rVideoOut" value="../showcase/video" spellcheck="false"></div>
+          <div class="frow"><label for="rName">Name</label><input id="rName" value="presentation" spellcheck="false"></div>
+          <div class="frow"><label for="rAudio">Audio</label><select id="rAudio"></select></div>
+          <div class="frow"><label for="rPoster">Poster frame</label><input id="rPoster" type="number" min="0" value="156"><button id="rPosterHere" class="mini" title="Use the playhead frame">⌖</button></div>
+          <button id="rEncodeGo" class="primary wide">Encode video</button>
+        </section>
+        <section id="rJob" class="job" hidden>
+          <div class="jhead"><b id="rJobLabel"></b><span id="rJobState" class="pill"></span><button id="rCancel" class="mini danger">Cancel</button></div>
+          <div class="pbar"><i id="rBar"></i></div>
+          <div class="jmeta"><span id="rJobPct"></span><span id="rJobEta"></span></div>
+          <div id="rVideos" class="vids"></div>
+          <details><summary>Log</summary><div id="rLog" class="log"></div></details>
+        </section>
+      </div>
+
+      <div class="tabpane" data-tab="issues" hidden><div id="issues"></div></div>
+    </aside>
+  </main>
+
+  <section class="timeline" aria-label="Timeline">
+    <div class="tl-resize" role="separator" aria-orientation="horizontal" aria-label="Resize timeline" title="Drag to resize"></div>
+    <div class="tl-bar">
+      <label class="sr" for="addMenu">Add</label>
+      <select id="addMenu" title="Add at the playhead">
+        <option value="">＋ Add…</option>
+        <option value="audio">Audio track</option>
+        <option value="caption">Caption</option>
+        <option value="bkey">Browser keyframe (K)</option>
+        <option value="pkey">Phone keyframe</option>
+        <option value="segment">Footage segment</option>
+        <option value="anchor">Anchor at playhead</option>
+        <option value="glow">Theme glow</option>
+        <option value="chip">Segmented chip</option>
+        <option value="flash">Flash</option>
+      </select>
+      <button id="btnSnap" class="ghost sm" aria-pressed="true" title="Snap to playhead, edges, clicks (hold Shift to bypass)">Snap</button>
+      <button id="btnRipple" class="ghost sm" aria-pressed="false" title="Moving or extending a bar shifts every later time with it">Ripple</button>
+      <span id="dragInfo" class="muted mono"></span>
+      <div class="grow"></div>
+      <span id="statusIssues" class="status" role="button" tabindex="0" title="Show issues"></span>
+      <button id="btnFit" class="ghost sm" title="Fit (F)">Fit</button>
+      <label class="zoom" title="Zoom (Ctrl + wheel)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M8.5 11h5M11 8.5v5"/></svg><input id="tlZoom" type="range" min="1" max="9" step="0.05" value="4.3" aria-label="Timeline zoom"></label>
+    </div>
+    <div id="tlScroll"><div id="tlCanvas"></div></div>
+  </section>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="lightbox" hidden></div>
+</body>
+</html>

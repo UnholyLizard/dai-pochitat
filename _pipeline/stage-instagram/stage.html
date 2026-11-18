@@ -1,0 +1,1113 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Дай почитать! — Instagram Stage (9:16)</title>
+<style>
+  /* Fonts: the site's own faces (@fontsource, as in src/main.js): Literata variable (display and body, + italic for
+     the highlight), Nunito variable (UI: pills, HUD), Caveat 700 (hand-lettered chapter labels) */
+  @font-face { font-family: 'Literata'; font-style: normal; font-weight: 200 900; src: url(assets/fonts/literata-latin-wght-normal.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Literata'; font-style: normal; font-weight: 200 900; src: url(assets/fonts/literata-latin-ext-wght-normal.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Literata'; font-style: normal; font-weight: 200 900; src: url(assets/fonts/literata-cyrillic-wght-normal.woff2) format('woff2');
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+  @font-face { font-family: 'Literata'; font-style: italic; font-weight: 200 900; src: url(assets/fonts/literata-latin-wght-italic.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Literata'; font-style: italic; font-weight: 200 900; src: url(assets/fonts/literata-latin-ext-wght-italic.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Literata'; font-style: italic; font-weight: 200 900; src: url(assets/fonts/literata-cyrillic-wght-italic.woff2) format('woff2');
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+  @font-face { font-family: 'Nunito'; font-weight: 200 1000; src: url(assets/fonts/nunito-latin-wght-normal.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Nunito'; font-weight: 200 1000; src: url(assets/fonts/nunito-latin-ext-wght-normal.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Nunito'; font-weight: 200 1000; src: url(assets/fonts/nunito-cyrillic-wght-normal.woff2) format('woff2');
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+  @font-face { font-family: 'Caveat'; font-weight: 700; src: url(assets/fonts/caveat-latin-700-normal.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Caveat'; font-weight: 700; src: url(assets/fonts/caveat-latin-ext-700-normal.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Caveat'; font-weight: 700; src: url(assets/fonts/caveat-cyrillic-700-normal.woff2) format('woff2');
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+
+  /* Palette: the site's tokens (src/styles/main.css, the «Дай почитать!» design system). Every colour that differs
+     between Day and Evening is mixed by --night (0 = day … 1 = evening), which the stage sets per frame from the
+     sequence's `glow` envelopes: when the site's lamp is tapped, the film's own backdrop turns to evening with it. */
+  :root {
+    --paper-day: #f4e8cf; --paper-night: #141a30;
+    --sun: #f6c343; --cobalt: #1f4dd8; --terracotta: #c94a30; --olive: #6f8f3a;
+    --display: 'Literata', Georgia, serif;
+    --ui: 'Nunito', system-ui, sans-serif;
+    --hand: 'Caveat', 'Segoe Print', cursive;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #f4e8cf; }
+  #stage {
+    --night: 0;
+    --n: calc(var(--night) * 100%);
+    --paper: color-mix(in srgb, #141a30 var(--n), #f4e8cf);
+    --card: color-mix(in srgb, #1d2443 var(--n), #fdf6e7);
+    --card-2: color-mix(in srgb, #252d52 var(--n), #f6ead0);
+    --ink: color-mix(in srgb, #f7ecd6 var(--n), #2b1b12);
+    --ink-2: color-mix(in srgb, #d9cdb8 var(--n), #4d3a2c);
+    --ink-3: color-mix(in srgb, #a59cb5 var(--n), #85705d);
+    --edge: color-mix(in srgb, #05070f var(--n), #2b1b12);
+    --accent: color-mix(in srgb, #f6c343 var(--n), #1f4dd8);
+    --lbl: color-mix(in srgb, #f07a5c var(--n), #c94a30);
+    position: relative; width: 1080px; height: 1920px; overflow: hidden;
+    background: #f4e8cf; color: var(--ink); font-family: var(--display);
+    -webkit-font-smoothing: antialiased;
+  }
+  .abs { position: absolute; }
+  .fill { position: absolute; inset: 0; }
+
+  /* ---------- background: the sunlit table by day, the reading-lamp evening; dust motes and fireflies ---------- */
+  #bgDay { background: radial-gradient(1100px 1300px at 92% -6%, #fff6dc 0%, rgba(255, 246, 220, 0.55) 38%, rgba(244, 232, 207, 0) 72%), #f4e8cf; }
+  #bgNight { background: radial-gradient(1100px 1300px at 92% -6%, #2a2547 0%, rgba(42, 37, 71, 0.5) 40%, rgba(20, 26, 48, 0) 74%), #141a30; opacity: 0; }
+  #bg .g { position: absolute; width: 1500px; height: 1500px; margin: -750px 0 0 -750px; border-radius: 50%; }
+  #terrain canvas { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+  #orb { display: none; }
+
+  /* ---------- mosaic: the book's pages as paper cards on the table ---------- */
+  #mosaic { perspective: 3200px; perspective-origin: 540px 960px; }
+  #plane { position: absolute; left: 540px; top: 960px; width: 0; height: 0; }
+  #plane .col { position: absolute; top: 0; width: 520px; display: flex; flex-direction: column; gap: 30px; }
+  #plane .tile {
+    width: 520px; height: 325px; border-radius: 16px; overflow: hidden; border: 3px solid #2b1b12;
+    background-size: cover; background-position: center top; background-color: #fdf6e7;
+    box-shadow: 0 9px 0 #2b1b12, 0 40px 60px -24px rgba(90, 50, 15, 0.55);
+  }
+  #mosaicShade { background: radial-gradient(ellipse 58% 52% at 50% 50%, rgba(244, 232, 207, 0.97) 0%, rgba(244, 232, 207, 0.9) 50%, rgba(244, 232, 207, 0.62) 82%, rgba(244, 232, 207, 0.5) 100%); }
+
+  /* ---------- world (browser + phone): pressed-paper objects with the site's solid offset shadow ---------- */
+  #world { perspective: 2600px; perspective-origin: 540px 960px; }
+  .browser { position: absolute; left: 0; top: 0; width: 1440px; height: 948px; transform-origin: 0 0; }
+  .browser .shell {
+    position: absolute; inset: -3px; border-radius: 20px; overflow: hidden; background: var(--card); border: 3px solid var(--edge);
+    box-shadow: 0 11px 0 var(--edge), 0 70px 110px -44px rgba(70, 38, 10, 0.6);
+  }
+  .browser .halo {
+    position: absolute; left: -14%; right: -14%; top: 4%; bottom: -16%; opacity: 0;
+    background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(246, 195, 67, 0.36), rgba(246, 195, 67, 0.1) 46%, transparent 72%);
+    filter: blur(50px);
+  }
+  .bchrome { position: absolute; left: 0; top: 0; right: 0; height: 48px; background: var(--card-2); border-bottom: 3px solid var(--edge); }
+  .bchrome .dots { position: absolute; left: 20px; top: 15px; display: flex; gap: 9px; }
+  .bchrome .dots i { width: 15px; height: 15px; border-radius: 50%; display: block; border: 2px solid var(--edge); }
+  .bchrome .dots i:nth-child(1) { background: #c94a30; } .bchrome .dots i:nth-child(2) { background: #f6c343; } .bchrome .dots i:nth-child(3) { background: #6f8f3a; }
+  .bchrome .url {
+    position: absolute; left: 50%; top: 8px; width: 440px; height: 29px; margin-left: -220px;
+    border-radius: 999px; background: var(--card); border: 2px solid color-mix(in srgb, var(--ink) 22%, transparent);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--ui); font-size: 14px; font-weight: 800; color: var(--ink-2); letter-spacing: 0.01em;
+  }
+  .bchrome .url svg rect { fill: var(--ink-3); } .bchrome .url svg path { stroke: var(--ink-3); }
+  .bchrome .load { position: absolute; left: 0; bottom: -3px; height: 3px; background: var(--cobalt); }
+  .bchrome .icons { position: absolute; right: 20px; top: 15px; display: flex; gap: 16px; opacity: 0.5; }
+  .bchrome .icons svg path, .bchrome .icons svg rect { stroke: var(--ink); }
+  .bview { position: absolute; left: 0; top: 48px; width: 1440px; height: 900px; overflow: hidden; background: #f4e8cf; }
+  .flayer { position: absolute; inset: 0; }
+  .flayer img { position: absolute; left: 0; top: 0; width: 1440px; height: 900px; display: block; }
+  .bdim { position: absolute; inset: 0; background: var(--paper); opacity: 0; border-radius: 16px; }
+
+  .cursor { position: absolute; left: 0; top: 0; width: 34px; height: 34px; transform-origin: 6px 3px; filter: drop-shadow(0 3px 5px rgba(43, 27, 18, 0.45)); }
+  .ripple { position: absolute; left: 0; top: 0; width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%; border: 4px solid var(--sun); box-shadow: 0 0 0 2px #2b1b12, inset 0 0 0 2px #2b1b12; opacity: 0; }
+  .ripple2 { position: absolute; left: 0; top: 0; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; background: rgba(246, 195, 67, 0.55); opacity: 0; }
+  .grab { position: absolute; left: 0; top: 0; width: 58px; height: 58px; margin: -29px 0 0 -29px; border-radius: 50%; border: 3px solid var(--sun); background: rgba(246, 195, 67, 0.18); opacity: 0; }
+
+  /* phone (the footage is the Day theme: the status bar takes the page's paper) */
+  .phone { position: absolute; left: 0; top: 0; width: 414px; height: 912px; transform-origin: 0 0; }
+  .phone .body {
+    position: absolute; inset: 0; border-radius: 64px;
+    background: linear-gradient(145deg, #4a3324, #2b1b12 42%, #3a281c 72%, #22150d);
+    box-shadow: 0 0 0 2px rgba(255, 246, 220, 0.14) inset, 0 12px 0 #1a100a, 0 80px 120px -40px rgba(70, 38, 10, 0.75);
+  }
+  .phone .halo { display: none; }
+  .phone .screen { position: absolute; left: 12px; top: 12px; width: 390px; height: 888px; border-radius: 52px; overflow: hidden; background: #f4e8cf; }
+  .phone .status { position: absolute; left: 0; top: 0; width: 390px; height: 44px; background: #f4e8cf; z-index: 2; color: #2b1b12; font-family: var(--ui); }
+  .phone .status .time { position: absolute; left: 44px; top: 13px; font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+  .phone .status .sys { position: absolute; right: 30px; top: 16px; display: flex; gap: 6px; align-items: center; }
+  .phone .status .sys svg [fill="#fcfbf9"] { fill: #2b1b12; } .phone .status .sys svg [stroke] { stroke: rgba(43, 27, 18, 0.45); } .phone .status .sys svg rect[fill^="rgba"] { fill: rgba(43, 27, 18, 0.45); }
+  .phone .island { position: absolute; left: 50%; top: 11px; width: 122px; height: 35px; margin-left: -61px; border-radius: 20px; background: #1a100a; z-index: 3; }
+  .phone .pview { position: absolute; left: 0; top: 44px; width: 390px; height: 844px; overflow: hidden; }
+  .phone .pview img { width: 390px; height: 844px; display: block; }
+  .phone .tap { position: absolute; left: 0; top: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: radial-gradient(circle, rgba(246, 195, 67, 0.6), rgba(246, 195, 67, 0.25) 60%, transparent 72%); border: 3px solid #2b1b12; opacity: 0; z-index: 3; }
+  .phone .homebar { position: absolute; left: 50%; bottom: 8px; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: rgba(43, 27, 18, 0.6); z-index: 3; }
+  .phone .glare { position: absolute; inset: 12px; border-radius: 52px; background: linear-gradient(115deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 30%); z-index: 4; }
+
+  /* ---------- typography: the site's chapter label (a numbered ring + Caveat), Literata display with the cobalt
+     italic highlight and the sun squiggle of the hero title, Literata body ---------- */
+  .kick { display: flex; align-items: center; gap: 16px; font-family: var(--hand); font-weight: 700; font-size: 40px; line-height: 1; color: var(--lbl); }
+  .kick .num { width: 46px; height: 46px; flex: none; border-radius: 50%; border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center; font-family: var(--ui); font-weight: 900; font-size: 21px; color: var(--ink); }
+  .kick .num:empty { display: none; }
+  .ln { display: block; overflow: hidden; padding: 0.08em 0.06em 0.2em 0; margin: -0.08em 0 -0.2em; }
+  .ln > span { display: inline-block; will-change: transform; }
+  em, .it { font-style: italic; color: var(--accent); padding-right: 0.04em; }
+  .sun { color: var(--sun); } .cobalt { color: var(--cobalt); } .terra { color: var(--terracotta); }
+  .qchip { display: inline-block; padding: 0.08em 0.5em 0.12em; margin: 0 0.08em; border-radius: 999px; font-family: var(--ui); font-size: 0.72em; font-weight: 800; color: var(--ink); background: var(--card); border: 2px solid var(--ink); vertical-align: 0.1em; }
+  .cap h2 { margin: 18px 0 0; font-family: var(--display); font-weight: 800; letter-spacing: -0.028em; line-height: 1.03; color: var(--ink); font-variation-settings: 'opsz' 72; }
+  .cap .squig { display: block; height: 22px; margin: 12px 0 0 2px; overflow: visible; }
+  .cap .squig path { fill: none; stroke: var(--sun); stroke-width: 9; stroke-linecap: round; }
+  .cap p { margin: 22px 0 0; font-family: var(--display); font-size: 23px; line-height: 1.5; color: var(--ink-2); font-weight: 420; }
+  .cap.side h2 { font-size: 78px; }
+  .cap.top { text-align: center; }
+  .cap.top .kick { justify-content: center; }
+  .cap.top h2 { font-size: 60px; margin-top: 10px; }
+  .cap.top .squig { margin-left: auto; margin-right: auto; }
+
+  /* 9:16 — read on a phone: the chapter label (ring + hand lettering) over a big two-line Literata title */
+  .cap.v .kick { font-size: 50px; gap: 18px; }
+  .cap.v .kick .num { width: 58px; height: 58px; font-size: 26px; border-width: 3.5px; }
+  .cap.v h2 { font-size: 92px; margin-top: 20px; line-height: 1.02; letter-spacing: -0.03em; }
+  .cap.v .squig { height: 26px; margin-top: 16px; }
+  .cap.v .squig path { stroke-width: 10; }
+  .cap.v p { font-size: 34px; margin-top: 24px; line-height: 1.4; }
+  /* caption scrim: the browser fades into the table under the headline while a caption (or the bug) is up; it sits
+     between the browser and the phone in #world, so the phone stays crisp. Paper by day, evening blue at night. */
+  #capScrim { position: absolute; left: 0; top: 0; width: 1080px; height: 900px; opacity: 0; pointer-events: none;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--paper) 98%, transparent) 0%, color-mix(in srgb, var(--paper) 96%, transparent) 62%,
+      color-mix(in srgb, var(--paper) 84%, transparent) 75%, color-mix(in srgb, var(--paper) 46%, transparent) 88%, color-mix(in srgb, var(--paper) 0%, transparent) 100%); }
+  /* brand bug: the site's mark tile and wordmark at the top of the safe area */
+  #bug { position: absolute; left: 72px; top: 254px; display: flex; align-items: center; gap: 18px; opacity: 0; }
+  #bug img { width: 54px; height: 54px; border-radius: 26%; border: 3px solid var(--edge); box-shadow: 0 5px 0 var(--edge); display: block; }
+  #bug .w { font-family: var(--display); font-weight: 850; font-size: 44px; letter-spacing: -0.035em; line-height: 1; color: var(--ink); white-space: nowrap; font-variation-settings: 'opsz' 72; }
+  #bug .w em { color: var(--accent); }
+  #bug .w .bang { color: var(--terracotta); font-style: italic; }
+  #bug .t { font-family: var(--ui); font-size: 22px; font-weight: 800; letter-spacing: 0.02em; color: var(--ink-3); margin-left: 4px; padding-left: 18px; border-left: 2px solid color-mix(in srgb, var(--ink) 22%, transparent); white-space: nowrap; line-height: 1.15; }
+
+  /* segmented chip (the site's chips: the checked one inverts to ink) */
+  .seg { display: flex; padding: 6px; border-radius: 999px; background: var(--card); border: 3px solid var(--edge); box-shadow: 0 5px 0 var(--edge); position: relative; }
+  .seg .pill { position: absolute; top: 6px; bottom: 6px; border-radius: 999px; background: var(--ink); }
+  .seg span { position: relative; padding: 10px 0; text-align: center; font-family: var(--ui); font-size: 18px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 9px; color: var(--ink); }
+  .seg span.on { color: var(--paper); }
+  .seg svg { width: 19px; height: 19px; }
+
+  /* HUD */
+  #hud { font-family: var(--ui); font-size: 15px; font-weight: 800; letter-spacing: 0.02em; color: var(--ink-3); }
+  #hud .bl { left: 120px; bottom: 30px; display: flex; gap: 12px; align-items: center; }
+  #hud .br { right: 120px; bottom: 36px; display: flex; gap: 16px; align-items: center; }
+  #hud .prog { width: 150px; height: 5px; border-radius: 3px; background: color-mix(in srgb, var(--ink) 16%, transparent); position: relative; overflow: hidden; }
+  #hud .prog i { position: absolute; left: 0; top: 0; height: 5px; border-radius: 3px; background: var(--accent); }
+  #hud .word { font-family: var(--display); font-size: 21px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); }
+  #hud .hmark { width: 32px; height: 32px; border-radius: 9px; border: 2px solid var(--edge); display: block; }
+
+  /* wordmark: «Дай почитать!» as in the hero title: ink, cobalt italic, terracotta bang */
+  .wordmark { font-family: var(--display); font-weight: 850; letter-spacing: -0.035em; line-height: 1; white-space: nowrap; color: var(--ink); font-variation-settings: 'opsz' 72; }
+  .wordmark .poch, .wordmark em { color: var(--cobalt); font-style: italic; }
+  .wordmark .bang { color: var(--terracotta); font-style: italic; }
+  .chars span { display: inline-block; }
+  .pills { display: flex; gap: 14px; justify-content: center; font-family: var(--ui); font-weight: 800; font-size: 21px; }
+  .pills span { padding: 11px 22px; border-radius: 999px; background: #fdf6e7; border: 2px solid rgba(43, 27, 18, 0.16); color: #2b1b12; }
+  .pills span:first-child { background: #2b1b12; color: #fdf6e7; border-color: #2b1b12; }
+  .handline { font-family: var(--hand); font-weight: 700; line-height: 1; color: var(--terracotta); }
+  .bigsquig { display: block; overflow: visible; }
+  .bigsquig path { fill: none; stroke: var(--sun); stroke-linecap: round; }
+  .mark { display: block; border-radius: 26%; border: 4px solid #2b1b12; box-shadow: 0 9px 0 #2b1b12; }
+  .urlbtn { display: inline-block; padding: 16px 38px; border-radius: 999px; background: var(--sun); border: 3px solid #2b1b12; box-shadow: 0 6px 0 #2b1b12; font-family: var(--ui); font-weight: 800; font-size: 30px; color: #2b1b12; }
+
+  #grain { opacity: 0.07; mix-blend-mode: multiply; }
+  #vignette { background: radial-gradient(ellipse 86% 82% at 50% 50%, transparent 58%, rgba(90, 50, 15, 0.17) 100%); }
+  #vignetteN { background: radial-gradient(ellipse 84% 80% at 50% 50%, transparent 52%, rgba(3, 5, 14, 0.55) 100%); opacity: 0; }
+  #flash { background: radial-gradient(circle at var(--fx, 50%) var(--fy, 0%), rgba(255, 236, 170, 0.95), rgba(246, 195, 67, 0.35) 28%, transparent 58%); opacity: 0; }
+  #black { background: #f4e8cf; opacity: 1; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bgDay" class="fill"></div>
+  <div id="bgNight" class="fill"></div>
+  <div id="bg" class="fill"><div class="g" id="g1"></div><div class="g" id="g2"></div><div class="g" id="g3"></div></div>
+  <div id="terrain" class="fill"><canvas width="1080" height="1920"></canvas></div>
+  <div id="orb"><i></i></div>
+
+  <div id="mosaic" class="fill"><div id="plane"></div></div>
+  <div id="mosaicShade" class="fill"></div>
+
+  <!-- intro title (texts come from the sequence: title.*) -->
+  <div id="title" class="fill" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+    <div id="tKick" class="handline" style="font-size:50px;rotate:-3deg"><span class="num" style="display:none"></span><span></span></div>
+    <div style="position:relative;margin-top:26px">
+      <div class="wordmark chars" id="tWord" style="font-size:210px"></div>
+      <svg class="bigsquig" id="tLine" width="820" height="44" viewBox="0 0 820 44" style="position:absolute;right:70px;bottom:-40px"><path d="M10 24c66-22 134 18 204 0s136-18 202 0 132 18 196 0 130-14 198 4" stroke-width="15" pathLength="100"/></svg>
+    </div>
+    <div id="tSub" style="margin-top:78px;font-family:var(--display);font-weight:520;font-size:46px;letter-spacing:-0.015em;color:#4d3a2c"></div>
+    <div id="tMeta" class="pills" style="margin-top:40px"></div>
+    <img id="tMark" alt="" style="display:none">
+  </div>
+
+  <div id="world" class="fill">
+    <div class="browser" id="browser">
+      <div class="halo" id="bhalo"></div>
+      <div class="shell">
+        <div class="bchrome">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <div class="url">
+            <svg width="12" height="14" viewBox="0 0 12 14"><rect x="1" y="6" width="10" height="7.5" rx="1.8"/><path d="M3.3 6V4.3a2.7 2.7 0 0 1 5.4 0V6" stroke-width="1.6" fill="none"/></svg>
+            <span id="bUrl"></span>
+          </div>
+          <div class="icons">
+            <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1v9M4.5 6.5 8 10l3.5-3.5M2 13h12" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+            <svg width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2.5" stroke-width="1.8" fill="none"/><path d="M8 5v6M5 8h6" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </div>
+          <div class="load" id="loadbar"></div>
+        </div>
+        <div class="bview" id="bview">
+          <div class="flayer" id="LA"><img alt=""><div class="grab"></div><svg class="cursor" viewBox="0 0 24 24"><path d="M4.5 2.2v17.2l4.4-4.1 3 6.6 2.9-1.3-3-6.5h6z" fill="#2b1b12" stroke="#fffaf0" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="ripple"></div><div class="ripple2"></div></div>
+          <div class="flayer" id="LB"><img alt=""><div class="grab"></div><svg class="cursor" viewBox="0 0 24 24"><path d="M4.5 2.2v17.2l4.4-4.1 3 6.6 2.9-1.3-3-6.5h6z" fill="#2b1b12" stroke="#fffaf0" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="ripple"></div><div class="ripple2"></div></div>
+        </div>
+        <div class="bdim" id="bdim"></div>
+      </div>
+    </div>
+
+    <div id="capScrim"></div>
+
+    <div class="phone" id="phone">
+      <div class="halo"></div>
+      <div class="body"></div>
+      <div class="screen">
+        <div class="status">
+          <span class="time" id="ptime">16:30</span>
+          <span class="sys">
+            <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="#fcfbf9"/><rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="#fcfbf9"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#fcfbf9"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fcfbf9"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.2 6.6a6.8 6.8 0 0 1 9.6 0l-1.4 1.4a4.8 4.8 0 0 0-6.8 0zM.8 4.2a10.2 10.2 0 0 1 14.4 0l-1.4 1.4a8.2 8.2 0 0 0-11.6 0z" fill="#fcfbf9"/></svg>
+            <svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="rgba(252,251,249,0.45)" fill="none"/><rect x="2.5" y="2.5" width="19" height="8" rx="2" fill="#fcfbf9"/><rect x="24.5" y="4.5" width="2" height="4" rx="1" fill="rgba(252,251,249,0.45)"/></svg>
+          </span>
+        </div>
+        <div class="island"></div>
+        <div class="pview"><img id="pimg" alt=""><div class="tap" id="tap"></div></div>
+        <div class="homebar"></div>
+      </div>
+      <div class="glare"></div>
+    </div>
+  </div>
+
+  <!-- captions and segmented chips are built from the sequence (captions[], chips[]) -->
+  <div id="caps"></div>
+  <div id="chips"></div>
+
+  <div id="bug"><img src="assets/logo.svg" alt=""><span class="w" id="bugWord"></span><span class="t" id="bugTag"></span></div>
+
+  <div id="hud" class="fill">
+    <div class="abs bl">
+      <img class="hmark" src="assets/logo.svg" alt="">
+      <span class="word" id="hudWord"></span><span style="opacity:.5">—</span><span id="hudTag"></span>
+    </div>
+    <div class="abs br"><span id="chap"></span><div class="prog"><i id="progI"></i></div></div>
+  </div>
+
+  <!-- end card -->
+  <div id="end" class="fill" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+    <div style="display:flex;align-items:center;gap:34px" id="eRow">
+      <img class="mark" id="eMark" src="assets/logo.svg" width="136" height="136" alt="">
+      <div class="wordmark chars" id="eWord" style="font-size:170px"></div>
+    </div>
+    <div id="eTag" class="handline" style="margin-top:44px;font-size:74px;rotate:-2deg"></div>
+    <div id="eLine" style="display:none"></div>
+    <div style="margin-top:44px"><span class="urlbtn" id="eUrl"></span></div>
+    <div id="eBy" style="margin-top:30px;font-family:var(--ui);font-weight:800;font-size:22px;color:#85705d"><span></span></div>
+  </div>
+
+  <!-- imported blocks (top-level sequence objects with "block": name), e.g. the studio outro -->
+  <div id="blocks" class="fill"></div>
+
+  <div id="flash" class="fill"></div>
+  <div id="vignette" class="fill"></div>
+  <div id="vignetteN" class="fill"></div>
+  <div id="grain" class="fill"></div>
+  <div id="black" class="fill"></div>
+</div>
+
+<script src="../blocks/loader.js"></script>
+<script>
+// ---------------------------------------------------------------------------
+// «Дай почитать!» Instagram stage (9:16 work stage-instagram/: reel.json, story.json) — the 16:9 stage re-laid-out for a
+// phone: caption layout "v", a brand bug, a caption scrim, portrait background layers, no HUD unless the sequence has "hud".
+// The stage is a pure function of time driven by a sequence (stage/sequence.json, format "stage-sequence/1").
+// render.cjs injects it as window.SEQ (plus META / MOSAIC); the editor (../editor) calls window.stage.apply(seq).
+// Time values in the sequence are seconds, or references: "@anchor", "@anchor+0.4", "@segmentId" (its t0).
+// ---------------------------------------------------------------------------
+// helpers
+const $ = (s) => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, p) => a + (b - a) * p;
+const E = {
+  lin: (p) => p,
+  outExpo: (p) => (p >= 1 ? 1 : 1 - Math.pow(2, -10 * p)),
+  inExpo: (p) => (p <= 0 ? 0 : Math.pow(2, 10 * p - 10)),
+  outCubic: (p) => 1 - Math.pow(1 - p, 3),
+  inCubic: (p) => p * p * p,
+  outQuart: (p) => 1 - Math.pow(1 - p, 4),
+  outBack: (p) => { const c = 1.4; return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); },
+  inOutCubic: (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2),
+  inOutQuart: (p) => (p < 0.5 ? 8 * p ** 4 : 1 - Math.pow(-2 * p + 2, 4) / 2),
+  inOutQuint: (p) => (p < 0.5 ? 16 * p ** 5 : 1 - Math.pow(-2 * p + 2, 5) / 2),
+  inOutSine: (p) => -(Math.cos(Math.PI * p) - 1) / 2,
+};
+// progress of t through [a, b] (a zero-length span is a step at a)
+const P = (t, a, b, e = E.inOutCubic) => e(b > a ? clamp((t - a) / (b - a)) : t >= a ? 1 : 0);
+const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+// envelope {in, fadeIn, out, fadeOut}: ramps up at in, down at out
+const env = (t, v, eIn = E.inOutCubic, eOut = E.inOutCubic) => (v ? P(t, v.in, v.in + v.fadeIn, eIn) * (1 - P(t, v.out, v.out + v.fadeOut, eOut)) : 0);
+
+// keyframe tracks: [{t, e?, ...props}] — missing props carry forward
+function track(keys) {
+  const names = new Set();
+  keys.forEach((k) => Object.keys(k).forEach((n) => n !== 't' && n !== 'e' && names.add(n)));
+  const full = [];
+  keys.forEach((k, i) => { const prev = full[i - 1] || {}; full.push({ ...prev, e: undefined, ...k }); });
+  return (t) => {
+    if (t <= full[0].t) return full[0];
+    for (let i = 1; i < full.length; i++) {
+      const b = full[i];
+      if (t <= b.t) {
+        const a = full[i - 1];
+        const p = (E[b.e || 'inOutCubic'] || E.inOutCubic)(clamp((t - a.t) / (b.t - a.t)));
+        const o = {};
+        names.forEach((n) => { o[n] = typeof a[n] === 'number' ? (n === 's' && a[n] > 0 && b[n] > 0 ? a[n] * Math.pow(b[n] / a[n], p) : lerp(a[n], b[n], p)) : b[n]; });
+        return o;
+      }
+    }
+    return full[full.length - 1];
+  };
+}
+
+function place(el, s) {
+  el.style.transform = `translate3d(${s.cx}px, ${s.cy}px, 0) rotateX(${s.rx || 0}deg) rotateY(${s.ry || 0}deg) rotateZ(${s.rz || 0}deg) scale(${s.s}) translate(${-s.px}px, ${-s.py}px)`;
+  el.style.opacity = s.o == null ? 1 : s.o;
+}
+
+let pending = [];
+function setImg(img, url) {
+  if (img._u === url) return;
+  img._u = url;
+  img.src = url;
+  pending.push(img.decode().catch(() => {}));
+}
+const frameUrl = (shot, i) => `../footage/${shot}/f${String(i).padStart(4, '0')}.jpg`;
+const META = window.META || {};
+const footFps = (shot) => (META[shot] && META[shot].fps) || 60;
+
+// inline markup for texts: *highlight* (the iridescent em), **bold**, `chip` (span.qchip), {class:text} (a styled span,
+// e.g. {gold:…}); everything else is plain text
+function rich(el, src) {
+  el.textContent = '';
+  const s = String(src == null ? '' : src);
+  const re = /\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`|\{([\w-]+):(.+?)\}/g;
+  let last = 0; let m;
+  while ((m = re.exec(s))) {
+    if (m.index > last) el.append(s.slice(last, m.index));
+    const tag = document.createElement(m[1] != null ? 'b' : m[2] != null ? 'em' : 'span');
+    if (m[3] != null) tag.className = 'qchip';
+    if (m[4] != null) tag.className = m[4];
+    tag.textContent = m[1] != null ? m[1] : m[2] != null ? m[2] : m[3] != null ? m[3] : m[5];
+    el.append(tag);
+    last = re.lastIndex;
+  }
+  if (last < s.length) el.append(s.slice(last));
+  return el;
+}
+const h = (tag, cls, kids = []) => { const e = document.createElement(tag); if (cls) e.className = cls; kids.forEach((k) => e.append(k)); return e; };
+
+// ---------------------------------------------------------------------------
+// per-letter words with measured kerning (splitting into spans drops the font's pair kerning, so restore it)
+function splitChars(el, parts) {
+  el.innerHTML = '';
+  const probe = document.createElement('span');
+  probe.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;font:inherit;letter-spacing:inherit';
+  el.appendChild(probe);
+  const wOf = (s) => { probe.textContent = s; return probe.getBoundingClientRect().width; };
+  const all = parts.map(([txt]) => txt).join('');
+  const kern = [...all].map((ch, i) => (i < all.length - 1 && ch !== ' ' && all[i + 1] !== ' ' ? wOf(ch + all[i + 1]) - wOf(ch) - wOf(all[i + 1]) : 0));
+  probe.remove();
+  let k = 0;
+  parts.forEach(([txt, cls]) => {
+    for (const ch of txt) {
+      const s = document.createElement('span');
+      s.textContent = ch === ' ' ? '\u00a0' : ch;   // a plain space would collapse in its own span
+      if (cls) s.className = cls;
+      if (Math.abs(kern[k]) > 0.05) s.style.marginRight = `${kern[k].toFixed(2)}px`;
+      el.appendChild(s); k++;
+    }
+  });
+  return [...el.children];
+}
+let tChars = [], eChars = [];
+// "Monte{gigs:Gigs}" -> [['Monte'], ['Gigs', 'gigs']] (a {class:text} part styles its letters)
+const wordParts = (w) => String(w || '').split(/(\{[\w-]+:[^{}]+\})/).filter(Boolean).map((p) => { const m = /^\{([\w-]+):([^{}]+)\}$/.exec(p); return m ? [m[2], m[1]] : [p]; });
+
+// mosaic of the raw stills
+const MOSAIC = window.MOSAIC || [];
+let cols = [];
+let mosaicKey = '';
+function buildMosaic(nCols, nRows) {
+  const key = `${nCols}x${nRows}`;
+  if (key === mosaicKey) return;
+  mosaicKey = key;
+  const plane = $('#plane');
+  plane.innerHTML = '';
+  cols = [];
+  for (let c = 0; c < nCols; c++) {
+    const col = document.createElement('div');
+    col.className = 'col';
+    col.style.left = `${(c - nCols / 2) * 546}px`;
+    for (let r = 0; r < nRows; r++) {
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      const src = MOSAIC.length ? MOSAIC[(c * 4 + r * 5) % MOSAIC.length] : '';
+      if (src) tile.style.backgroundImage = `url("${src}")`;
+      col.appendChild(tile);
+    }
+    plane.appendChild(col);
+    cols.push(col);
+  }
+}
+
+// the particle terrain: the site's WebGL backdrop (src/gl/stage.js, shaders.js) redrawn as a 2D point field — a sea of
+// slow swells near the viewer rising into ridged "Black Mountains" at the horizon — projected from the site's own
+// camera (eye 1.6 above the plane at z 6, 50° vertical field of view). Points take the current mood colour.
+const TER = { ctx: document.querySelector('#terrain canvas').getContext('2d'), pts: [] };
+for (let iz = 0; iz < 70; iz++) for (let ix = 0; ix < 128; ix++) {
+  TER.pts.push([-37 + (ix + (iz % 2) * 0.5) * (74 / 127), -32 + Math.pow(iz / 69, 1.15) * 38, hash(ix * 131 + iz * 7.3)]);
+}
+const smooth = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * (3 - 2 * k); };
+function terrainY(x, z, t, flow) {
+  const far = 1 - smooth(-21, -6, z);
+  const sea = Math.sin(x * 0.55 + t * 0.55) * 0.07 + Math.sin((z - flow * 0.35) * 0.8 - t * 0.7 + x * 0.18) * 0.06
+    + Math.sin(x * 0.23 + z * 0.31 + t * 0.05) * Math.cos(x * 0.11 - z * 0.19 - t * 0.08) * 0.12;
+  const r1 = 1 - Math.abs(Math.sin(x * 0.19 + 1.3) * Math.cos(z * 0.27 + 0.4)); const r2 = 1 - Math.abs(Math.sin(x * 0.47 + z * 0.23 + 0.6));
+  const ridge = r1 * r1 * 2.3 + r2 * r2 * 0.75;
+  const d0 = Math.hypot(x, z + 2);
+  const beat = Math.sin(d0 * 0.9 - t * 1.4) * 0.05 * Math.exp(-d0 * 0.08);
+  return sea * (1 - far) + beat + far * far * ridge;
+}
+// mood colour keys -> [r, g, b]
+const hexRgb = (h) => { const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(String(h).trim()); return m ? [1, 2, 3].map((i) => parseInt(m[i], 16)) : [0, 240, 255]; };
+
+// grain texture (seeded)
+(function grain() {
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const g = c.getContext('2d'); const d = g.createImageData(256, 256);
+  let s = 1234567;
+  for (let i = 0; i < d.data.length; i += 4) { s = (s * 16807) % 2147483647; const v = (s / 2147483647) * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
+  g.putImageData(d, 0, 0);
+  $('#grain').style.backgroundImage = `url(${c.toDataURL()})`;
+})();
+
+const ICONS = {
+  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 14.6A8.2 8.2 0 1 1 9.4 4a6.6 6.6 0 0 0 10.6 10.6z"/></svg>',
+  sunset: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="4.5" fill="currentColor"/><path d="M12 3v2M4.9 6l1.4 1.4M19.1 6l-1.4 1.4M2 13h2M20 13h2M2 20h20"/></svg>',
+  moonFill: '<svg viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" fill="currentColor"/></svg>',
+};
+
+// ---------------------------------------------------------------------------
+// sequence -> compiled model M (every time resolved to seconds)
+let SEQ = null;
+let M = null;
+
+function resolver(seq) {
+  const segs = new Map();
+  (seq.segments || []).forEach((s) => s.id && segs.set(s.id, s));
+  if (seq.phone) segs.set(seq.phone.id || 'phone', seq.phone);
+  const cache = new Map(); const busy = new Set();
+  function anchor(name) {
+    if (cache.has(name)) return cache.get(name);
+    if (busy.has(name)) throw new Error(`time reference cycle at @${name}`);
+    busy.add(name);
+    let v;
+    try {
+      const a = seq.anchors && seq.anchors[name];
+      if (a) {
+        // stage time of footage time `at` in segment `seg`
+        const s = segs.get(a.seg);
+        if (!s) throw new Error(`anchor @${name}: unknown segment "${a.seg}"`);
+        v = time(s.t0) + (s.lead || 0) + (a.at || 0) - (s.start || 0) / footFps(s.shot);
+      } else if (segs.has(name)) v = time(segs.get(name).t0);
+      else throw new Error(`unknown time reference @${name}`);
+    } finally { busy.delete(name); }
+    cache.set(name, v);
+    return v;
+  }
+  function time(v) {
+    if (typeof v === 'number' && isFinite(v)) return v;
+    if (typeof v === 'string') {
+      const m = /^@([\w-]+)\s*(?:([+-])\s*(\d*\.?\d+))?$/.exec(v.trim());
+      if (m) return anchor(m[1]) + (m[2] ? (m[2] === '-' ? -1 : 1) * parseFloat(m[3]) : 0);
+      if (v.trim() !== '' && isFinite(Number(v))) return Number(v);
+    }
+    throw new Error(`bad time value ${JSON.stringify(v)}`);
+  }
+  return { time, anchor, segs };
+}
+
+function compile(seq) {
+  if (!seq || typeof seq !== 'object') throw new Error('no sequence');
+  const R = resolver(seq);
+  const T = (v, d) => (v == null ? d : R.time(v));
+  const num = (v, d) => (typeof v === 'number' && isFinite(v) ? v : d);
+  const envOf = (v) => (v ? { in: T(v.in, 0), fadeIn: num(v.fadeIn, 0), out: T(v.out, Infinity), fadeOut: num(v.fadeOut, 0), amount: num(v.amount, 1) } : null);
+  const fps = num(seq.fps, 60);
+  const seg = (s) => ({ id: s.id, shot: s.shot, still: s.still, t0: T(s.t0), lead: num(s.lead, 0), start: num(s.start, 0), xf: s.xf == null ? null : num(s.xf, null), cursor: Array.isArray(s.cursor) ? s.cursor.map(Number) : null });
+  const keys = (list) => (list || []).map((k) => ({ ...k, t: T(k.t) }));
+  const b = seq.browser || {}; const ph = seq.phone || null;
+  const bKeys = keys(b.camera); const pKeys = ph ? keys(ph.camera) : [];
+  if (!bKeys.length) throw new Error('browser.camera needs at least one keyframe');
+  const anchors = {};
+  Object.keys(seq.anchors || {}).forEach((n) => { anchors[n] = R.anchor(n); });
+  const mo = seq.mosaic || {};
+  const fx = seq.fx || {};
+  const hud = seq.hud || {};
+  return {
+    fps, duration: num(seq.duration, 10), crossfade: num(seq.crossfade, 0.34), anchors,
+    segs: (seq.segments || []).map(seg),
+    phoneSeg: ph ? seg(ph) : null,
+    browserTrack: track(bKeys), bKeys,
+    phoneTrack: pKeys.length ? track(pKeys) : null, pKeys,
+    loadbar: b.loadbar ? { in: T(b.loadbar.in), out: T(b.loadbar.out), fadeOut: num(b.loadbar.fadeOut, 0.3) } : null,
+    dim: envOf(b.dim), halo: { base: num((b.halo || {}).base, 0.85), night: num((b.halo || {}).night, 0.45) },
+    glow: (seq.glow || []).map(envOf),
+    captions: (seq.captions || []).map((c) => ({ id: c.id, in: T(c.in), out: T(c.out), outDur: num(c.outDur, 0.55) })),
+    chips: (seq.chips || []).map((c) => ({ id: c.id, in: T(c.in), out: T(c.out), sw: T(c.switchAt, Infinity), from: num(c.from, 0), to: num(c.to, 1) })),
+    title: seq.title ? { in: T(seq.title.in, 0), out: T(seq.title.out), outDur: num(seq.title.outDur, 0.85) } : null,
+    end: seq.end ? { in: T(seq.end.in) } : null,
+    hud: { in: T(hud.in, 0), fadeIn: num(hud.fadeIn, 1), out: T(hud.out, Infinity), fadeOut: num(hud.fadeOut, 0.6),
+      chapters: (hud.chapters || []).map((v) => T(v)), p0: T(hud.progressIn, 0), p1: T(hud.progressOut, num(seq.duration, 10)) },
+    mosaic: {
+      drift: num(mo.drift, 34), tiltX: num(mo.tiltX, 50), tiltZ: num(mo.tiltZ, -30),
+      open: mo.open ? { ...envOf(mo.open), opacity: num(mo.open.opacity, 0.62), zoomRate: num(mo.open.zoomRate, 0),
+        push: mo.open.push ? { in: T(mo.open.push.in), dur: num(mo.open.push.dur, 1), amount: num(mo.open.push.amount, 0) } : null } : null,
+      close: mo.close ? { in: T(mo.close.in), fadeIn: num(mo.close.fadeIn, 1.6), opacity: num(mo.close.opacity, 0.38), scale: num(mo.close.scale, 1),
+        settle: mo.close.settle ? { in: T(mo.close.settle.in), dur: num(mo.close.settle.dur, 1), amount: num(mo.close.settle.amount, 0) } : null } : null,
+    },
+    terrain: seq.ambient && seq.ambient.terrain ? { ...envOf(seq.ambient.terrain), dim: envOf(seq.ambient.terrain.dim),
+      horizon: num(seq.ambient.terrain.horizon, 560), flow: num(seq.ambient.terrain.flow, 0.6) } : null,
+    orb: seq.ambient && seq.ambient.orb ? { ...envOf(seq.ambient.orb), x: num(seq.ambient.orb.x, 470), y: num(seq.ambient.orb.y, 300) } : null,
+    // block moods over time: [{ t, c: "#hex", e? }] (the site's per-block accents); default the Featured cyan
+    mood: (() => { const k = ((seq.ambient && seq.ambient.mood) || [{ t: 0, c: '#00f0ff' }]).map((m) => { const [r, g, b] = hexRgb(m.c); return { t: T(m.t), e: m.e || 'inOutSine', r, g, b }; }); return track(k); })(),
+    blocks: StageBlocks.collect(seq, T),
+    bug: seq.bug ? { in: T(seq.bug.in, 0), fadeIn: num(seq.bug.fadeIn, 0.6), out: T(seq.bug.out, Infinity), fadeOut: num(seq.bug.fadeOut, 0.4) } : null,
+    hasHud: !!seq.hud,
+    fx: {
+      fadeIn: fx.fadeIn ? { in: T(fx.fadeIn.in), dur: num(fx.fadeIn.dur, 0.9) } : null,
+      fadeOut: fx.fadeOut ? { in: T(fx.fadeOut.in), dur: num(fx.fadeOut.dur, 1) } : null,
+      flashes: (fx.flashes || []).map((f) => ({ at: T(f.at), dur: num(f.dur, 0.9), x: num(f.x, 50), y: num(f.y, 20), amount: num(f.amount, 0.08) })),
+    },
+  };
+}
+
+// DOM built from the sequence: captions, chips and the texts of the title, HUD, browser and end card
+function buildCaption(c) {
+  const el = h('div', `cap ${c.layout === 'top' ? 'top' : c.layout === 'v' ? 'v' : 'side'} abs`);
+  el.dataset.id = c.id;
+  el.style.cssText = `left:${c.x}px;top:${c.y}px;width:${c.w}px`;
+  const kick = h('div', 'kick', [h('span', 'num', [String(c.num == null ? '' : c.num)]), h('span', 'lbl', [String(c.kicker == null ? '' : c.kicker)])]);
+  // a line that is entirely {class:text} styles the line's own span (gradient text spans the whole line box)
+  const line = (txt) => {
+    const whole = /^\{([\w-]+):([^{}]+)\}$/.exec(String(txt));
+    const s = document.createElement('span');
+    if (whole) { s.className = whole[1]; s.textContent = whole[2]; return h('span', 'ln', [s]); }
+    return h('span', 'ln', [rich(s, txt)]);
+  };
+  const h2 = h('h2', '', (c.title || []).map(line));
+  if (c.size) h2.style.fontSize = `${c.size}px`;
+  el.append(kick, h2);
+  if (c.squiggle !== 0) {
+    const sq = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    sq.setAttribute('class', 'squig'); sq.setAttribute('viewBox', '0 0 300 22'); sq.setAttribute('preserveAspectRatio', 'none');
+    sq.style.width = `${c.squiggle || 300}px`;
+    sq.innerHTML = '<path d="M5 12c24-9 49 8 75 0s50-8 74 0 49 8 73 0 46-6 68 2" pathLength="100"/>';
+    el.append(sq);
+  }
+  if (c.body && c.body.length) {
+    const p = h('p', '', c.body.map(line));
+    if (c.bodySize) p.style.fontSize = `${c.bodySize}px`;
+    el.append(p);
+  }
+  return el;
+}
+
+function buildChip(c) {
+  const el = h('div', 'abs chip');
+  el.dataset.id = c.id;
+  el.style.cssText = `${c.align === 'right' ? 'right' : 'left'}:${c.x}px;top:${c.y}px`;
+  const seg = h('div', 'seg', [h('div', 'pill')]);
+  (c.items || []).forEach((it) => {
+    const s = document.createElement('span');
+    s.style.width = `${it.w}px`;
+    if (it.icon && ICONS[it.icon]) s.innerHTML = ICONS[it.icon];
+    s.append(String(it.label == null ? '' : it.label));
+    seg.append(s);
+  });
+  el.append(seg);
+  return el;
+}
+
+function buildDom(seq) {
+  $('#caps').replaceChildren(...(seq.captions || []).map(buildCaption));
+  $('#chips').replaceChildren(...(seq.chips || []).map(buildChip));
+  M.capEls = [...$('#caps').children];
+  M.chipEls = [...$('#chips').children];
+
+  const ti = seq.title || {};
+  $('#tKick .num').textContent = ti.num || '';
+  $('#tKick > span:last-child').textContent = ti.kicker || '';
+  $('#tWord').style.fontSize = `${ti.wordSize || 196}px`;
+  tChars = splitChars($('#tWord'), wordParts(ti.word));
+  rich($('#tSub'), ti.sub || '');
+  $('#tMeta').replaceChildren(...(ti.meta || []).map((m) => rich(document.createElement('span'), m)));
+
+  const en = seq.end || {};
+  $('#eWord').style.fontSize = `${en.wordSize || 164}px`;
+  eChars = splitChars($('#eWord'), wordParts(en.word));
+  rich($('#eTag'), en.tag || '');
+  $('#eUrl').textContent = en.url || '';
+  rich($('#eBy span'), en.by || '');
+
+  const bug = seq.bug || {};
+  rich($('#bugWord'), bug.word || '');
+  $('#bugTag').textContent = bug.tag || '';
+  $('#bugTag').style.display = bug.tag ? '' : 'none';
+
+  const hud = seq.hud || {};
+  rich($('#hudWord'), hud.word || '');
+  $('#hudTag').textContent = hud.tagline || '';
+  $('#bUrl').textContent = (seq.browser || {}).url || '';
+  $('#ptime').textContent = (seq.phone && seq.phone.time) || '16:30';
+  $('#grain').style.opacity = (seq.fx || {}).grain == null ? '' : seq.fx.grain;
+  const mo = seq.mosaic || {};
+  buildMosaic(mo.cols || 7, mo.rows || 6);
+}
+
+// decode everything a frame may need up front, so a render never waits on a first-time decode
+const decoded = new Set();
+function preload(urls) {
+  return Promise.all(urls.filter((u) => u && !decoded.has(u)).map((u) => {
+    decoded.add(u);
+    const i = new Image(); i.src = u; return i.decode().catch(() => {});
+  }));
+}
+
+// opts.wait = false (editor): start decoding new images but don't wait for them; render.cjs waits
+async function apply(seq, opts = {}) {
+  await document.fonts.ready;
+  const next = compile(seq);          // throws on a bad sequence; the last good one stays live
+  M = next; SEQ = seq;
+  buildDom(seq);
+  await StageBlocks.mount($('#blocks'), M.blocks, { w: 1080, h: 1920 });
+  window.DURATION = M.duration;
+  const tiles = [...document.querySelectorAll('#plane .tile')].map((t) => { const m = /url\("(.+)"\)/.exec(t.style.backgroundImage); return m && m[1]; });
+  const loading = preload([...tiles, ...M.segs.filter((s) => s.still).map((s) => s.still)]);
+  if (opts.wait !== false) await loading;
+  return { duration: M.duration, anchors: M.anchors };
+}
+
+// ---------------------------------------------------------------------------
+function segFrame(seg, t) {
+  const m = META[seg.shot]; const n = m ? m.frames.length : 1;
+  const i = seg.start + Math.round((t - seg.t0 - seg.lead) * footFps(seg.shot));
+  return clamp(i, seg.start, n - 1);
+}
+
+function applyLayer(layer, seg, t, opacity) {
+  layer.style.opacity = opacity;
+  if (opacity <= 0) return null;
+  const cur = layer.querySelector('.cursor');
+  const r1 = layer.querySelector('.ripple');
+  const r2 = layer.querySelector('.ripple2');
+  const grab = layer.querySelector('.grab');
+  if (seg.still) {
+    setImg(layer.querySelector('img'), seg.still);
+    [cur, r1, r2, grab].filter(Boolean).forEach((e) => { e.style.opacity = 0; });
+    return seg.still;
+  }
+  const fi = segFrame(seg, t);
+  const url = frameUrl(seg.shot, fi);
+  setImg(layer.querySelector('img'), url);
+  const m = META[seg.shot];
+  const fr = m && m.frames[fi];
+  const ft = fi / footFps(seg.shot);
+  let ca = 0;
+  const win = seg.cursor || (m && m.cursor);   // a segment may override the shot's cursor window (footage s)
+  if (win && fr && fr.m) {
+    const [a, b] = win;
+    ca = Math.min(P(ft, a, a + 0.3, E.outCubic), 1 - P(ft, b - 0.3, b, E.inCubic));
+  }
+  let press = 1; let rip = -1;
+  (m && m.clicks || []).forEach((c) => {
+    const d = ft - c;
+    if (d >= -0.06 && d < 0.22) press = Math.min(press, 1 - 0.16 * Math.sin(clamp((d + 0.06) / 0.28) * Math.PI));
+    if (d >= 0 && d < 0.7) rip = d / 0.7;
+  });
+  // drags: the cursor presses in and a soft ring follows it while the button is held
+  let held = 0;
+  (m && m.drags || []).forEach(([a, b]) => { held = Math.max(held, Math.min(P(ft, a - 0.05, a + 0.15, E.outCubic), 1 - P(ft, b, b + 0.25, E.inCubic))); });
+  if (held > 0) press = Math.min(press, 1 - 0.1 * held);
+  if (fr && fr.m && ca > 0) {
+    cur.style.opacity = ca;
+    cur.style.transform = `translate(${fr.m[0] - 6}px, ${fr.m[1] - 3}px) scale(${press})`;
+    if (grab) grab.style.opacity = held * ca;
+    if (grab) grab.style.transform = `translate(${fr.m[0]}px, ${fr.m[1]}px) scale(${0.7 + 0.3 * held})`;
+    if (rip >= 0) {
+      const e = E.outCubic(rip);
+      r1.style.opacity = (1 - rip) * 0.9 * ca;
+      r1.style.transform = `translate(${fr.m[0]}px, ${fr.m[1]}px) scale(${0.25 + e * 0.9})`;
+      r2.style.opacity = (1 - E.outCubic(clamp(rip * 1.6))) * 0.6 * ca;
+      r2.style.transform = `translate(${fr.m[0]}px, ${fr.m[1]}px) scale(${0.6 + e * 0.6})`;
+    } else { r1.style.opacity = 0; r2.style.opacity = 0; }
+  } else { cur.style.opacity = 0; r1.style.opacity = 0; r2.style.opacity = 0; if (grab) grab.style.opacity = 0; }
+  return url;
+}
+
+function renderBrowser(t) {
+  const st = M.browserTrack(t);
+  const el = $('#browser');
+  place(el, st);
+  el.style.visibility = st.o <= 0.001 ? 'hidden' : 'visible';
+  if (st.o <= 0.001) return;
+
+  const SEGS = M.segs;
+  const LA = $('#LA'), LB = $('#LB');
+  if (!SEGS.length) { applyLayer(LA, { still: '' }, t, 0); applyLayer(LB, { still: '' }, t, 0); return; }
+  let idx = 0;
+  for (let i = 0; i < SEGS.length; i++) if (t >= SEGS[i].t0) idx = i;
+  const cur = SEGS[idx];
+  const prev = SEGS[idx - 1];
+  const x = prev ? P(t, cur.t0, cur.t0 + (cur.xf != null ? cur.xf : M.crossfade), E.inOutSine) : 1;   // xf 0 = a hard cut
+  if (prev && x < 1) {
+    applyLayer(LA, prev, t, 1);
+    applyLayer(LB, cur, t, x);
+  } else {
+    applyLayer(LA, cur, t, 1);
+    applyLayer(LB, cur, t, 0);
+  }
+
+  // page-load bar while the first page arrives
+  const lb = $('#loadbar'); const L = M.loadbar;
+  lb.style.width = L ? `${P(t, L.in, L.out, E.outCubic) * 100}%` : '0%';
+  lb.style.opacity = L ? 1 - P(t, L.out, L.out + L.fadeOut) : 0;
+
+  // the halo brightens while the theme glow is up (the light theme throws more light)
+  $('#bhalo').style.opacity = M.halo.base + M.halo.night * NIGHT(t);
+  // dim while receding behind the phone
+  $('#bdim').style.opacity = M.dim ? M.dim.amount * env(t, M.dim) : 0;
+}
+
+// theme glow: the sum of the glow envelopes (MonteGigs: the site switched to Daylight in the footage)
+const NIGHT = (t) => M.glow.reduce((a, v) => a + env(t, v), 0);
+
+function renderPhone(t) {
+  const el = $('#phone');
+  if (!M.phoneTrack || !M.phoneSeg) { el.style.visibility = 'hidden'; return; }
+  const st = M.phoneTrack(t);
+  const vis = t >= M.pKeys[0].t && st.o > 0.001;
+  el.style.visibility = vis ? 'visible' : 'hidden';
+  if (!vis) return;
+  place(el, st);
+  const seg = M.phoneSeg;
+  const fi = segFrame(seg, t);
+  setImg($('#pimg'), frameUrl(seg.shot, fi));
+  // touch feedback: a soft press circle at each tap
+  const m = META[seg.shot]; const tap = $('#tap');
+  const fps = footFps(seg.shot);
+  const ft = fi / fps;
+  let shown = false;
+  (m && m.clicks || []).forEach((c) => {
+    const d = ft - c;
+    if (d >= -0.08 && d < 0.5 && !shown) {
+      const fr = m.frames[Math.round(c * fps)];
+      if (!fr || !fr.m) return;
+      shown = true;
+      const k = clamp((d + 0.08) / 0.58);
+      tap.style.opacity = d < 0 ? 0.9 * (1 - (-d / 0.08)) : 0.9 * (1 - E.outCubic(clamp(d / 0.5)));
+      tap.style.transform = `translate(${fr.m[0]}px, ${fr.m[1]}px) scale(${0.55 + 0.6 * E.outCubic(k)})`;
+    }
+  });
+  if (!shown) tap.style.opacity = 0;
+}
+
+// ---------------------------------------------------------------------------
+// captions
+function capAnim(el, t, tin, tout, opts = {}) {
+  const outDur = opts.outDur || 0.55;
+  const vis = t > tin - 0.01 && t < tout + outDur;
+  el.style.visibility = vis ? 'visible' : 'hidden';
+  if (!vis) return;
+  const out = P(t, tout, tout + outDur, E.inCubic);
+  el.style.opacity = 1 - out;
+  el.style.transform = `translateY(${-24 * out}px)`;
+  el.style.filter = out > 0 ? `blur(${out * 6}px)` : '';
+  const kick = el.querySelector('.kick');
+  const kp = P(t, tin, tin + 0.7, E.outExpo);
+  kick.style.opacity = kp;
+  kick.style.transform = `translateY(${(1 - kp) * 14}px)`;
+  const bar = kick.querySelector('.bar');
+  if (bar) bar.style.transform = `scaleX(${P(t, tin + 0.1, tin + 0.9, E.outExpo)})`;
+  const sq = el.querySelector('.squig path');
+  if (sq) { sq.style.strokeDasharray = '100 100'; sq.style.strokeDashoffset = `${100 - 100 * P(t, tin + 0.6, tin + 1.35, E.inOutCubic)}`; }
+  el.querySelectorAll('h2 .ln > span').forEach((s, i) => {
+    const p = P(t, tin + 0.12 + i * 0.09, tin + 1.05 + i * 0.09, E.outExpo);
+    s.style.transform = `translateY(${(1 - p) * 112}%)`;
+  });
+  el.querySelectorAll('p .ln > span').forEach((s, i) => {
+    const p = P(t, tin + 0.4 + i * 0.07, tin + 1.3 + i * 0.07, E.outExpo);
+    s.style.transform = `translateY(${(1 - p) * 112}%)`;
+    s.style.opacity = p;
+  });
+}
+
+function renderSeg(el, t, tin, tout, activeIdx, switchT) {
+  const vis = t > tin - 0.01 && t < tout + 0.5;
+  el.style.visibility = vis ? 'visible' : 'hidden';
+  if (!vis) return;
+  const a = P(t, tin, tin + 0.6, E.outExpo) * (1 - P(t, tout, tout + 0.5, E.inCubic));
+  el.style.opacity = a;
+  el.style.transform = `translateY(${(1 - P(t, tin, tin + 0.6, E.outExpo)) * -12}px)`;
+  const spans = [...el.querySelectorAll('.seg span')];
+  const pill = el.querySelector('.pill');
+  if (!spans.length) return;
+  const lefts = []; let x = 5;
+  spans.forEach((s) => { lefts.push(x); x += s.offsetWidth; });
+  const p = P(t, switchT, switchT + 0.5, E.inOutQuart);
+  const from = clamp(activeIdx[0], 0, spans.length - 1), to = clamp(activeIdx[1], 0, spans.length - 1);
+  pill.style.left = `${lerp(lefts[from], lefts[to], p)}px`;
+  pill.style.width = `${lerp(spans[from].offsetWidth, spans[to].offsetWidth, p)}px`;
+  spans.forEach((s, i) => {
+    const on = from === to ? (i === from ? 1 : 0) : i === from ? 1 - p : i === to ? p : 0;
+    s.classList.toggle('on', on > 0.5);   // the checked chip inverts to ink (paper label)
+  });
+}
+
+// ---------------------------------------------------------------------------
+// seeded motes: dust in the afternoon light by day; in the evening a third of them are fireflies, the rest faint stars
+const MOTES = Array.from({ length: 160 }, (_, i) => ({ x: hash(i * 3.1 + 1), y: hash(i * 7.7 + 2), r: 1.4 + hash(i * 1.3 + 3) * 3.4, sp: 0.3 + hash(i * 5.9 + 4), ph: hash(i * 9.1 + 5) * 6.283, fly: i % 3 === 0 }));
+function renderBg(t) {
+  // --night (0 day … 1 evening) drives every themed colour on the stage: the sum of the sequence's glow envelopes
+  const nt = clamp(NIGHT(t));
+  $('#stage').style.setProperty('--night', nt.toFixed(4));
+  $('#bgNight').style.opacity = nt;
+  $('#vignetteN').style.opacity = nt;
+  // a slow patch of window light over the table (day), the reading lamp's pool behind the browser (evening)
+  const g1 = $('#g1'), g2 = $('#g2'), g3 = $('#g3');
+  g1.style.left = `${900 + Math.sin(t * 0.13) * 90}px`; g1.style.top = `${180 + Math.cos(t * 0.11) * 80}px`;
+  g1.style.background = `radial-gradient(circle, rgba(255,246,220,${(0.8 * (1 - nt)).toFixed(3)}) 0%, rgba(255,246,220,0) 62%)`;
+  g2.style.left = `${160 + Math.cos(t * 0.17) * 90}px`; g2.style.top = `${1600 + Math.sin(t * 0.19) * 110}px`;
+  g2.style.background = `radial-gradient(circle, rgba(246,195,67,${(0.15 * (1 - nt) + 0.05 * nt).toFixed(3)}) 0%, rgba(246,195,67,0) 60%)`;
+  g3.style.left = `${540 + Math.sin(t * 0.09) * 120}px`; g3.style.top = '1100px';
+  g3.style.background = `radial-gradient(circle, rgba(246,195,67,${(0.17 * nt).toFixed(3)}) 0%, rgba(246,195,67,0) 58%)`;
+
+  const amb = SEQ && SEQ.ambient && SEQ.ambient.motes != null ? +SEQ.ambient.motes : 1;
+  const g = TER.ctx;
+  g.clearRect(0, 0, 1080, 1920);
+  if (amb <= 0) return;
+  for (const m of MOTES) {
+    const drift = t * (6 + m.sp * 10);
+    const x = ((m.x * 1080 + drift * 0.6 + Math.sin(t * 0.3 * m.sp + m.ph) * 26) % 1120 + 1120) % 1120 - 20;
+    const y = ((m.y * 1920 - drift * 0.35 + Math.cos(t * 0.24 * m.sp + m.ph) * 18) % 1960 + 1960) % 1960 - 20;
+    const tw = 0.55 + 0.45 * Math.sin(t * (0.8 + m.sp) + m.ph);
+    const ad = (1 - nt) * amb * (0.14 + 0.26 * tw);
+    if (ad > 0.01) { g.fillStyle = `rgba(226,150,62,${ad.toFixed(3)})`; g.beginPath(); g.arc(x, y, m.r, 0, 6.2832); g.fill(); }
+    const an = nt * amb * (m.fly ? 0.35 + 0.65 * tw : 0.16 + 0.2 * tw);
+    if (an > 0.01) {
+      if (m.fly) {
+        const R = m.r * 7; const gr = g.createRadialGradient(x, y, 0, x, y, R);
+        gr.addColorStop(0, `rgba(246,195,67,${(an * 0.5).toFixed(3)})`); gr.addColorStop(1, 'rgba(246,195,67,0)');
+        g.fillStyle = gr; g.fillRect(x - R, y - R, R * 2, R * 2);
+      }
+      g.fillStyle = m.fly ? `rgba(255,232,150,${an.toFixed(3)})` : `rgba(247,236,214,${an.toFixed(3)})`;
+      g.beginPath(); g.arc(x, y, m.fly ? m.r * 0.9 : m.r * 0.5, 0, 6.2832); g.fill();
+    }
+  }
+}
+
+function renderMosaic(t) {
+  const O = M.mosaic.open, C = M.mosaic.close;
+  const ao = O ? env(t, O, E.outCubic, E.inOutCubic) * O.opacity : 0;
+  const ac = C ? P(t, C.in, C.in + C.fadeIn, E.inOutCubic) * C.opacity : 0;
+  const a = ao + ac;
+  const vis = a > 0.002;
+  $('#mosaic').style.visibility = vis ? 'visible' : 'hidden';
+  $('#mosaicShade').style.visibility = vis ? 'visible' : 'hidden';
+  if (!vis) return;
+  $('#mosaic').style.opacity = a;
+  $('#mosaicShade').style.opacity = Math.min(1, a * 1.6);
+  // opener: push in while it fades; closer: settle back while it fades in
+  const split = O && C ? (O.out + O.fadeOut + C.in) / 2 : C ? -Infinity : Infinity;
+  let scl;
+  if (t < split) scl = 1.0 + (O.push ? P(t, O.push.in, O.push.in + O.push.dur, E.inCubic) * O.push.amount : 0) + t * O.zoomRate;
+  else scl = C.scale - (C.settle ? P(t, C.settle.in, C.settle.in + C.settle.dur, E.outCubic) * C.settle.amount : 0);
+  $('#plane').style.transform = `rotateX(${M.mosaic.tiltX}deg) rotateZ(${M.mosaic.tiltZ}deg) scale(${scl})`;
+  cols.forEach((c, i) => {
+    const dir = i % 2 ? 1 : -1;
+    c.style.transform = `translateY(${-980 + dir * (t * M.mosaic.drift) + (i % 3) * 90}px)`;
+  });
+}
+
+function renderMark(el, t, t0) {
+  // the book mark pops onto the table (a pressed-paper tile: overshoot, a small turn)
+  const p = P(t, t0, t0 + 0.7, E.outBack);
+  el.style.opacity = P(t, t0, t0 + 0.2);
+  el.style.transform = `scale(${0.5 + 0.5 * p}) rotate(${(1 - p) * -14}deg)`;
+}
+
+function renderTitle(t) {
+  const T = M.title;
+  const vis = !!T && t < T.out + T.outDur;
+  $('#title').style.visibility = vis ? 'visible' : 'hidden';
+  if (!vis) return;
+  const t0 = T.in;
+  const out = P(t, T.out, T.out + T.outDur, E.inCubic);
+  $('#title').style.opacity = 1 - out;
+  $('#title').style.transform = `translateY(${-30 * out}px) scale(${1 + out * 0.04})`;
+  $('#title').style.filter = out > 0 ? `blur(${out * 10}px)` : '';
+  const k = P(t, t0 + 0.1, t0 + 0.8, E.outBack);
+  $('#tKick').style.opacity = P(t, t0 + 0.1, t0 + 0.4); $('#tKick').style.transform = `translateY(${(1 - k) * 26}px)`;
+  // the letters drop onto the table one by one, like stamped type, each with a small overshoot and turn
+  tChars.forEach((c, i) => {
+    const a = t0 + 0.14 + i * 0.055;
+    const p = P(t, a, a + 0.6, E.outBack);
+    c.style.opacity = P(t, a, a + 0.14);
+    c.style.transform = `translateY(${(1 - p) * -70}px) rotate(${(1 - p) * (i % 2 ? 9 : -9)}deg)`;
+  });
+  const sq = $('#tLine path');
+  sq.style.strokeDasharray = '100 100'; sq.style.strokeDashoffset = `${100 - 100 * P(t, t0 + 1.0, t0 + 1.65, E.inOutCubic)}`;
+  const s = P(t, t0 + 1.15, t0 + 1.9, E.outExpo);
+  $('#tSub').style.opacity = s; $('#tSub').style.transform = `translateY(${(1 - s) * 18}px)`;
+  [...$('#tMeta').children].forEach((el, i) => {
+    const a = t0 + 1.4 + i * 0.1;
+    el.style.opacity = P(t, a, a + 0.2); el.style.transform = `translateY(${(1 - P(t, a, a + 0.55, E.outBack)) * 18}px)`;
+  });
+}
+
+function renderEnd(t) {
+  const vis = !!M.end && t > M.end.in;
+  $('#end').style.visibility = vis ? 'visible' : 'hidden';
+  if (!vis) return;
+  const t0 = M.end.in;
+  renderMark($('#eMark'), t, t0 + 0.05);
+  eChars.forEach((c, i) => {
+    const a = t0 + 0.18 + i * 0.04;
+    c.style.opacity = P(t, a, a + 0.12);
+    c.style.transform = `translateY(${(1 - P(t, a, a + 0.55, E.outBack)) * 60}px)`;
+  });
+  const g = P(t, t0 + 0.75, t0 + 1.35, E.outBack);
+  $('#eTag').style.opacity = P(t, t0 + 0.75, t0 + 1.0); $('#eTag').style.transform = `translateY(${(1 - g) * 22}px)`;
+  const u = P(t, t0 + 1.0, t0 + 1.6, E.outBack);
+  $('#eUrl').style.opacity = P(t, t0 + 1.0, t0 + 1.2); $('#eUrl').style.transform = `translateY(${(1 - u) * 20}px) scale(${0.9 + 0.1 * u})`;
+  $('#eBy').style.opacity = P(t, t0 + 1.3, t0 + 1.9, E.outExpo);
+}
+
+// the brand bug: the mark tile pops onto the table, the wordmark rises in beside it
+function renderBug(t) {
+  const b = M.bug; const el = $('#bug');
+  if (!b) { el.style.opacity = 0; return; }
+  el.style.opacity = env(t, b);
+  el.style.transform = `translateY(${(1 - P(t, b.in, b.in + b.fadeIn, E.outExpo)) * -14}px)`;
+  renderMark($('#bug img'), t, b.in);
+}
+
+// the scrim follows whichever caption (or the bug) is most visible; a gap shorter than scrim.bridge (s, default 1.2)
+// between two captions stays covered until the next caption's own ramp is complete, so the browser's top edge never
+// flashes up between beats
+function renderScrim(t) {
+  let sc = M.bug ? env(t, M.bug) : 0;
+  M.captions.forEach((c) => { sc = Math.max(sc, P(t, c.in - 0.15, c.in + 0.35) * (1 - P(t, c.out, c.out + c.outDur))); });
+  const bridge = SEQ.scrim && SEQ.scrim.bridge != null ? SEQ.scrim.bridge : 1.2;
+  const byIn = M.captions.slice().sort((a, b) => a.in - b.in);
+  for (let i = 1; i < byIn.length; i++) {
+    const a = byIn[i - 1], b = byIn[i];
+    if (b.in - a.out < bridge && t >= a.out && t <= b.in + 0.35) sc = 1;
+  }
+  $('#capScrim').style.opacity = sc;
+  $('#capScrim').style.height = `${(SEQ.scrim && SEQ.scrim.height) || 900}px`;
+}
+
+function renderHud(t) {
+  // fade during close-ups (browser scale above the resting ~0.9)
+  const H = M.hud;
+  const zoom = clamp((1.0 - M.browserTrack(t).s) / 0.08);
+  const a = M.hasHud ? P(t, H.in, H.in + H.fadeIn) * (1 - P(t, H.out, H.out + H.fadeOut)) * zoom : 0;
+  $('#hud').style.opacity = a;
+  const n = H.chapters.length;
+  let c = 0;
+  for (let i = 0; i < n; i++) if (t >= H.chapters[i]) c = i;
+  $('#chap').textContent = `${String(c + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}`;
+  $('#progI').style.width = `${clamp((t - H.p0) / (H.p1 - H.p0)) * 100}%`;
+}
+
+function renderFx(t) {
+  const F = Math.round(t * M.fps);
+  $('#grain').style.backgroundPosition = `${Math.floor(hash(F) * 256)}px ${Math.floor(hash(F + 99) * 256)}px`;
+  const fi = M.fx.fadeIn, fo = M.fx.fadeOut;
+  $('#black').style.opacity = (fi ? 1 - P(t, fi.in, fi.in + fi.dur, E.outCubic) : 0) + (fo ? P(t, fo.in, fo.in + fo.dur, E.inOutSine) : 0);
+  // a soft bloom at a click (the theme switch as daylight sweeps in)
+  let best = null; let amt = 0;
+  M.fx.flashes.forEach((f) => {
+    const v = f.amount * Math.sin(P(t, f.at, f.at + f.dur, E.lin) * Math.PI);
+    if (!best || v > amt) { best = f; amt = v; }
+  });
+  $('#flash').style.setProperty('--fx', `${best ? best.x : 50}%`);
+  $('#flash').style.setProperty('--fy', `${best ? best.y : 0}%`);
+  $('#flash').style.opacity = best ? amt : 0;
+}
+
+// ---------------------------------------------------------------------------
+async function render(t) {
+  if (!M) return;
+  pending = [];
+  renderBg(t);
+  renderMosaic(t);
+  renderTitle(t);
+  renderBrowser(t);
+  renderPhone(t);
+  M.captions.forEach((c, i) => M.capEls[i] && capAnim(M.capEls[i], t, c.in, c.out, { outDur: c.outDur }));
+  M.chips.forEach((c, i) => M.chipEls[i] && renderSeg(M.chipEls[i], t, c.in, c.out, [c.from, c.to], c.sw));
+  renderScrim(t);
+  renderBug(t);
+  renderEnd(t);
+  StageBlocks.render(t);
+  renderHud(t);
+  renderFx(t);
+  await Promise.all(pending);
+}
+
+window.render = render;
+if (window.CLEAN) {
+  const st = document.createElement('style');
+  st.textContent = '.cap, #hud, .chip, #bug { display: none !important; }';
+  document.head.appendChild(st);
+}
+
+// editor hooks: apply a sequence live, read camera states and element boxes
+window.stage = {
+  apply,
+  icons: Object.keys(ICONS),
+  resolver: (seq) => { const r = resolver(seq); return { time: r.time, anchor: r.anchor }; },
+  time: (v) => resolver(SEQ).time(v),
+  camera: (which, t) => { const tr = which === 'phone' ? M.phoneTrack : M.browserTrack; return tr ? { ...tr(t) } : null; },
+  boxes: () => {
+    const box = (el) => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height, vis: getComputedStyle(el).visibility === 'visible' && +getComputedStyle(el).opacity > 0.02 }; };
+    return { captions: (M ? M.capEls : []).map(box), chips: (M ? M.chipEls : []).map((el) => box(el.querySelector('.seg') || el)) };
+  },
+  get model() { return M; },
+};
+
+// sequence: injected by render.cjs (window.SEQ), else reel.json next to this file; the editor applies its own
+function loadJSON(url) {
+  const x = new XMLHttpRequest();
+  x.open('GET', url, false);
+  x.send();
+  if (x.status && x.status !== 200) throw new Error(`${url}: HTTP ${x.status}`);
+  return JSON.parse(x.responseText);
+}
+window.ready = (async () => {
+  await document.fonts.ready;
+  await Promise.all(['800 78px Literata', 'italic 800 78px Literata', '850 210px Literata', 'italic 850 210px Literata', '420 23px Literata', '520 46px Literata',
+    '800 18px Nunito', '900 21px Nunito', '800 22px Nunito', '900 26px Nunito', '700 40px Caveat', '700 50px Caveat', '800 92px Literata', 'italic 800 92px Literata', '850 46px Literata', 'italic 850 46px Literata']
+    .map((f) => document.fonts.load(f, 'AaДайпочитать!…’—Жж')));
+  if (!window.EDITOR) await apply(window.SEQ || loadJSON('reel.json'));
+  return true;
+})();
+</script>
+</body>
+</html>

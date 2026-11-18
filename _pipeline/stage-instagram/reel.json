@@ -1,0 +1,82 @@
+{
+  "format": "stage-sequence/1",
+  "name": "Дай почитать! — Instagram reel",
+  "canvas": { "w": 1080, "h": 1920 },
+  "fps": 60,
+  "duration": 33.6,
+  "crossfade": 0.3,
+  "audio": { "src": "stage-instagram/film-reel/audio/mix.wav", "t0": 0, "volume": 1 },
+  "render": { "frames": "frames_reel", "video": "../showcase/dai-pochitat-site/instagram", "name": "dai-pochitat_reel", "poster": 174 },
+  "anchors": {
+    "lampClick": { "seg": "book2", "at": 12.0 },
+    "catClick": { "seg": "casting", "at": 2.4 },
+    "voteClick": { "seg": "casting", "at": 4.8 },
+    "magicClick": { "seg": "chest", "at": 0.6 },
+    "openClick": { "seg": "chest", "at": 1.2 },
+    "fabClick": { "seg": "chat", "at": 0.6 },
+    "chipClick": { "seg": "chat", "at": 3.6 },
+    "coinTap": { "seg": "phone", "at": 2.4 }
+  },
+  "segments": [
+    { "id": "book", "shot": "book", "t0": 0, "lead": 0, "start": 0, "cursor": [16.9, 17] },
+    { "id": "book2", "shot": "book", "t0": 7.2, "lead": 0, "start": 576, "xf": 0.2 },
+    { "id": "casting", "shot": "casting", "t0": 12.0, "lead": 0, "start": 108, "xf": 0 },
+    { "id": "chest", "shot": "chest", "t0": 16.2, "lead": 0, "start": 18, "xf": 0 },
+    { "id": "chat", "shot": "chat", "t0": 19.8, "lead": 0, "start": 0, "xf": 0 }
+  ],
+  "browser": {
+    "url": "dai-pochitat.app",
+    "halo": { "base": 0, "night": 0.95 },
+    "camera": [
+      { "t": 0, "px": 700, "py": 400, "cx": 540, "cy": 1170, "s": 0.66, "rx": 16, "ry": -9, "rz": 2, "o": 1 },
+      { "t": 1.2, "px": 690, "py": 360, "cx": 540, "cy": 1100, "s": 0.8, "rx": 3, "ry": -2, "rz": 0, "e": "outExpo" },
+      { "t": 3.3, "px": 690, "py": 360, "cx": 540, "cy": 1095, "s": 0.83, "rx": 1, "ry": 0, "e": "inOutSine" },
+      { "t": 3.95, "px": 1000, "py": 430, "cx": 540, "cy": 1120, "s": 1.2, "rx": 0, "e": "inOutQuart" },
+      { "t": 6.95, "px": 1010, "py": 430, "cx": 540, "cy": 1120, "s": 1.26, "e": "inOutSine" },
+      { "t": 7.45, "px": 1000, "py": 420, "cx": 540, "cy": 1130, "s": 1.5, "e": "inOutQuart" },
+      { "t": 9.4, "cx": 540, "cy": 1130, "s": 1.55, "e": "inOutSine" },
+      { "t": 11.8, "cx": 540, "cy": 1130, "s": 1.7, "e": "inOutSine" },
+      { "t": 12.25, "px": 300, "py": 690, "cx": 540, "cy": 1130, "s": 1.75, "e": "inOutQuart" },
+      { "t": 15.8, "px": 300, "py": 740, "cx": 540, "cy": 1130, "s": 1.72, "e": "inOutSine" },
+      { "t": 16.45, "px": 345, "py": 760, "cx": 540, "cy": 1120, "s": 1.5, "e": "inOutQuart" },
+      { "t": 19.5, "px": 345, "py": 860, "cx": 540, "cy": 1120, "s": 1.52, "e": "inOutSine" },
+      { "t": 20.05, "px": 1290, "py": 700, "cx": 540, "cy": 1150, "s": 1.6, "e": "inOutQuart" },
+      { "t": 21.2, "px": 1290, "py": 700, "cx": 540, "cy": 1150, "s": 1.62, "e": "inOutSine" },
+      { "t": 21.9, "px": 1250, "py": 600, "cx": 540, "cy": 1150, "s": 1.9, "e": "inOutQuart" },
+      { "t": 23.7, "px": 1250, "py": 610, "cx": 540, "cy": 1150, "s": 1.92, "e": "inOutSine" },
+      { "t": 24.3, "px": 1250, "py": 610, "cx": 540, "cy": 1000, "s": 1.6, "rx": 8, "o": 0, "e": "inCubic" }
+    ]
+  },
+  "phone": {
+    "id": "phone", "shot": "mobile", "t0": 24.0, "lead": 0, "start": 24, "time": "16:30",
+    "camera": [
+      { "t": 23.85, "px": 207, "py": 456, "cx": 560, "cy": 2600, "s": 1.15, "rx": -12, "ry": 18, "rz": -6, "o": 1 },
+      { "t": 24.7, "cx": 540, "cy": 1230, "s": 1.2, "rx": 0, "ry": 6, "rz": 0, "e": "outExpo" },
+      { "t": 28.6, "cx": 540, "cy": 1215, "s": 1.23, "ry": 2, "e": "inOutSine" },
+      { "t": 29.3, "cx": 540, "cy": 1150, "s": 1.1, "rx": 6, "ry": -8, "o": 0, "e": "inCubic" }
+    ]
+  },
+  "glow": [ { "in": "@lampClick", "fadeIn": 0.55, "out": 11.86, "fadeOut": 0.14 } ],
+  "bug": { "in": 0.1, "fadeIn": 0.6, "out": 6.9, "fadeOut": 0.4, "word": "Дай *почитать*{bang:!}", "tag": "kids’ library" },
+  "scrim": { "height": 900, "bridge": 1.2 },
+  "captions": [
+    { "id": "c0", "layout": "v", "in": 0.3, "out": 3.4, "x": 72, "y": 340, "w": 936, "size": 88, "squiggle": 0, "num": "", "kicker": "A library website for kids & teens",
+      "title": ["A library that", "*opens like a book.*"] },
+    { "id": "c1", "layout": "v", "in": 3.9, "out": 6.95, "x": 72, "y": 340, "w": 936, "size": 92, "squiggle": 0, "num": "1", "kicker": "A 3D pop-up book",
+      "title": ["Scroll, and", "*the pages turn.*"] },
+    { "id": "c2", "layout": "v", "in": 7.35, "out": 11.6, "x": 72, "y": 340, "w": 936, "size": 92, "squiggle": 0, "num": "2", "kicker": "Evening mode",
+      "title": ["Tap the lamp.", "*It’s evening.*"] },
+    { "id": "c3", "layout": "v", "in": 12.15, "out": 15.85, "x": 72, "y": 340, "w": 936, "size": 92, "squiggle": 0, "num": "3", "kicker": "The casting",
+      "title": ["Readers cast", "*the librarian.*"] },
+    { "id": "c4", "layout": "v", "in": 16.35, "out": 19.5, "x": 72, "y": 340, "w": 936, "size": 92, "squiggle": 0, "num": "4", "kicker": "The magic chest",
+      "title": ["Age and mood in,", "*a real book out.*"] },
+    { "id": "c5", "layout": "v", "in": 19.95, "out": 23.75, "x": 72, "y": 340, "w": 936, "size": 92, "squiggle": 0, "num": "5", "kicker": "The librarian",
+      "title": ["Your pick", "*answers back.*"] },
+    { "id": "c6", "layout": "v", "in": 24.15, "out": 28.45, "x": 72, "y": 340, "w": 936, "size": 92, "squiggle": 0, "num": "6", "kicker": "In your pocket",
+      "title": ["Installable.", "*Works offline.*"] }
+  ],
+  "chips": [],
+  "ambient": { "motes": 1 },
+  "fx": { "grain": 0.06, "flashes": [ { "at": "@lampClick", "dur": 1.0, "x": 50, "y": 58, "amount": 0.3 } ] },
+  "outro": { "block": "craft-tower-outro", "in": 28.8, "credit": "Dai pochitat! — a concept by", "bg": ["#1d2443", "#141a30"] }
+}

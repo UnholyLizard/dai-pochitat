@@ -1,0 +1,135 @@
+[
+ {
+  "t": 0.15,
+  "beat": 0.25,
+  "label": "the bug's mark pops",
+  "sfx": "stamp",
+  "gain": 0.22
+ },
+ {
+  "t": 0.95,
+  "beat": 1.58,
+  "label": "the browser lands",
+  "sfx": "woosh",
+  "gain": 0.26
+ },
+ {
+  "t": 4.3,
+  "beat": 7.17,
+  "label": "the page turns",
+  "sfx": "swish",
+  "gain": 0.42
+ },
+ {
+  "t": 5.25,
+  "beat": 8.75,
+  "label": "the room stands up",
+  "sfx": "pop",
+  "gain": 0.26
+ },
+ {
+  "t": 6.0,
+  "beat": 10.0,
+  "label": "the lamp",
+  "sfx": "click",
+  "gain": 0.36
+ },
+ {
+  "t": 6.02,
+  "beat": 10.03,
+  "label": "evening",
+  "sfx": "bloom",
+  "gain": 0.3
+ },
+ {
+  "t": 6.2,
+  "beat": 10.33,
+  "label": "night stamp",
+  "sfx": "coin",
+  "gain": 0.18
+ },
+ {
+  "t": 6.55,
+  "beat": 10.92,
+  "label": "new rank",
+  "sfx": "chime",
+  "gain": 0.2
+ },
+ {
+  "t": 8.4,
+  "beat": 14.0,
+  "label": "cut to chat",
+  "sfx": "woosh",
+  "gain": 0.2
+ },
+ {
+  "t": 9.0,
+  "beat": 15.0,
+  "label": "chat opens",
+  "sfx": "click",
+  "gain": 0.3
+ },
+ {
+  "t": 9.03,
+  "beat": 15.05,
+  "label": "chat opens",
+  "sfx": "pop",
+  "gain": 0.3
+ },
+ {
+  "t": 10.3,
+  "beat": 17.17,
+  "label": "first bubble",
+  "sfx": "blip",
+  "gain": 0.22
+ },
+ {
+  "t": 11.6,
+  "beat": 19.33,
+  "label": "second bubble",
+  "sfx": "blip",
+  "gain": 0.22
+ },
+ {
+  "t": 12.0,
+  "beat": 20.0,
+  "label": "a riddle!",
+  "sfx": "click",
+  "gain": 0.3
+ },
+ {
+  "t": 13.0,
+  "beat": 21.67,
+  "label": "the phone slides in",
+  "sfx": "woosh",
+  "gain": 0.34
+ },
+ {
+  "t": 14.6,
+  "beat": 24.33,
+  "label": "the reader's card",
+  "sfx": "tap",
+  "gain": 0.34
+ },
+ {
+  "t": 14.65,
+  "beat": 24.42,
+  "label": "the reader's card",
+  "sfx": "pop",
+  "gain": 0.28
+ },
+ {
+  "t": 17.9,
+  "beat": 29.83,
+  "label": "the lantern lights",
+  "sfx": "chime",
+  "gain": 0.18
+ },
+ {
+  "t": 18.1,
+  "beat": 30.17,
+  "label": "wordmark",
+  "sfx": "sparkle",
+  "gain": 0.12
+ }
+]

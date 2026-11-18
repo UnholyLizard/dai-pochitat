@@ -1,0 +1,422 @@
+[
+ {
+  "t": 0.32,
+  "beat": 0.53,
+  "label": "title letters land",
+  "sfx": "stamp",
+  "gain": 0.3
+ },
+ {
+  "t": 0.62,
+  "beat": 1.03,
+  "label": "title letters land",
+  "sfx": "stamp",
+  "gain": 0.24
+ },
+ {
+  "t": 0.9,
+  "beat": 1.5,
+  "label": "title letters land",
+  "sfx": "stamp",
+  "gain": 0.2
+ },
+ {
+  "t": 1.0,
+  "beat": 1.67,
+  "label": "squiggle draws",
+  "sfx": "scribble",
+  "gain": 0.2
+ },
+ {
+  "t": 2.95,
+  "beat": 4.92,
+  "label": "browser lands",
+  "sfx": "woosh",
+  "gain": 0.34
+ },
+ {
+  "t": 8.3,
+  "beat": 13.83,
+  "label": "the cover opens",
+  "sfx": "swish",
+  "gain": 0.36
+ },
+ {
+  "t": 9.4,
+  "beat": 15.67,
+  "label": "the house stands up; first stamp",
+  "sfx": "pop",
+  "gain": 0.34
+ },
+ {
+  "t": 9.42,
+  "beat": 15.7,
+  "label": "first stamp",
+  "sfx": "stamp",
+  "gain": 0.26
+ },
+ {
+  "t": 9.52,
+  "beat": 15.87,
+  "label": "coin",
+  "sfx": "coin",
+  "gain": 0.2
+ },
+ {
+  "t": 10.2,
+  "beat": 17.0,
+  "label": "owl found",
+  "sfx": "click",
+  "gain": 0.3
+ },
+ {
+  "t": 10.23,
+  "beat": 17.05,
+  "label": "owl found",
+  "sfx": "pop",
+  "gain": 0.34
+ },
+ {
+  "t": 10.32,
+  "beat": 17.2,
+  "label": "coin",
+  "sfx": "coin",
+  "gain": 0.22
+ },
+ {
+  "t": 12.7,
+  "beat": 21.17,
+  "label": "the page turns",
+  "sfx": "swish",
+  "gain": 0.42
+ },
+ {
+  "t": 13.65,
+  "beat": 22.75,
+  "label": "the room stands up",
+  "sfx": "pop",
+  "gain": 0.26
+ },
+ {
+  "t": 14.4,
+  "beat": 24.0,
+  "label": "the lamp",
+  "sfx": "click",
+  "gain": 0.36
+ },
+ {
+  "t": 14.42,
+  "beat": 24.03,
+  "label": "evening",
+  "sfx": "bloom",
+  "gain": 0.3
+ },
+ {
+  "t": 14.6,
+  "beat": 24.33,
+  "label": "night stamp",
+  "sfx": "coin",
+  "gain": 0.18
+ },
+ {
+  "t": 14.95,
+  "beat": 24.92,
+  "label": "new rank",
+  "sfx": "chime",
+  "gain": 0.2
+ },
+ {
+  "t": 16.8,
+  "beat": 28.0,
+  "label": "mouse found",
+  "sfx": "click",
+  "gain": 0.28
+ },
+ {
+  "t": 16.83,
+  "beat": 28.05,
+  "label": "mouse found",
+  "sfx": "pop",
+  "gain": 0.3
+ },
+ {
+  "t": 16.92,
+  "beat": 28.2,
+  "label": "coin",
+  "sfx": "coin",
+  "gain": 0.18
+ },
+ {
+  "t": 19.2,
+  "beat": 32.0,
+  "label": "cut to the casting",
+  "sfx": "woosh",
+  "gain": 0.2
+ },
+ {
+  "t": 20.4,
+  "beat": 34.0,
+  "label": "Cinder picked",
+  "sfx": "click",
+  "gain": 0.3
+ },
+ {
+  "t": 20.5,
+  "beat": 34.17,
+  "label": "the cat hops on stage",
+  "sfx": "pop",
+  "gain": 0.32
+ },
+ {
+  "t": 21.6,
+  "beat": 36.0,
+  "label": "another line",
+  "sfx": "click",
+  "gain": 0.28
+ },
+ {
+  "t": 21.64,
+  "beat": 36.07,
+  "label": "hop",
+  "sfx": "pop",
+  "gain": 0.3
+ },
+ {
+  "t": 24.0,
+  "beat": 40.0,
+  "label": "the vote",
+  "sfx": "click",
+  "gain": 0.32
+ },
+ {
+  "t": 24.03,
+  "beat": 40.05,
+  "label": "stamp",
+  "sfx": "stamp",
+  "gain": 0.26
+ },
+ {
+  "t": 24.1,
+  "beat": 40.17,
+  "label": "thank you",
+  "sfx": "chime",
+  "gain": 0.24
+ },
+ {
+  "t": 24.2,
+  "beat": 40.33,
+  "label": "coin",
+  "sfx": "coin",
+  "gain": 0.16
+ },
+ {
+  "t": 26.4,
+  "beat": 44.0,
+  "label": "cut to the chest",
+  "sfx": "woosh",
+  "gain": 0.2
+ },
+ {
+  "t": 27.0,
+  "beat": 45.0,
+  "label": "magical",
+  "sfx": "click",
+  "gain": 0.28
+ },
+ {
+  "t": 27.6,
+  "beat": 46.0,
+  "label": "open the chest",
+  "sfx": "click",
+  "gain": 0.32
+ },
+ {
+  "t": 27.63,
+  "beat": 46.05,
+  "label": "a book comes out",
+  "sfx": "pop",
+  "gain": 0.34
+ },
+ {
+  "t": 27.68,
+  "beat": 46.13,
+  "label": "coins burst",
+  "sfx": "sparkle",
+  "gain": 0.26
+ },
+ {
+  "t": 27.8,
+  "beat": 46.33,
+  "label": "coin",
+  "sfx": "coin",
+  "gain": 0.18
+ },
+ {
+  "t": 28.2,
+  "beat": 47.0,
+  "label": "new rank",
+  "sfx": "chime",
+  "gain": 0.18
+ },
+ {
+  "t": 30.6,
+  "beat": 51.0,
+  "label": "cut to the chat",
+  "sfx": "woosh",
+  "gain": 0.2
+ },
+ {
+  "t": 31.2,
+  "beat": 52.0,
+  "label": "chat opens",
+  "sfx": "click",
+  "gain": 0.3
+ },
+ {
+  "t": 31.23,
+  "beat": 52.05,
+  "label": "chat opens",
+  "sfx": "pop",
+  "gain": 0.3
+ },
+ {
+  "t": 32.5,
+  "beat": 54.17,
+  "label": "first bubble",
+  "sfx": "blip",
+  "gain": 0.22
+ },
+ {
+  "t": 33.8,
+  "beat": 56.33,
+  "label": "second bubble",
+  "sfx": "blip",
+  "gain": 0.22
+ },
+ {
+  "t": 34.2,
+  "beat": 57.0,
+  "label": "a riddle!",
+  "sfx": "click",
+  "gain": 0.3
+ },
+ {
+  "t": 35.5,
+  "beat": 59.17,
+  "label": "the riddle",
+  "sfx": "blip",
+  "gain": 0.24
+ },
+ {
+  "t": 36.6,
+  "beat": 61.0,
+  "label": "cut to the catalogue",
+  "sfx": "woosh",
+  "gain": 0.2
+ },
+ {
+  "t": 36.9,
+  "beat": 61.5,
+  "label": "search box",
+  "sfx": "click",
+  "gain": 0.26
+ },
+ {
+  "t": 37.08,
+  "beat": 61.8,
+  "label": "typing",
+  "sfx": "key",
+  "gain": 0.2
+ },
+ {
+  "t": 37.2,
+  "beat": 62.0,
+  "label": "typing",
+  "sfx": "key",
+  "gain": 0.2
+ },
+ {
+  "t": 37.32,
+  "beat": 62.2,
+  "label": "typing",
+  "sfx": "key",
+  "gain": 0.2
+ },
+ {
+  "t": 37.44,
+  "beat": 62.4,
+  "label": "typing",
+  "sfx": "key",
+  "gain": 0.2
+ },
+ {
+  "t": 37.56,
+  "beat": 62.6,
+  "label": "typing",
+  "sfx": "key",
+  "gain": 0.2
+ },
+ {
+  "t": 37.68,
+  "beat": 62.8,
+  "label": "typing",
+  "sfx": "key",
+  "gain": 0.2
+ },
+ {
+  "t": 39.0,
+  "beat": 65.0,
+  "label": "a book opens",
+  "sfx": "click",
+  "gain": 0.3
+ },
+ {
+  "t": 39.04,
+  "beat": 65.07,
+  "label": "a book opens",
+  "sfx": "pop",
+  "gain": 0.28
+ },
+ {
+  "t": 41.3,
+  "beat": 68.83,
+  "label": "the phone slides in",
+  "sfx": "woosh",
+  "gain": 0.34
+ },
+ {
+  "t": 43.2,
+  "beat": 72.0,
+  "label": "the reader's card",
+  "sfx": "tap",
+  "gain": 0.34
+ },
+ {
+  "t": 43.25,
+  "beat": 72.08,
+  "label": "the reader's card",
+  "sfx": "pop",
+  "gain": 0.28
+ },
+ {
+  "t": 45.62,
+  "beat": 76.03,
+  "label": "end card",
+  "sfx": "stamp",
+  "gain": 0.3
+ },
+ {
+  "t": 45.9,
+  "beat": 76.5,
+  "label": "wordmark",
+  "sfx": "sparkle",
+  "gain": 0.16
+ },
+ {
+  "t": 46.6,
+  "beat": 77.67,
+  "label": "the address",
+  "sfx": "pop",
+  "gain": 0.26
+ }
+]

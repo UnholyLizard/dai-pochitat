@@ -12,6 +12,7 @@
     "test:unit": "node --test tests/librarian.test.js tests/cache.test.js tests/catalog.test.js tests/books-admin.test.js",
     "check": "eslint . && npm run test:unit && npm run build",
     "art": "node scripts/gen-art.mjs",
+	"editor": "node _pipeline/editor/server.cjs --port 5193",
     "art:cut": "node scripts/cutout.mjs",
     "deploy": "npm run build && wrangler deploy && wrangler d1 migrations apply DB --remote",
     "covers:jpg": "node scripts/make-inline-covers.mjs",

@@ -19,3 +19,14 @@ scratch/
 playwright-report/
 test-results/
 worker-configuration.d.ts
+# showcase film: working folders and media (hundreds of MB); the tooling in _pipeline/ is tracked
+_pipeline/site/
+_pipeline/cache/
+_pipeline/footage/
+_pipeline/lab/
+_pipeline/preview*/
+_pipeline/frames*/
+_pipeline/tools/node_modules/
+_pipeline/film/audio/*.wav
+_pipeline/stage-instagram/film-*/audio/*.wav
+showcase/
