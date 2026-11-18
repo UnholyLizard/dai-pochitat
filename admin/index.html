@@ -23,6 +23,7 @@
       <nav class="tabs" role="tablist">
         <button type="button" role="tab" aria-selected="true" data-tab="chats">Диалоги</button>
         <button type="button" role="tab" aria-selected="false" data-tab="books">Книги</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="collections">Коллекции</button>
         <button type="button" role="tab" aria-selected="false" data-tab="users">Читатели</button>
         <button type="button" role="tab" aria-selected="false" data-tab="events">События (#5)</button>
         <button type="button" role="tab" aria-selected="false" data-tab="bot">Бот</button>
@@ -48,11 +49,21 @@
         <div class="toolbar">
           <input type="search" data-b-q placeholder="Поиск: шифр, ISBN, название, автор…" autocomplete="off">
           <select data-b-status aria-label="Статус"></select>
+          <select data-b-collection aria-label="Коллекция"></select>
           <button type="button" class="primary" data-b-add>+ Добавить книгу</button>
         </div>
         <p class="note" data-b-count></p>
         <ul class="books" data-b-list></ul>
         <button type="button" class="ghost" data-b-more hidden>Показать ещё</button>
+      </section>
+
+      <section data-panel="collections" hidden>
+        <div class="toolbar">
+          <p class="note toolbar__grow">Подборки в каталоге — кнопки «Все коллекции». Книги добавляются в подборку в карточке книги.</p>
+          <button type="button" class="primary" data-c-add>+ Новая коллекция</button>
+        </div>
+        <p class="note" data-c-count></p>
+        <ul class="books colls" data-c-list></ul>
       </section>
 
       <section data-panel="users" hidden>
@@ -194,6 +205,18 @@
         <label>Заметки о состоянии<input name="condition_notes" maxlength="500"></label>
       </fieldset>
 
+      <fieldset>
+        <legend>Настроение</legend>
+        <p class="note">По нему книгу находит волшебный сундук и фильтр «настроение» в каталоге.</p>
+        <div class="coll-picks" data-b-moods></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Коллекции</legend>
+        <p class="note">Книга появится в этих подборках каталога (фильтр «Все коллекции»).</p>
+        <div class="coll-picks" data-b-collections></div>
+      </fieldset>
+
       <fieldset data-b-loan-box hidden>
         <legend>Выдача</legend>
         <p data-b-loan-text class="note"></p>
@@ -289,6 +312,50 @@
         <span class="spacer"></span>
         <button type="button" class="ghost" data-l-cancel>Отмена</button>
         <button type="submit" class="primary" data-l-ok disabled>Выдать</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="editor editor--narrow" data-c-editor>
+    <form method="dialog" data-c-form autocomplete="off">
+      <header class="editor__head">
+        <h2 data-c-title>Новая коллекция</h2>
+        <button type="button" class="ghost" data-c-close aria-label="Закрыть">✕</button>
+      </header>
+      <p class="error" data-c-error hidden></p>
+      <fieldset>
+        <legend>Название</legend>
+        <label>По-русски<input name="title_ru" maxlength="80" required></label>
+        <div class="grid">
+          <label>English<input name="title_en" maxlength="80" placeholder="как по-русски"></label>
+          <label>Crnogorski<input name="title_me" maxlength="80" placeholder="как по-русски"></label>
+        </div>
+        <label>Адрес (slug)<input name="slug" maxlength="48" required pattern="[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?"
+            placeholder="screen-adaptations"><small class="note">Латиница, цифры и дефис. Ссылка: /catalog/?collection=…</small></label>
+      </fieldset>
+      <fieldset>
+        <legend>Описание</legend>
+        <label>По-русски<textarea name="description_ru" rows="2" maxlength="500"></textarea></label>
+        <label>English<textarea name="description_en" rows="2" maxlength="500"></textarea></label>
+        <label>Crnogorski<textarea name="description_me" rows="2" maxlength="500"></textarea></label>
+      </fieldset>
+      <footer class="editor__foot">
+        <button type="button" class="danger" data-c-delete hidden>Удалить…</button>
+        <span class="spacer"></span>
+        <button type="button" class="ghost" data-c-cancel>Отмена</button>
+        <button type="submit" class="primary" data-c-save>Сохранить</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="confirm" data-c-confirm>
+    <form method="dialog" data-c-confirm-form>
+      <h2>Удалить коллекцию?</h2>
+      <p><span data-c-confirm-text></span>. Книги останутся в каталоге — исчезнет только подборка и её кнопка.</p>
+      <label>Для подтверждения введите <b data-c-confirm-code></b><input name="typed" autocomplete="off"></label>
+      <footer class="editor__foot">
+        <button type="button" class="ghost" data-c-confirm-cancel>Отмена</button>
+        <button type="submit" class="danger" data-c-confirm-ok disabled>Удалить</button>
       </footer>
     </form>
   </dialog>

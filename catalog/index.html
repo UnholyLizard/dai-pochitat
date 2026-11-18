@@ -86,6 +86,7 @@
       </div>
 
       <div class="catalog-filters" id="catalog-filters" data-catalog-filters>
+        <div class="catalog-filters__inner">
         <div class="catalog-pills-row" role="group" aria-label="Возраст">
           <button class="catalog-pill is-active" type="button" data-age-group="" data-i18n="catalog.allAges">Все возрасты</button>
           <button class="catalog-pill" type="button" data-age-group="little" data-i18n="age.little">0–6 лет</button>
@@ -117,6 +118,8 @@
           <button class="catalog-pill catalog-pill--collection" type="button" data-collection="love_and_warmth" data-i18n="catalog.colLove">Про любовь и семью</button>
           <button class="catalog-pill catalog-pill--collection" type="button" data-collection="winter_and_new_year" data-i18n="catalog.colWinter">Зимние истории</button>
           <button class="catalog-pill catalog-pill--collection" type="button" data-collection="important_topics" data-i18n="catalog.colRights">На важные темы</button>
+          <button class="catalog-pill catalog-pill--collection catalog-pill--screen" type="button" data-collection="screen_adaptations" data-i18n="catalog.colScreen">С экранизациями</button>
+        </div>
         </div>
       </div>
     </div>
@@ -134,5 +137,21 @@
       <div class="book-drawer__content"></div>
     </div>
   </div>
+
+  <!-- Shown while the «С экранизациями» collection is picked: the library's PDF list of films by age. -->
+  <aside class="catalog-toast" data-screen-toast role="region" aria-label="Каталог экранизаций" data-i18n-attr="aria-label:screen.toastTitle" hidden>
+    <span class="catalog-toast__icon" aria-hidden="true">PDF</span>
+    <div class="catalog-toast__text">
+      <b data-i18n="screen.toastTitle">Сначала книга — потом кино</b>
+      <span data-i18n="screen.toastText">Список 100+ экранизаций по возрастам для семейного просмотра.</span>
+    </div>
+    <a class="catalog-toast__cta" href="/downloads/ekranizacii.pdf" download="Дай почитать — каталог экранизаций.pdf" type="application/pdf">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span data-i18n="screen.pdfShort">Скачать PDF</span>
+    </a>
+    <button class="catalog-toast__close" type="button" data-screen-toast-close aria-label="Закрыть" data-i18n-attr="aria-label:screen.close">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg>
+    </button>
+  </aside>
 </body>
 </html>

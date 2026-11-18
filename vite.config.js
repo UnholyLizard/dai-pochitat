@@ -83,7 +83,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg}', 'assets/*-{latin,cyrillic}-*.woff2', 'art/{house,ginger-avatar}.webp'],
         globIgnores: ['**/*-ext-*.woff2'],
         navigateFallback: 'index.html',
-        navigateFallbackDenylist: [/^\/(?:robots\.txt|sitemap\.xml)$/, /^\/api\//, /^\/admin(?:\/|$)/, /^\/catalog(?:\/|$)/],
+        navigateFallbackDenylist: [/^\/(?:robots\.txt|sitemap\.xml)$/, /^\/api\//, /^\/admin(?:\/|$)/, /^\/catalog(?:\/|$)/, /^\/downloads\//],
         cleanupOutdatedCaches: true,
         maximumFileSizeToCacheInBytes: 1_500_000,
         runtimeCaching: [

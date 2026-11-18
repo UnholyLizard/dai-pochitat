@@ -1749,8 +1749,100 @@
     display: none;
   }
 
+  /* «с экранизациями»: an on/off chip with a film-strip glyph (the label text is swapped by i18n,
+     so the icon lives in CSS, not in the markup) */
+  .chips--toggle {
+    margin-top: -6px;
+  }
+
+  .chip-screen span::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    flex: none;
+    background: currentColor;
+    -webkit-mask: var(--film-icon) center / contain no-repeat;
+    mask: var(--film-icon) center / contain no-repeat;
+    --film-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='16' rx='2.5'/%3E%3Cpath d='M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4'/%3E%3C/svg%3E");
+  }
+
+  .chip-screen input:checked + span {
+    background: var(--terracotta);
+    border-color: var(--terracotta);
+    color: #fff;
+  }
+
+  /* Download card for the PDF list of screen adaptations */
+  .pdf-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px 10px 10px;
+    border-radius: 16px;
+    border: 1.5px dashed var(--line);
+    background: var(--card-2);
+    color: var(--ink);
+    text-decoration: none;
+    transition: border-color 0.2s, background-color 0.2s, translate 0.25s var(--spring);
+  }
+
+  .pdf-link:hover {
+    border-color: var(--terracotta);
+    border-style: solid;
+    translate: 0 -2px;
+  }
+
+  .pdf-link:focus-visible {
+    outline: 3px solid var(--cobalt);
+    outline-offset: 2px;
+  }
+
+  .pdf-link__icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 46px;
+    border-radius: 6px 12px 6px 6px;
+    background: var(--terracotta);
+    color: #fff;
+    font: 900 0.72rem/1 var(--font-ui);
+    letter-spacing: 0.04em;
+    box-shadow: inset -10px 10px 0 -6px rgb(255 255 255 / 0.28);
+  }
+
+  .pdf-link__text {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .pdf-link__text b {
+    font: 800 0.98rem/1.2 var(--font-ui);
+  }
+
+  .pdf-link__text small {
+    font: 600 0.8rem/1.3 var(--font-ui);
+    color: var(--ink-2);
+  }
+
+  .pdf-link > svg {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    color: var(--terracotta);
+  }
+
   .oracle__result {
     margin-top: 1.2em;
+  }
+
+  /* Secondary links sit under the suggestion, so the drawn book appears right below "Open the chest" */
+  .oracle__more {
+    display: grid;
+    gap: 12px;
+    margin-top: 18px;
   }
 
   /* A book recommendation, used by the chest and in the chat */

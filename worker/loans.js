@@ -28,10 +28,13 @@ const marks = (n) => Array.from({ length: n }, () => '?').join(',');
 export async function dueDates(env, ids) {
   const out = new Map();
   if (!ids.length) return out;
-  const { results } = await env.DB.prepare(
-    `SELECT book_id, due_date FROM loans WHERE returned_at IS NULL AND book_id IN (${marks(ids.length)})`,
-  ).bind(...ids).all();
-  for (const r of results ?? []) out.set(r.book_id, r.due_date);
+  for (let i = 0; i < ids.length; i += 90) { // D1 binds at most 100 parameters per query
+    const part = ids.slice(i, i + 90);
+    const { results } = await env.DB.prepare(
+      `SELECT book_id, due_date FROM loans WHERE returned_at IS NULL AND book_id IN (${marks(part.length)})`,
+    ).bind(...part).all();
+    for (const r of results ?? []) out.set(r.book_id, r.due_date);
+  }
   return out;
 }
 
@@ -45,11 +48,14 @@ export async function withDueDates(env, books) {
 export async function withLoans(env, books) {
   const ids = books.map((b) => b.id);
   if (!ids.length) return books;
-  const { results } = await env.DB.prepare(
+  // D1 binds at most 100 parameters per query; the admin list can hold 200 books.
+  const chunks = [];
+  for (let i = 0; i < ids.length; i += 90) chunks.push(ids.slice(i, i + 90));
+  const results = (await Promise.all(chunks.map((part) => env.DB.prepare(
     `SELECT l.id, l.book_id, l.user_id, l.due_date, u.first_name, u.last_name, u.username
        FROM loans l JOIN users u ON u.id = l.user_id
-      WHERE l.returned_at IS NULL AND l.book_id IN (${marks(ids.length)})`,
-  ).bind(...ids).all();
+      WHERE l.returned_at IS NULL AND l.book_id IN (${marks(part.length)})`,
+  ).bind(...part).all()))).flatMap((r) => r.results ?? []);
   const byBook = new Map((results ?? []).map((r) => [r.book_id, {
     id: r.id,
     user_id: r.user_id,

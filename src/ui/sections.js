@@ -1,7 +1,8 @@
 // Content rendered from src/content: the book oracle, event tickets, hours & contacts.
 import { bus, $, $$, html, render } from '../lib/core.js';
 import { t, L, getLang } from '../i18n/index.js';
-import { findBooks } from '../content/books.js';
+import { findBooks, fromRow, BOOKS, AGE_GROUPS } from '../content/books.js';
+import { SCREEN_COLLECTION, SCREEN_BOOK_IDS } from '../content/screen-adaptations.js';
 import { getBookTitle, getBookAuthor } from '../lib/translit.js';
 import { EVENTS } from '../content/events.js';
 import { LIBRARY } from '../content/library.js';
@@ -63,12 +64,36 @@ document.addEventListener('error', (e) => {
 const queues = new Map();
 let shown = null;
 
+// «с экранизациями»: the whole collection, not just the suggestion pool (which is a random sample).
+let screenPool = null;
+async function loadScreenPool() {
+  if (screenPool) return screenPool;
+  try {
+    const pages = await Promise.all([0, 100].map((offset) =>
+      fetch(`/api/books?collection=${SCREEN_COLLECTION}&limit=100&offset=${offset}`).then((r) => (r.ok ? r.json() : Promise.reject(r.status)))));
+    const rows = pages.flatMap((p) => p.books ?? []);
+    if (!rows.length) throw new Error('empty');
+    screenPool = rows.map(fromRow);
+  } catch {
+    screenPool = BOOKS.filter((b) => SCREEN_BOOK_IDS.has(b.id)); // offline: whatever the fallback list has
+  }
+  return screenPool;
+}
+
+/** Screen adaptations for an age: the mood's matches when there are any, otherwise the whole age band. */
+function findScreenBooks({ age, mood }) {
+  const [lo, hi] = AGE_GROUPS[age] ?? [0, 99];
+  const byAge = (screenPool ?? []).filter((b) => b.age[0] <= hi && b.age[1] >= lo);
+  const byMood = byAge.filter((b) => b.moods.includes(mood));
+  return byMood.length ? byMood : byAge;
+}
+
 /** Next book for a filter: cycles through matches in a shuffled order, never repeating back-to-back. */
-export function drawBook(age, mood) {
-  const key = `${age}|${mood}`;
+export function drawBook(age, mood, { screen = false } = {}) {
+  const key = `${age}|${mood}|${screen ? 'screen' : ''}`;
   let q = queues.get(key);
   if (!q?.length) {
-    const pool = findBooks({ age, mood });
+    const pool = screen ? findScreenBooks({ age, mood }) : findBooks({ age, mood });
     q = pool.map((b) => [Math.random(), b]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
     if (q.length > 1 && q[0].id === shown?.id) q.push(q.shift());
     queues.set(key, q);
@@ -80,9 +105,11 @@ export function drawBook(age, mood) {
 export function initOracle({ onSpin, onAsk }) {
   const form = $('[data-oracle]');
   const out = $('[data-oracle-result]');
-  const spin = () => {
+  const spin = async () => {
     const data = new FormData(form);
-    const book = drawBook(data.get('age'), data.get('mood'));
+    const screen = data.has('screen');
+    if (screen) await loadScreenPool();
+    const book = drawBook(data.get('age'), data.get('mood'), { screen });
     if (!book) { render(out, html`<p class="pp-empty">${t('oracle.empty')}</p>`); return; }
     render(out, bookCard(book));
     sfx.pop();

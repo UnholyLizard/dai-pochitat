@@ -12,6 +12,7 @@ import { invalidateCache } from './cache.js';
 export const HIDDEN_STATUSES = ['lost', 'archived'];
 export const STATUSES = ['available', 'borrowed', 'reserved', 'repair', ...HIDDEN_STATUSES];
 const AGE_GROUPS = ['little', 'middle', 'big', 'teen', 'adult'];
+export const MOODS = ['funny', 'adventure', 'magic', 'spooky', 'friends', 'animals', 'real'];
 
 const TEXT = {
   title_ru: 300, title_en: 300, title_me: 300,
@@ -74,6 +75,14 @@ function clean(body, { partial }) {
     if (!STATUSES.includes(body.status)) return { error: 'status is not valid' };
     v.status = body.status;
   }
+  if ('collections' in body) {
+    if (!Array.isArray(body.collections) || body.collections.some((c) => typeof c !== 'string')) return { error: 'collections must be a list' };
+    v.collections = [...new Set(body.collections.map((c) => c.trim()).filter(Boolean))].slice(0, 50);
+  }
+  if ('moods' in body) {
+    // The chest and the catalog filter only know these; anything else would never match.
+    if (!Array.isArray(body.moods) || body.moods.some((m) => !MOODS.includes(m))) return { error: `moods must be some of: ${MOODS.join(', ')}` };
+  }
   for (const [field, column] of [['moods', 'moods_json'], ['tags', 'tags_json']]) {
     if (!(field in body)) continue;
     if (!Array.isArray(body[field])) return { error: `${field} must be a list` };
@@ -88,6 +97,42 @@ const ageGroupFor = (min) => (min >= 16 ? 'adult' : min >= 11 ? 'big' : min >= 7
 async function nextCode(env) {
   const row = await env.DB.prepare("SELECT MAX(CAST(SUBSTR(code, 4) AS INTEGER)) AS n FROM books WHERE code LIKE 'DP-%'").first();
   return `DP-${String((row?.n ?? 0) + 1).padStart(4, '0')}`;
+}
+
+/* ---------------------------------------------------------------- collections */
+
+/** Attach `collections: [collection ids]` to each book row. */
+async function withCollections(env, books) {
+  if (!books.length) return books;
+  const ids = books.map((b) => b.id);
+  const chunks = []; // D1 binds at most 100 parameters per query; a list page can hold 200 books
+  for (let i = 0; i < ids.length; i += 90) chunks.push(ids.slice(i, i + 90));
+  const rows = (await Promise.all(chunks.map((part) => env.DB.prepare(
+    `SELECT book_id, collection_id FROM collection_books WHERE book_id IN (${part.map(() => '?').join(',')}) ORDER BY collection_id`,
+  ).bind(...part).all()))).flatMap((r) => r.results ?? []);
+  const by = new Map(ids.map((id) => [id, []]));
+  for (const r of rows) by.get(r.book_id)?.push(r.collection_id);
+  return books.map((b) => ({ ...b, collections: by.get(b.id) ?? [] }));
+}
+
+/** Unknown collection ids → error text, else null. */
+async function checkCollections(env, wanted) {
+  if (!wanted?.length) return null;
+  const known = new Set(((await env.DB.prepare('SELECT id FROM collections').all()).results ?? []).map((c) => c.id));
+  const unknown = wanted.filter((c) => !known.has(c));
+  return unknown.length ? `unknown collections: ${unknown.join(', ')}` : null;
+}
+
+/** Statements that make the book's collection links exactly `wanted` (existing links keep their position). */
+function collectionStatements(env, bookId, wanted) {
+  const keep = wanted.length ? ` AND collection_id NOT IN (${wanted.map(() => '?').join(',')})` : '';
+  return [
+    env.DB.prepare(`DELETE FROM collection_books WHERE book_id = ?${keep}`).bind(bookId, ...wanted),
+    ...wanted.map((c) => env.DB.prepare(
+      `INSERT OR IGNORE INTO collection_books (collection_id, book_id, position)
+       VALUES (?1, ?2, (SELECT COALESCE(MAX(position), -1) + 1 FROM collection_books WHERE collection_id = ?1))`,
+    ).bind(c, bookId)),
+  ];
 }
 
 const findBook = (env, id) => env.DB.prepare('SELECT rowid AS _rowid, * FROM books WHERE id = ?1 OR code = ?1').bind(id).first();
@@ -105,6 +150,7 @@ function ftsStatements(env, rowidSql, bind, book) {
 async function list(env, url) {
   const q = (url.searchParams.get('q') ?? '').trim();
   const status = url.searchParams.get('status') ?? '';
+  const collection = url.searchParams.get('collection') ?? '';
   const limit = Math.min(Math.max(Number(url.searchParams.get('limit')) || 50, 1), 200);
   const offset = Math.max(Number(url.searchParams.get('offset')) || 0, 0);
 
@@ -117,15 +163,23 @@ async function list(env, url) {
   }
   if (status === 'hidden') where.push(`b.status IN (${HIDDEN_STATUSES.map((s) => `'${s}'`).join(',')})`);
   else if (STATUSES.includes(status)) where.push(`b.status = ?${binds.push(status)}`);
+  if (collection === 'none') where.push('NOT EXISTS (SELECT 1 FROM collection_books cb WHERE cb.book_id = b.id)');
+  else if (collection) where.push(`EXISTS (SELECT 1 FROM collection_books cb WHERE cb.book_id = b.id AND cb.collection_id = ?${binds.push(collection)})`);
   const clause = where.length ? `WHERE ${where.join(' AND ')}` : '';
 
-  const [rows, total, counts] = await Promise.all([
+  const [rows, total, counts, collections] = await Promise.all([
     env.DB.prepare(`SELECT b.* FROM books b ${clause} ORDER BY b.code ASC LIMIT ${limit} OFFSET ${offset}`).bind(...binds).all(),
     env.DB.prepare(`SELECT COUNT(*) AS n FROM books b ${clause}`).bind(...binds).first(),
     env.DB.prepare('SELECT status, COUNT(*) AS n FROM books GROUP BY status').all(),
+    env.DB.prepare(
+      `SELECT c.id, c.slug, c.title_ru, c.title_en, COUNT(cb.book_id) AS n
+         FROM collections c LEFT JOIN collection_books cb ON cb.collection_id = c.id
+        GROUP BY c.id ORDER BY c.id ASC`,
+    ).all(),
   ]);
   return json({
-    books: await withLoans(env, rows.results ?? []),
+    books: await withCollections(env, await withLoans(env, rows.results ?? [])),
+    collections: collections.results ?? [],
     total: total?.n ?? 0,
     limit,
     offset,
@@ -136,6 +190,10 @@ async function list(env, url) {
 async function create(env, body) {
   const { values, error } = clean(body, { partial: false });
   if (error) return bad(error);
+  const wantedCollections = values.collections ?? [];
+  delete values.collections;
+  const collectionError = await checkCollections(env, wantedCollections);
+  if (collectionError) return bad(collectionError);
 
   if (body.ai_translate || (!values.title_en && !values.title_me && body.ai_translate !== false)) {
     const tr = await translateBook({
@@ -169,13 +227,14 @@ async function create(env, body) {
     await env.DB.batch([
       env.DB.prepare(`INSERT INTO books (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')})`).bind(...cols.map((c) => book[c] ?? null)),
       ...ftsStatements(env, '(SELECT rowid FROM books WHERE id = ?)', [id], book),
+      ...collectionStatements(env, id, wantedCollections),
     ]);
   } catch (err) {
     if (/UNIQUE/i.test(String(err?.message))) return json({ error: 'code already exists' }, 409);
     throw err;
   }
   log('log', 'book created', { code });
-  return json({ book }, 201);
+  return json({ book: { ...book, collections: wantedCollections } }, 201);
 }
 
 async function update(env, id, body) {
@@ -183,6 +242,10 @@ async function update(env, id, body) {
   if (!current) return json({ error: 'not found' }, 404);
   const { values, error } = clean(body, { partial: true });
   if (error) return bad(error);
+  const wantedCollections = values.collections; // undefined: links stay as they are
+  delete values.collections;
+  const collectionError = await checkCollections(env, wantedCollections);
+  if (collectionError) return bad(collectionError);
 
   if (body.ai_translate) {
     const tr = await translateBook({
@@ -200,7 +263,7 @@ async function update(env, id, body) {
   }
 
   const cols = Object.keys(values).filter((c) => values[c] !== undefined);
-  if (!cols.length) return bad('nothing to update');
+  if (!cols.length && !wantedCollections) return bad('nothing to update');
 
   // A book that is out stays 'borrowed' (or goes lost/archived); returning it is done through the loan.
   if (values.status && ['available', 'reserved', 'repair'].includes(values.status) && current.status === 'borrowed'
@@ -217,9 +280,11 @@ async function update(env, id, body) {
   await env.DB.batch([
     env.DB.prepare(`UPDATE books SET ${set.map((c) => `${c} = ?`).join(', ')} WHERE id = ?`).bind(...set.map((c) => next[c] ?? null), current.id),
     ...ftsStatements(env, '?', [current._rowid], next),
+    ...(wantedCollections ? collectionStatements(env, current.id, wantedCollections) : []),
   ]);
-  log('log', 'book updated', { code: current.code, fields: cols });
-  return json({ book: next });
+  log('log', 'book updated', { code: current.code, fields: wantedCollections ? [...cols, 'collections'] : cols });
+  const [withLinks] = await withCollections(env, [next]);
+  return json({ book: withLinks });
 }
 
 async function remove(env, id, url) {
@@ -364,7 +429,9 @@ export async function booksAdminRoutes(request, env, url) {
 
   if (method === 'GET') {
     const book = await findBook(env, id);
-    return book ? json({ book: publicRow(book) }) : json({ error: 'not found' }, 404);
+    if (!book) return json({ error: 'not found' }, 404);
+    const [withLinks] = await withCollections(env, [publicRow(book)]);
+    return json({ book: withLinks });
   }
   if (method === 'PUT' || method === 'PATCH') {
     const body = await readJson(request, MAX_BODY);

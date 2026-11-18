@@ -6,6 +6,7 @@ import { api } from '../lib/api.js';
 import { initBooks } from './books.js';
 import { initUsers } from './users.js';
 import { initEvents } from './events.js';
+import { initCollections } from './collections.js';
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
@@ -31,6 +32,7 @@ function showTab(name) {
   if (name === 'books') initBooks({ editCode: new URLSearchParams(location.search).get('book') });
   if (name === 'users') initUsers({ role: data.me.role });
   if (name === 'events') initEvents();
+  if (name === 'collections') initCollections();
 }
 
 function renderThreads() {

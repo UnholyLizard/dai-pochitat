@@ -5,6 +5,7 @@ import { t, L, getLang } from '../i18n/index.js';
 import { game } from '../game/state.js';
 import { sfx } from '../game/sfx.js';
 import { BOOKS } from '../content/books.js';
+import { SCREEN_COLLECTION, SCREEN_BOOK_IDS } from '../content/screen-adaptations.js';
 import { getBookTitle, getBookAuthor } from '../lib/translit.js';
 import { isAdmin } from '../lib/auth.js';
 
@@ -196,6 +197,9 @@ async function fetchBooks({ reset = false } = {}) {
       if (state.ageGroup && !matchesAgeGroup(b, state.ageGroup)) return false;
       if (state.mood && !b.moods?.includes(state.mood)) return false;
       if (state.language && (b.language || 'ru') !== state.language) return false;
+      // Offline only the screen-adaptations collection is known locally; other collections show nothing
+      // rather than pretending the whole shelf belongs to them.
+      if (state.collection && !(state.collection === SCREEN_COLLECTION && SCREEN_BOOK_IDS.has(b.id))) return false;
       return true;
     });
     state.total = filtered.length;
@@ -399,12 +403,116 @@ function updateUI() {
 
         for (const p of $$('[data-available]', modal)) p.classList.toggle('is-active', !!state.available);
 
+        syncScreenToast();
+
         // Count of active filters stays visible on the toggle while the panel is hidden
         const countEl = $('[data-catalog-filters-count]', modal);
         if (countEl) {
           const active = [state.ageGroup, state.mood, state.collection, state.language, state.available].filter(Boolean).length;
           countEl.textContent = String(active);
           countEl.hidden = active === 0;
+        }
+      }
+
+      const CHEVRON = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+      /** Wraps each pill row with ‹ › hints (pointer affordance only: keyboard focus scrolls pills into view itself). */
+      function initPillScrollers(root) {
+        if (!root) return () => { };
+        const updaters = [];
+        const smooth = () => (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
+        for (const row of $$('.catalog-pills-row', root)) {
+          const wrap = document.createElement('div');
+          wrap.className = 'catalog-pills-scroller';
+          row.before(wrap);
+          wrap.append(row);
+          for (const dir of ['prev', 'next']) {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = `catalog-pills-hint catalog-pills-hint--${dir}`;
+            b.tabIndex = -1;
+            b.setAttribute('aria-hidden', 'true');
+            b.innerHTML = CHEVRON(dir === 'prev' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7');
+            b.addEventListener('click', () => {
+              row.scrollBy({ left: (dir === 'prev' ? -1 : 1) * row.clientWidth * 0.7, behavior: smooth() });
+            });
+            wrap.append(b);
+          }
+          const update = () => {
+            const max = row.scrollWidth - row.clientWidth;
+            wrap.toggleAttribute('data-can-prev', row.scrollLeft > 2);
+            wrap.toggleAttribute('data-can-next', row.scrollLeft < max - 2);
+          };
+          row.addEventListener('scroll', update, { passive: true });
+          new ResizeObserver(update).observe(row);
+          updaters.push(update);
+          update();
+        }
+        const refresh = () => requestAnimationFrame(() => updaters.forEach((u) => u()));
+        document.fonts?.ready.then(refresh);
+        return refresh;
+      }
+
+      // «С экранизациями» picked → a bottom card offers the PDF list of films. Closing it holds until the
+      // collection is picked again.
+      let screenToastDismissed = false;
+      function syncScreenToast() {
+        const toast = $('[data-screen-toast]');
+        if (!toast) return;
+        const on = state.collection === SCREEN_COLLECTION;
+        if (!on) screenToastDismissed = false;
+        const show = on && !screenToastDismissed;
+        if (show && toast.hidden) {
+          toast.hidden = false;
+          void toast.offsetWidth; // commit the hidden-state styles so the slide-in transition runs
+          toast.classList.add('is-visible');
+        } else if (!show && !toast.hidden) {
+          toast.classList.remove('is-visible');
+          const done = () => { if (!toast.classList.contains('is-visible')) toast.hidden = true; };
+          setTimeout(done, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 320); // after the slide-out
+        }
+      }
+
+      /** Rebuild the collection pills from /api/collections. Resolves true when the row changed. */
+      async function loadCollectionPills() {
+        const allPill = $('[data-collection=""]', modal);
+        const row = allPill?.parentElement;
+        if (!row) return false;
+        let list;
+        try {
+          const res = await fetch('/api/collections');
+          if (!res.ok) return false;
+          ({ collections: list } = await res.json());
+        } catch { return false; }
+        if (!Array.isArray(list) || !list.length) return false;
+        // Empty shelves get no pill — unless a link already points at one.
+        const shown = list.filter((c) => (c.n ?? 1) > 0 || c.id === state.collection || c.slug === state.collection);
+        // A link may use the slug: the pills (and the URL from now on) use the id.
+        const bySlug = shown.find((c) => c.slug === state.collection);
+        if (bySlug) state.collection = bySlug.id;
+        const pills = shown.map((c) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = `catalog-pill catalog-pill--collection${c.id === SCREEN_COLLECTION ? ' catalog-pill--screen' : ''}`;
+          b.dataset.collection = c.id;
+          b.dataset.titleRu = c.title_ru || '';
+          b.dataset.titleEn = c.title_en || c.title_ru || '';
+          if (c.description_ru || c.description_en) {
+            b.dataset.descRu = c.description_ru || '';
+            b.dataset.descEn = c.description_en || c.description_ru || '';
+          }
+          return b;
+        });
+        row.replaceChildren(allPill, ...pills);
+        relabelCollectionPills();
+        return true;
+      }
+
+      function relabelCollectionPills() {
+        const en = getLang() === 'en';
+        for (const b of $$('[data-collection][data-title-ru]', modal)) {
+          b.textContent = en ? b.dataset.titleEn : b.dataset.titleRu;
+          if ('descRu' in b.dataset) b.title = en ? b.dataset.descEn : b.dataset.descRu;
         }
       }
 
@@ -537,20 +645,42 @@ function updateUI() {
         // Mobile filter toggle: hides the pill rows, keeps the search field
         const filtersToggle = $('[data-catalog-filters-toggle]', modal);
         const filtersPanel = $('[data-catalog-filters]', modal);
+        // Scrolling the results down folds the filters away; scrolling back up leaves them folded —
+        // only the toggle brings them back. The panel sits in a sticky bar, so folding/unfolding it
+        // makes the browser's scroll anchoring move the scroll position: those scroll events are not
+        // the reader scrolling, and must not fold the panel the moment it was opened.
+        const catalogPage = $('.catalog-page');
+        const FOLD_AFTER = 64; // px of genuine downward scrolling before the panel folds
+        let lastY = 0;
+        let baseY = 0;
+        let settleUntil = 0;
+        const isExpanded = () => filtersToggle?.getAttribute('aria-expanded') === 'true';
         const setFilters = (expanded) => {
           filtersToggle?.setAttribute('aria-expanded', String(expanded));
-          if (filtersPanel) filtersPanel.hidden = !expanded;
+          if (filtersPanel) {
+            filtersPanel.classList.toggle('is-collapsed', !expanded);
+            filtersPanel.inert = !expanded;
+          }
+          settleUntil = performance.now() + 450; // collapse transition + anchoring
+          baseY = lastY;
         };
-        filtersToggle?.addEventListener('click', () => setFilters(filtersToggle.getAttribute('aria-expanded') !== 'true'));
+        filtersToggle?.addEventListener('click', () => setFilters(!isExpanded()));
 
-        // Scrolling the results down folds the filters away; scrolling back up leaves them folded —
-        // only the toggle brings them back.
-        const catalogPage = $('.catalog-page');
-        let lastY = 0;
         const onScroll = (y) => {
-          if (y > lastY && y > 120 && filtersToggle?.getAttribute('aria-expanded') === 'true') setFilters(false);
+          if (performance.now() < settleUntil || y < lastY) baseY = y;
+          else if (isExpanded() && y > 120 && y - baseY > FOLD_AFTER
+            && !filtersPanel?.contains(document.activeElement)) setFilters(false);
           lastY = y;
         };
+
+        $('[data-screen-toast-close]')?.addEventListener('click', () => {
+          screenToastDismissed = true;
+          syncScreenToast();
+        });
+
+        // Pill rows scroll sideways without a scrollbar: compact ‹ › hints show which way there is more.
+        const refreshPillHints = initPillScrollers(filtersPanel);
+        bus.on('lang', refreshPillHints);
         addEventListener('scroll', () => onScroll(scrollY), { passive: true });
         catalogPage?.addEventListener('scroll', () => onScroll(catalogPage.scrollTop), { passive: true });
 
@@ -598,9 +728,26 @@ function updateUI() {
             .catch(() => { });
         }
 
+        // A filter picked by the URL may sit off-screen in its sideways row: bring it into view.
+        const revealActivePills = () => {
+          for (const pill of $$('.catalog-pills-row .catalog-pill.is-active', modal)) {
+            const row = pill.parentElement;
+            if (pill !== row.firstElementChild) row.scrollLeft = pill.offsetLeft - (row.clientWidth - pill.offsetWidth) / 2;
+          }
+        };
         syncFilterPills();
+        revealActivePills();
         if (searchInput) searchInput.value = state.q;
         fetchBooks({ reset: true });
+
+        // Collection pills follow the admin's «Коллекции» list; the static markup stays as the offline set.
+        loadCollectionPills().then((changed) => {
+          if (!changed) return;
+          syncFilterPills();
+          revealActivePills();
+          refreshPillHints();
+        });
+        bus.on('lang', relabelCollectionPills);
 
         // Update on language change
         bus.on('lang', () => {

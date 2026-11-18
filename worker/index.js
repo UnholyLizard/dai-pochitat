@@ -172,8 +172,15 @@ async function getBook(id, env) {
 }
 
 async function listCollections(env) {
-  const { results } = await env.DB.prepare('SELECT * FROM collections ORDER BY id ASC').all();
-  return json({ collections: results }, 200, { 'cache-control': 'public, max-age=300, s-maxage=86400' });
+  // Oldest first, so a new collection lands at the end of the catalog's pill row. Only collections with
+  // books a reader can see are worth a pill; `n` lets the page decide.
+  const { results } = await env.DB.prepare(
+    `SELECT c.*, (SELECT COUNT(*) FROM collection_books cb JOIN books b ON b.id = cb.book_id
+                   WHERE cb.collection_id = c.id AND b.status NOT IN (${HIDDEN_STATUSES.map((s) => `'${s}'`).join(',')})) AS n
+       FROM collections c ORDER BY c.created_at ASC, c.id ASC`,
+  ).all();
+  // Edge copies are retired by the catalog version on every admin edit; browsers re-ask after a minute.
+  return json({ collections: results }, 200, { 'cache-control': 'public, max-age=60, s-maxage=86400' });
 }
 
 async function listEvents(env) {
@@ -230,7 +237,7 @@ export default {
     if (url.pathname === '/api/books') {
       try {
         if (request.method !== 'GET') return json({ error: 'method not allowed' }, 405, { allow: 'GET' });
-        return await cachedGet(request, ctx, () => listBooks(url, env));
+        return await cachedGet(request, ctx, () => listBooks(url, env), env);
       } catch (err) {
         log('error', 'listBooks failed', { error: String(err?.message ?? err) });
         return json({ error: 'unavailable' }, 503);
@@ -239,7 +246,7 @@ export default {
 
     if (url.pathname === '/api/suggestions' && request.method === 'GET') {
       try {
-        return await cachedGet(request, ctx, () => suggestions(env));
+        return await cachedGet(request, ctx, () => suggestions(env), env);
       } catch (err) {
         log('error', 'suggestions failed', { error: String(err?.message ?? err) });
         return json({ error: 'unavailable' }, 503);
@@ -250,7 +257,7 @@ export default {
       try {
         if (request.method !== 'GET') return json({ error: 'method not allowed' }, 405, { allow: 'GET' });
         const id = decodeURIComponent(url.pathname.replace('/api/books/', ''));
-        return await cachedGet(request, ctx, () => getBook(id, env));
+        return await cachedGet(request, ctx, () => getBook(id, env), env);
       } catch (err) {
         log('error', 'getBook failed', { error: String(err?.message ?? err) });
         return json({ error: 'unavailable' }, 503);
@@ -260,7 +267,7 @@ export default {
     if (url.pathname === '/api/events') {
       try {
         if (request.method !== 'GET') return json({ error: 'method not allowed' }, 405, { allow: 'GET' });
-        return await cachedGet(request, ctx, () => listEvents(env));
+        return await cachedGet(request, ctx, () => listEvents(env), env);
       } catch (err) {
         log('error', 'listEvents failed', { error: String(err?.message ?? err) });
         return json({ error: 'unavailable' }, 503);
@@ -270,7 +277,7 @@ export default {
     if (url.pathname === '/api/collections') {
       try {
         if (request.method !== 'GET') return json({ error: 'method not allowed' }, 405, { allow: 'GET' });
-        return await cachedGet(request, ctx, () => listCollections(env));
+        return await cachedGet(request, ctx, () => listCollections(env), env);
       } catch (err) {
         log('error', 'listCollections failed', { error: String(err?.message ?? err) });
         return json({ error: 'unavailable' }, 503);

@@ -65,6 +65,16 @@ select { height: 46px; padding: 0 12px; border-radius: 12px; border: 1.5px solid
 .books__main { display: grid; min-width: 0; }
 .books__main strong, .books__main small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .books__main small { color: var(--ink-3); }
+.books__colls { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+.books__colls span { padding: 1px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; background: color-mix(in srgb, var(--teal, #2f8a84) 16%, transparent); color: var(--teal, #2f8a84); white-space: nowrap; }
+.toolbar__grow { flex: 1 1 240px; margin: 0; align-self: center; }
+.thumb.thumb--coll { display: grid; place-items: center; font-weight: 900; color: var(--teal, #2f8a84); background: color-mix(in srgb, var(--teal, #2f8a84) 14%, var(--card)); }
+.colls a { font-weight: 700; white-space: nowrap; }
+.coll-picks { display: flex; flex-wrap: wrap; gap: 8px; }
+.coll-picks label { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 10px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--card-2); font-weight: 700; cursor: pointer; }
+.coll-picks label:has(input:checked) { border-color: var(--teal, #2f8a84); background: color-mix(in srgb, var(--teal, #2f8a84) 14%, var(--card)); }
+.coll-picks input { width: 18px; height: 18px; margin: 0; accent-color: var(--teal, #2f8a84); }
+.coll-picks small { color: var(--ink-3); font-weight: 600; }
 .thumb { width: 44px; height: 60px; border-radius: 6px; background: var(--card-2); overflow: hidden; }
 .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .badge--lost, .badge--archived { background: var(--ink-3); color: var(--paper); border-color: transparent; }

@@ -15,6 +15,11 @@ const SECTIONS = {
   '0+': '0+', '7-9': '7–9 лет', teens: 'Подросткам', adults: 'Взрослым', classics: 'Классика',
   comics: 'Комиксы и манга', poetry: 'Стихи', me_sr: 'Черногорские / сербские', en: 'English', nonfiction: 'Познавательное',
 };
+// Same set and order as the chest on the home page (worker/books-admin.js MOODS).
+const MOODS = {
+  funny: 'смешное', adventure: 'с приключениями', magic: 'волшебное', spooky: 'страшноватое',
+  friends: 'про дружбу', animals: 'про животных', real: 'про настоящую жизнь',
+};
 const LANGS = { ru: 'Русский', en: 'English', me: 'Crnogorski', sr: 'Srpski', de: 'Deutsch', fr: 'Français', uk: 'Українська' };
 const PAGE = 50;
 
@@ -26,7 +31,7 @@ function node(tag, props = {}, ...kids) {
 const options = (map) => Object.entries(map).map(([value, label]) => node('option', { value, textContent: label }));
 
 let ready = false;
-let state = { q: '', status: '', offset: 0, total: 0, books: [], counts: {} };
+let state = { q: '', status: '', collection: '', offset: 0, total: 0, books: [], counts: {}, collections: [] };
 let editing = null; // book being edited, or null for a new one
 let pendingCover = null; // { webp: Blob, jpg: Blob } converted but not yet uploaded
 let removeCover = false;
@@ -124,7 +129,8 @@ function renderList() {
       node('div', { className: 'books__main' },
         node('strong', { textContent: title }),
         node('small', { textContent: `${b.code} · ${author}${b.year ? ` · ${b.year}` : ''}` }),
-        ...(b.loan ? [node('small', { className: b.loan.due_date < todayIso() ? 'is-overdue' : '', textContent: `У: ${b.loan.user} · до ${fmtDay(b.loan.due_date)}${b.loan.due_date < todayIso() ? ' · просрочено' : ''}` })] : [])),
+        ...(b.loan ? [node('small', { className: b.loan.due_date < todayIso() ? 'is-overdue' : '', textContent: `У: ${b.loan.user} · до ${fmtDay(b.loan.due_date)}${b.loan.due_date < todayIso() ? ' · просрочено' : ''}` })] : []),
+        ...(b.collections?.length ? [node('div', { className: 'books__colls' }, ...b.collections.map((id) => node('span', { textContent: collectionTitle(id) })))] : [])),
       node('span', { className: `badge badge--${b.status}`, textContent: STATUS[b.status] ?? b.status }),
       select, edit);
   }));
@@ -145,13 +151,61 @@ function renderStatusFilter() {
   sel.value = state.status;
 }
 
+/* ---------------------------------------------------------------- collections */
+
+const collectionTitle = (id) => state.collections.find((c) => c.id === id)?.title_ru ?? id;
+
+function renderCollectionFilter() {
+  const sel = $('[data-b-collection]');
+  if (!sel) return;
+  sel.replaceChildren(
+    node('option', { value: '', textContent: 'Все коллекции' }),
+    ...state.collections.map((c) => node('option', { value: c.id, textContent: `${c.title_ru} (${c.n ?? 0})` })),
+    node('option', { value: 'none', textContent: 'Без коллекции' }));
+  sel.value = state.collection;
+}
+
+/** Checkboxes in the editor; deliberately unnamed so payload() skips them and sends `collections` itself. */
+function renderCollectionPicks(selected = []) {
+  const box = $('[data-b-collections]');
+  if (!box) return;
+  box.replaceChildren(...state.collections.map((c) => {
+    const input = node('input', { type: 'checkbox', value: c.id, checked: selected.includes(c.id) });
+    input.dataset.bCollPick = '';
+    return node('label', {}, input, c.title_ru, node('small', { textContent: ` ${c.n ?? 0}` }));
+  }));
+  if (!state.collections.length) box.append(node('p', { className: 'note', textContent: 'Коллекций пока нет.' }));
+}
+
+/** Mood checkboxes; unnamed like the collection picks, so payload() sends `moods` itself. */
+function renderMoodPicks(selected = []) {
+  const box = $('[data-b-moods]');
+  if (!box) return;
+  box.replaceChildren(...Object.entries(MOODS).map(([id, label]) => {
+    const input = node('input', { type: 'checkbox', value: id, checked: selected.includes(id) });
+    input.dataset.bMood = '';
+    return node('label', {}, input, label);
+  }));
+}
+
+const parseList = (json) => { try { const v = JSON.parse(json ?? '[]'); return Array.isArray(v) ? v : []; } catch { return []; } };
+
+/** Called by the Коллекции tab after it changes collections, and to open the list filtered by one. */
+export async function refreshBooks({ collection } = {}) {
+  if (collection !== undefined) state.collection = collection;
+  if (ready) await load({ keepOffset: collection === undefined });
+}
+
 async function load({ more = false, keepOffset = false } = {}) {
   const limit = keepOffset ? Math.max(state.books.length, PAGE) : PAGE;
   const offset = more ? state.books.length : 0;
   const params = new URLSearchParams({ limit: String(limit), offset: String(offset) });
   if (state.q) params.set('q', state.q);
   if (state.status) params.set('status', state.status);
+  if (state.collection) params.set('collection', state.collection);
   const data = await api(`/api/admin/books?${params}`);
+  state.collections = data.collections ?? state.collections;
+  renderCollectionFilter();
   state.books = more ? [...state.books, ...data.books] : data.books;
   state.total = data.total;
   state.counts = data.counts;
@@ -204,6 +258,8 @@ function openEditor(book) {
   $('[data-b-file]').value = '';
   showCover(book?.cover_url ?? null);
   renderLoanBox(book);
+  renderCollectionPicks(book?.collections ?? []);
+  renderMoodPicks(parseList(book?.moods_json));
 
   const f = form();
   if (f.elements.ai_translate) {
@@ -251,6 +307,9 @@ function payload() {
     body.says_me = '';
   }
   body.tags = body.tags.split(',').map((t) => t.trim()).filter(Boolean);
+  body.moods = [...f.querySelectorAll('[data-b-mood]:checked')].map((el) => el.value);
+  // Only sent when the picks were rendered, so an empty list never wipes links by accident.
+  if (state.collections.length) body.collections = [...f.querySelectorAll('[data-b-coll-pick]:checked')].map((el) => el.value);
   if (!body.code) delete body.code;
   for (const k of ['year', 'age_min', 'age_max']) if (body[k] === '') delete body[k];
   return body;
@@ -430,6 +489,7 @@ async function doDelete(e) {
       timer = setTimeout(() => { state.q = e.target.value.trim(); load().catch(() => { }); }, 300);
     });
     $('[data-b-status]').addEventListener('change', (e) => { state.status = e.target.value; load().catch(() => { }); });
+    $('[data-b-collection]')?.addEventListener('change', (e) => { state.collection = e.target.value; load().catch(() => { }); });
     $('[data-b-add]').addEventListener('click', () => openEditor(null));
     $('[data-b-more]').addEventListener('click', () => load({ more: true }).catch(() => { }));
 

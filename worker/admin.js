@@ -7,6 +7,8 @@ import { isAdmin, saveReply, thread } from './store.js';
 import { booksAdminRoutes } from './books-admin.js';
 import { usersAdminRoutes } from './users-admin.js';
 import { eventsAdminRoutes } from './events-admin.js';
+import { collectionsAdminRoutes } from './collections-admin.js';
+import { invalidateCache } from './cache.js';
 
 const ROLES = new Set(['admin', 'user']);
 
@@ -50,12 +52,19 @@ export async function adminRoutes(request, env, url) {
     return json({ messages: await thread(env, id, 0, 300) });
   }
 
+  // Successful catalog/event writes retire every cached public read (all filters, all POPs).
+  const catalogWrite = async (res) => {
+    if (res && res.ok && request.method !== 'GET' && !/\/(?:translate|lookup|fetch-image)$/.test(path)) await invalidateCache(request.url, [], env);
+    return res;
+  };
   const books = await booksAdminRoutes(request, env, url);
-  if (books) return books;
+  if (books) return catalogWrite(books);
+  const collections = await collectionsAdminRoutes(request, env, url);
+  if (collections) return catalogWrite(collections);
   const readers = await usersAdminRoutes(request, env, url, me);
   if (readers) return readers;
   const events = await eventsAdminRoutes(request, env, url);
-  if (events) return events;
+  if (events) return catalogWrite(events);
 
   if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
   const body = await readJson(request, 2048);

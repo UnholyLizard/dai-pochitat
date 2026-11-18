@@ -450,20 +450,36 @@
             <label style="--dot: var(--teal)"><input type="radio" name="mood" value="real"><span
                 data-i18n="mood.real">про настоящую жизнь</span></label>
           </fieldset>
+          <div class="chips chips--toggle">
+            <label class="chip-screen"><input type="checkbox" name="screen" value="1"><span
+                data-i18n="chest.screen">с экранизациями</span></label>
+          </div>
           <button class="btn btn--primary btn--wide" type="submit">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <use href="#i-key" />
             </svg>
             <span data-i18n="chest.go">Открыть сундук!</span>
           </button>
-          <a class="btn btn--ghost btn--wide" href="/catalog/" style="margin-top: 0.65rem;">
+        </form>
+        <div class="oracle__result" data-oracle-result aria-live="polite"></div>
+        <div class="oracle__more">
+          <a class="pdf-link" href="/downloads/ekranizacii.pdf" download="Дай почитать — каталог экранизаций.pdf"
+            type="application/pdf">
+            <span class="pdf-link__icon" aria-hidden="true">PDF</span>
+            <span class="pdf-link__text">
+              <b data-i18n="screen.pdf">Скачать PDF каталог экранизаций</b>
+              <small data-i18n="screen.pdfMeta">PDF · 420 КБ · 100+ фильмов и мультфильмов по возрастам</small>
+            </span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </a>
+          <a class="btn btn--ghost btn--wide" href="/catalog/">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <use href="#i-catalog" />
             </svg>
             <span data-i18n="chest.browseAll">Полистать весь каталог (1300+ книг)</span>
           </a>
-        </form>
-        <div class="oracle__result" data-oracle-result aria-live="polite"></div>
+        </div>
         <button class="peek" type="button" data-peek="dragon" data-i18n="ui.peek">Кажется, на этой странице кто-то
           прячется</button>
       </article>
